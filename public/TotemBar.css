@@ -1,0 +1,52 @@
+:root {
+  
+    --light: #ffffff;
+    --dark: #09121a;
+    --gold: #a9b67a; /*a9b67a*/
+  }
+
+  .nav-link{
+    padding: 0;
+    color: var(--gold);
+  }
+
+.totembar{
+    margin-top: 60px;;
+    position: fixed; 
+    inset: 0px 0px 22px 0px; 
+    height: 100vh; z-index: 9;
+    background-color: var(--secondary-color-opaque);
+    color:var(--light);
+    min-width: 57px; 
+    visibility: visible; 
+    max-width: 57px; 
+    width: 57px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #4e4e4e;
+  }
+  
+  .totembar > div {
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #4e4e4e;
+  }
+  
+  .totembar > div > a {
+    color: var(--light);
+  }
+  
+  .totembar > div > a:hover {
+    color:var(--gold);
+    cursor:pointer;
+  }
+  
+  .totembar > .selected{
+    color:var(--gold);
+    border-left:3pt solid var(--gold);
+  }
+  
+  .totembar > .selected > a{
+    color:var(--gold);
+  }

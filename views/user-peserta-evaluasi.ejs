@@ -1,0 +1,166 @@
+<div class="section-1">
+    <%- include ('totembar.ejs') %>
+        <div class="workspace">
+            <h2>Evaluasi Peserta</h2>
+            <div class="heigth-90vh overflow-scroll">
+                <table class="table-x width-full">
+                    <thead>
+                        <tr>
+                            <th colspan="5">
+                                <div class="flex-row">
+                                    <div class="button float-right"><i
+                                            class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+                                </div>
+                            </th>
+                        </tr>
+                        
+                        <tr>
+                            <td>Carian<input placeholder="cari nama/kp peserta..." type="text" id="srcfilter" style="width: 100%;"></td>
+                            <td>Peringkat<select id="peringkat" style="width: 100%;">
+                                    <option value="sekolah">Sekolah</option>
+                                    <option value="daerah">Daerah</option>
+                                    <option value="negeri">Negeri</option>
+                                    <option value="kebangsaan">Kebangsaan</option>
+                                </select></td>
+                            <td>Program<select id="program" style="width: 100%;">
+                                    <option value="">Semua Acara</option>
+                                    
+                                </select></td>
+                        </tr>
+                    </thead>
+                </table>
+                <div id="peserta-container" class="flex-row width-full flex-wrap">
+
+                </div>
+            </div>
+        </div>
+</div>
+
+<script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+<script src="./assets/d3/v7/d3.v7.min.js"></script>
+    
+<script>
+    var API = {
+            load: (peringkat, fn) => {
+                $.ajax({
+                        type: "POST",
+                        url: '/api/peserta/load',
+                        data: {peringkat:peringkat},
+                        success: function (res) {
+                            d3.select('.popUp').classed('hide',true);
+                            d3.select('.popUp-container').selectAll('*').remove()
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            },
+            programList: (fn) =>{
+                $.ajax({
+                        type: "POST",
+                        url: '/api/program/list',
+                        data: {},
+                        success: function (res) {
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            },
+            addbulk: (data, fn) => {
+                $.ajax({
+                        type: "POST",
+                        url: '/api/peserta/add',
+                        data: {peserta:data},
+                        success: function (res) {
+                            
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            }
+        }
+
+    //var peringkat = $('#peringkat').val();
+    //API.load(peringkat, (data)=>{
+    //    renderCards(data, prog);
+    //    
+    //});
+
+    function go(){
+        console.log('prog -------------------');
+        API.programList((prog)=>{
+            console.log('-----------',prog);
+            var prog_sel = d3.select('#program');
+            prog_sel.selectAll('.prog').data(prog).enter().append('option').attr('value',d=>d.prog_name).text(d=>d.prog_name);
+
+            var peringkat = $('#peringkat').val();
+            API.load(peringkat, (data)=>{
+                renderCards(data, prog);
+            });
+        });
+    }
+
+    go();
+
+</script>
+
+<%- include ('__program.ejs') %>
+
+<script>
+    function renderCards(data, prog){
+        console.log('xxxx------>>>',data);
+        var c = d3.select('#peserta-container');
+        c.selectAll('*').remove();
+
+        var prog_ = [];
+        prog.forEach((a)=>{
+            tmp = {
+                program: a.prog_name,
+                peserta:[]
+            };
+            
+            data.filter((b)=>{
+                //console.log('filtered...',a.prog_name.match(b.program));
+                return a.prog_name.match(b.program) && b.program.length>2
+            }).forEach((d)=>{
+                tmp.peserta.push(d);
+            });
+            prog_.push(tmp);
+        });
+
+        console.log(prog_);
+        c.selectAll('.program-card').data(prog_).enter().append('div').call((o)=>{
+            o.attr('class','program-card flex-grow-4');
+            hdr = o.append('div').attr('class','program-card-header flex-row center').append('span').text(d=>d.program);
+
+            bdy = o.append('div').attr('class','program-body');
+            bdy.selectAll('.program-peserta').data(d=>d.peserta).enter().append().call((b)=>{
+                b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp);
+                nama = b.append('div').attr('class','flex-column');
+                nama.append('strong').style('line-height','0.7').style('margin-top','5px').text(d=>d.nama);
+                nama.append('small').text(d=>d.kp);
+
+                btn = b.append('div').attr('class','toggle-next-level flext-row float-right center text-dark').append('i').attr('class','fa-solid fa-toggle-off fa-2x');
+
+                b.on('mousemove',(e, d)=>{
+                    d3.selectAll('.p_' + d.kp).classed('bg-light',true).classed('text-dark',true);
+                }).on('mouseout',(e, d)=>{
+                    d3.selectAll('.p_' + d.kp).classed('bg-light',false).classed('text-dark',false);
+                }).on('click',(e, d)=>{
+                    //d3.selectAll('.program-peserta').classed('bg-green',false);
+                    toggle = d3.selectAll('.p_' + d.kp).classed('bg-green');
+                    d3.selectAll('.p_' + d.kp).classed('bg-green',!toggle);
+                })
+            });
+        });
+        //c.selectAll('.card-program flex-column').data()
+
+        
+
+        d3.select('#peringkat').on('change',(e)=>{
+            peringkat = $('#peringkat').val();
+            API.load(peringkat, (data)=>{
+                renderCards(data, prog);
+            });
+        });
+    }
+</script>

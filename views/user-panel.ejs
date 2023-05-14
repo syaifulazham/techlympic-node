@@ -1,0 +1,302 @@
+<div class="section-1">
+    <%- include ('totembar.ejs') %>
+    <div class="workspace">
+        
+        <div class="flex-row">
+            <h2>Profil Pengguna</h2>
+        </div>
+        <div class="flex-column">
+            <table class='table-smp'>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class=' align-right'>
+                            <button class='button' onclick="fieldsCompleted()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class='w-60 align-right'>Email</td>
+                        <td class='w-400'>
+                            <input readOnly class="mx-6 w-400" type="text" value="<%=user.email%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'>Nama</td>
+                        <td>
+                            <input readOnly class="mx-6 w-400" type="text" value="<%=user.displayName%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'>Jenis</td>
+                        <td>
+                            <select id="userRole" class="mx-6 w-400" id="userRole" value="<%=(registered > 0)?me.usr_role:'--Pilih Jenis Pengguna--'%>"
+                                onchange="toggleSekolah(event)">
+                                <option>--Pilih Jenis Pengguna--</option>
+                                <option <%=(me.usr_role==='Guru')?'selected':''%>>Guru</option>
+                                <option <%=(me.usr_role==='Ibu Bapa')?'selected':''%>>Ibu Bapa</option>
+                                <option <%=(me.usr_role==='Belia')?'selected':''%>>Belia</option>
+                            </select>
+                            
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                        <td class='align-right'></td>
+                        <td>
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                        <td class='align-right' colspan="3">
+                            <hr>
+                        </td>
+                    </tr>
+
+                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                        <td class='align-right'>Sekolah</td>
+                        <td><input class="mx-6 w-400" readOnly placeholder="Kod Sekolah" id="kodsekolah" type="text"
+                                value="<%=(registered > 0)?me.kodsekolah:""%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                        <td class='align-right'></td>
+                        <td><input class="mx-6 w-400" readOnly placeholder="Nama Sekolah" id="namasekolah" type="text"
+                                value="<%=(registered > 0)?me.namasekolah:""%>" />
+                        </td>
+                        <td><a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a></td>
+                    </tr>
+
+                    <tr>
+                        <td class='align-right'></td>
+                        <td>
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td class='align-right' colspan="3">
+                            <hr>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class='w-60 align-right'>Alamat</td>
+                        <td class='w-400'>
+                            <input class="mx-6 w-400" placeholder="alamat 1" id="alamat1" type="text" value="<%=(registered > 0)?me.alamat1:""%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'></td>
+                        <td>
+                            <input class="mx-6 w-400" placeholder="alamat 2" id="alamat2" type="text" value="<%=(registered > 0)?me.alamat2:""%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'>Poskod</td>
+                        <td>
+                            <input class="mx-6 w-400" placeholder="poskod" id="poskod" type="text" value="<%=(registered > 0)?me.poskod:""%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'>Bandar</td>
+                        <td>
+                            <input class="mx-6 w-400" placeholder="bandar" id="bandar" type="text" value="<%=(registered > 0)?me.bandar:""%>" />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class='align-right'>Negeri</td>
+                        <td>
+                            <select id="negeri" class="mx-6 w-400" id="negeri" value="<%=(registered > 0)?me.negeri:""%>">
+                                <option <%=(me.negeri==='--Pilih Negeri--')?'selected':''%>>--Pilih Negeri--</option>
+                                <option <%=(me.negeri==='JOHOR')?'selected':''%>>JOHOR</option>
+                                <option <%=(me.negeri==='KEDAH')?'selected':''%>>KEDAH</option>
+                                <option <%=(me.negeri==='KELANTAN')?'selected':''%>>KELANTAN</option>
+                                <option <%=(me.negeri==='MELAKA')?'selected':''%>>MELAKA</option>
+                                <option <%=(me.negeri==='NEGERI SEMBILAN')?'selected':''%>>NEGERI SEMBILAN</option>
+                                <option <%=(me.negeri==='PAHANG')?'selected':''%>>PAHANG</option>
+                                <option <%=(me.negeri==='PULAU PINANG')?'selected':''%>>PULAU PINANG</option>
+                                <option <%=(me.negeri==='PERAK')?'selected':''%>>PERAK</option>
+                                <option <%=(me.negeri==='PERLIS')?'selected':''%>>PERLIS</option>
+                                <option <%=(me.negeri==='SELANGOR')?'selected':''%>>SELANGOR</option>
+                                <option <%=(me.negeri==='TERENGGANU')?'selected':''%>>TERENGGANU</option>
+                                <option <%=(me.negeri==='SABAH')?'selected':''%>>SABAH</option>
+                                <option <%=(me.negeri==='SARAWAK')?'selected':''%>>SARAWAK</option>
+                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN KUALA LUMPUR')?'selected':''%>>WILAYAH PERSEKUTUAN KUALA LUMPUR</option>
+                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN LABUAN')?'selected':''%>>WILAYAH PERSEKUTUAN LABUAN</option>
+                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN PUTRAJAYA')?'selected':''%>>WILAYAH PERSEKUTUAN PUTRAJAYA</option>
+                            </select>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="popUp hide">
+        
+        <div class="flex-row mx-6 bg-dark" style="padding:8px 6px 8px 6px">
+            <input class="mx-6" 
+                    style="width: 100%;"
+                    placeholder="cari sekolah" 
+                    id="searchsekolah" 
+                    type="text" 
+                    value=""
+                    onkeyup="searchSekolah(event)" />
+            <a class="button float-right" onclick="closePopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a class="button float-right" onclick="closePopUp(event)"><i class="fa-solid fa-x"></i></a>
+        </div>
+        <div id="pop" class="popUp-container flex-column" style="min-height: 100px;max-height:100vh;margin-left:10px">
+
+        </div>
+    </div>
+
+    <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+    <script src="./assets/d3/v7/d3.v7.min.js"></script>
+
+    <script>
+        var API = {
+            sekolah: {
+                search: (q, fn) => {
+                    data = { query: q }
+                    $.ajax({
+                        type: "POST",
+                        url: '/api/sekolah/search',
+                        data: data,
+                        success: function (res) {
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+                }
+            },
+
+            submit: (data, fn) => {
+                    $.ajax({
+                        type: "POST",
+                        url: '/api/user/register',
+                        data: data,
+                        success: function (res) {
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            },
+        }
+
+        var searchSekolah = (e) => {
+            if (e.keyCode === 13) {
+                q = $('#searchsekolah').val();
+                API.sekolah.search(q, (data) => {
+                    //removeHideClass('.popUp')
+                    d3.select('#pop').selectAll('*').remove();
+
+                    hdr = ['Kod','Sekolah','Jenis','PPD'];
+                    tbl = d3.select('#pop').append('table').attr('class','table-x selectable-tr');
+                    thead = tbl.append('thead');
+                    thead.append('tr').selectAll('th').data(hdr).enter().append('th').text(d=>d);
+
+                    tbody = tbl.append('tbody');
+                    tbody.selectAll('tr').data(data).enter().append('tr').call((o)=>{
+                        o.append('td').text((d)=>d.kodsekolah);
+                        sek = o.append('td');
+                        g = sek.append('div').attr('class','flex-column')
+                        g.append('strong').text(d=>d.namasekolah);
+                        g.append('small').text(d=>d.alamatsurat + `, `+ d.poskodsurat + `, `+ d.bandarsurat + `, `+ d.negeri);
+                       
+                        o.append('td').text((d)=>d.jenis_label);
+                        o.append('td').text((d)=>d.ppd);
+
+                        o.on('click', (e, d)=>{
+                            console.log(e, d);
+                            $('#kodsekolah').val(d.kodsekolah);
+                            $('#namasekolah').val(d.namasekolah);
+                            $('#alamat1').val(d.alamatsurat);
+                            $('#poskod').val(d.poskodsurat);
+                            $('#bandar').val(d.bandarsurat);
+                            $('#negeri').val(d.negeri);
+                            closePopUp(e);
+                        })
+                    })
+                });
+            }
+
+        }
+
+        // Function to set the class "hide" if it does not exist
+        function setHideClass(element) {
+            if (!$(element).hasClass('hide')) {
+                $(element).addClass('hide');
+            }
+        }
+
+        // Function to remove the class "hide"
+        function removeHideClass(element) {
+            $(element).removeClass('hide');
+        }
+
+        var openPopUp = (e) => {
+            removeHideClass('.popUp')
+        }
+
+        var closePopUp = (e) => {
+            setHideClass('.popUp')
+        }
+
+        var toggleSekolah = (e) => {
+            var jenis = $('#userRole').val();
+            if (jenis === 'Guru') {
+                removeHideClass('.guru');
+            } else {
+                setHideClass('.guru');
+            }
+            //$('.guru').toggleClass('hide');
+        }
+
+        var fieldsCompleted = () => {
+            var completed = false;
+
+            var urole = $('#userRole').val();
+
+            if(urole !== '--Pilih Jenis Pengguna--'){
+                if(urole === 'Guru'){
+                    var kod = $('#kodsekolah').val();
+                    var sek = $('#namasekolah').val();
+
+                    if(kod !== '' && sek!== ''){
+                        var data = {
+                            usr_role: urole, 
+                            kodsekolah: kod, 
+                            namasekolah: sek, 
+                            alamat1: $('#alamat1').val(), 
+                            alamat2: $('#alamat2').val(), 
+                            poskod: $('#poskod').val(), 
+                            bandar: $('#bandar').val(), 
+                            negeri: $('#negeri').val()
+                        }
+                        API.submit(data, (d) => { console.log(d.message)});
+                    }
+                }else{
+
+                }
+            }
+
+
+        }
+    </script>
+
+</div>

@@ -1,0 +1,21 @@
+<div class="section-1">
+    <%- include ('totembar.ejs') %>
+    <div class="workspace">
+        <div class="flex-row">
+            <h2>Papan Pemuka</h2>
+        </div>
+        <div class="flex-row flex-wrap width-full center">
+            <%count.forEach((d)=>{%>
+                <div class="card center">
+                    <div class="card-score">
+                        <h1><%=d.peserta===0?'-':d.peserta%></h1>
+                    </div>
+                    <hr>
+                    <div class="card-label">
+                        <span><%=d.prog_name%></span>
+                    </div>
+                </div>    
+            <%})%>
+        </div>
+    </div>
+</div>

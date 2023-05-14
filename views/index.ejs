@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google OAuth 2.0 Example</title>
+</head>
+
+<body>
+    <p>
+        <% if (user) { %>
+            Welcome <%= user.displayName %>!
+                <% } else { %>
+                    <a href="/auth/google">Sign in with Google</a>
+                    <% } %>
+    </p>
+
+    <p>
+        <% if (user) { %>
+            Welcome <%= user.displayName %>!
+                <% } else { %>
+                    <a href="/auth/microsoft">Sign in with Microsoft</a>
+                    <% } %>
+    </p>
+</body>
+<html>

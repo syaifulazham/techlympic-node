@@ -1,0 +1,72 @@
+<div class="working">
+    <section id="sec-1" class="section-1 flex-column">
+    
+    <div class='imgBg flex-column px-6 py-6'>
+        <div class='flex-row mosti'>
+            <img class='.jata' src="./img/jata_malaysia.svg" width="90vh"></img>
+            <div class='flex-column px-6 justify mosti-text left-border'>
+                <h5>KEMENTERIAN SAINS,</h5>
+                <h5>TEKNOLOGI DAN INOVASI</h5>
+            </div>
+        </div>
+        
+    </div>
+    <div class="imgBg flex-row center">
+        <div class='glow'>
+            <span>Selamat Kembali</span> 
+            <% if (user) { %>
+            <strong><%= user.displayName %></strong>
+            <%}%>
+            <h1>Techlympic 2023</h1>
+            <% if (!user) { %>
+                <a class="button" href="/login">Sertai kami</a>
+            <%}%>
+        
+        </div>
+    </div>
+    <img class='thebg' src="./img/bg-02.png"></img>
+</section>
+    <section id="sec-2" class="section-2 flex-row flex-wrap">
+        
+
+        <div class='programs-img flex-row' >
+            <img class='img-l' src="./img/build cars.jpg"/>
+            <div class="flex-column div-r">
+            <span>Cabaran Kereta Lestari | Techlympics Quiz-A-Thon</span> <h2>Teknologi Sohor</h2>
+            </div>
+        </div>
+
+        <div class='programs-img flex-row' >
+            <div class="flex-column div-l">
+            <span>Misi Penerbangan Dron</span> <h2>Aeroangkasa</h2>
+            </div>
+            <img class='img-r' src="./img/build drone.jpg"/>
+        </div>
+
+        <div class='programs-img flex-row' >
+            <img class='img-l' src="./img/build robots.jpg"/>
+            <div class="flex-column div-r">
+            <span>Cabaran Mencipta Robot* (keterangkuman) | Program Jangkauan Techlympics</span> <h2>Keterangkuman Malaysia Madani</h2>
+            </div>
+        </div>
+        
+        <div class='programs-img flex-row' >
+            <div class="flex-column div-l">
+            <span>Cabaran Bandar Pintar | Cabaran Binaan Virtual Kreatif Malaysia Madani (Redbrick)</span> <h2>Inovasi, Kreativiti untuk Kesejahteraan Rakyat</h2>
+            </div>
+            <img class='img-r' src="./img/bg-02.png"/>
+        </div>
+
+        <div class='programs-img flex-row' >
+            <img class='img-l' src="./img/play puzzle.jpg"/>
+            <div class="flex-column div-r">
+            <span>Pemikiran Komputasi Kanak-Kanak (FC-1)</span> <h2>Kecerdasan Buatan dan Sains Data</h2>
+            </div>
+        </div>
+
+        
+    </section>
+    <section id="sec-3" class="section-1">
+        <div><span>Jadual</span> <h1>Techlympic 2023</h1></div>
+    </section>
+</div>

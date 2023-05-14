@@ -1,0 +1,281 @@
+<div class="section-1">
+    <div class="popUp hide">
+        
+        <div id="pop" class="popUp-container flex-column" style="min-height: 100px;max-height:100vh;margin-left:10px">
+
+        </div>
+    </div>
+
+    <%- include ('totembar.ejs') %>
+    <div class="workspace">
+        <h2>Daftar Peserta</h2>
+        <div id="input-tray" class="input-tray fill-container flex-column center">
+            <span>Drag and drop files here</span>
+            <input type="file" class="custom-file-input" id="file-input" onchange="readFile()">
+          </div>
+    </div>
+    <script>
+        // Get file input element
+        const fileInput = document.getElementById('file-input');
+        
+        // Add event listeners for drag and drop
+        fileInput.addEventListener('dragenter', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            fileInput.classList.add('dragover');
+        });
+        
+        fileInput.addEventListener('dragleave', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            fileInput.classList.remove('dragover');
+        });
+        
+        fileInput.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        
+        fileInput.addEventListener('drop', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            fileInput.classList.remove('dragover');
+            fileInput.files = event.dataTransfer.files;
+
+            readFile();
+        });
+
+    </script>
+    <!--
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+     Include the SheetJS library 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    -->
+    <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+    <script src="./assets/d3/v7/d3.v7.min.js"></script>
+    <script src="./assets/xlsx/xlsx.full.min.js"></script>
+
+    <script>
+        var API = {
+            addbulk: (data, fn) => {
+                d3.select('.popUp').classed('hide',false);
+                d3.select('.popUp-container').append('div').text('menyimpan data...')
+                $.ajax({
+                        type: "POST",
+                        url: '/api/peserta/add',
+                        data: {peserta:data},
+                        success: function (res) {
+                            d3.select('.popUp').classed('hide',true);
+                            d3.select('.popUp-container').selectAll('*').remove()
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            }
+        }
+    </script>
+
+<%- include ('__program.ejs') %>
+
+    <script>
+    function readFile() {
+      // Get the file input element
+      var fileInput = document.getElementById('file-input');
+    
+      // Get the first file from the input element
+      var file = fileInput.files[0];
+    
+      // Create a new FileReader object
+      var reader = new FileReader();
+    
+      // When the FileReader object is done loading the file
+      reader.onload = function(event) {
+        // Get the binary data from the loaded file
+        var data = event.target.result;
+    
+        // Parse the binary data into a workbook object
+        var workbook = XLSX.read(data, { type: 'binary' });
+        
+    
+        // Get the first worksheet from the workbook
+        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    
+        // Convert the worksheet data to JSON format
+        var jsonData = XLSX.utils.sheet_to_json(worksheet);
+    
+        // Log the JSON data to the console
+        console.log(jsonData);
+        renderD3Table(jsonData);
+      };
+    
+      // Read the file as binary data
+      reader.readAsBinaryString(file);
+    }
+
+    function getJsonKeys(jsonData) {
+    // Create an empty array to store the keys
+    var keys = [];
+
+    // Loop through the first object in the JSON data
+    for (var key in jsonData[0]) {
+        // Add the key to the array
+        keys.push(key);
+    }
+
+        // Return the array of keys
+        return keys;
+    }
+
+
+    function renderD3Table(data){
+        //const distinct = arr.filter((value, index, self) => {
+        //    return self.indexOf(value) === index;
+        //});
+
+        kelas = [];
+        data.forEach((d)=>{
+            d['tahap/ tingkatan'] = d['tahap/ tingkatan'] + '';
+            d['no kp'] = d['no kp'] + '';
+            kelas.push(d['tahap/ tingkatan']);
+        });
+
+        kelas = kelas.filter((value, index, self) => {
+            return self.indexOf(value) === index;
+        });
+
+        kelas.unshift('');
+        /*
+        lst = [
+                'Cabaran Kereta Lestari',
+                'Misi Penerbangan Dron',
+                'Cabaran Mencipta Robot',
+                'Program Jangkauan Techlympics',
+                'Cabaran Bandar Pintar',
+                'Pemikiran Komputasi Kanak-Kanak'
+            ];
+            */
+
+        const doFilter = (e, d)=>{
+            val = $('#srcfilter').val();
+
+            _d = data.filter((d)=> {
+                return (d['nama'].match(val) || d['email'].match(val)) && d['tahap/ tingkatan'].match($('#kelas').val())
+            });
+
+            console.log(_d);
+
+            d3.selectAll('.peserta').classed('hide',true);
+            _d.forEach((d)=>{d3.select('.peserta-' + d['no kp']).classed('hide',false)});
+        }
+
+        keys = getJsonKeys(data);
+        //keys.push('Penyertaan Acara')
+        c = d3.select('#input-tray').attr('class','heigth-90vh overflowy-scroll');
+        c.selectAll('*').remove();
+
+        table = c.append('table').attr('class','table-x width-full');
+
+        thead = table.append('thead');
+
+        trhs = thead.append('tr');
+        ths = trhs.append('th').attr('colspan',5);
+        //BUTTON to save
+        bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
+        bts_simpan.on('click', (e)=>{
+            //var _data = d3.selectAll(".peserta", {style: "all"}).data();
+            var saving_data = [];
+            data.forEach((d)=>{
+                sel_ = [];
+                d3.selectAll('._'+d['no kp'] + ':checked').data().forEach((d)=>{
+                    sel_.push(d.acara);
+                });
+                sel = sel_.join('|');
+                saving_data.push({
+                    nama: d.nama,
+                    kp: d['no kp'],
+                    email: d.email,
+                    darjah_tingkatan: d['tahap/ tingkatan'],
+                    program: sel
+                });
+                //
+            });
+
+            API.addbulk(saving_data, (d)=>{
+                console.log(d);
+            });
+            console.log(saving_data);
+        })
+
+        trh = thead.append('tr');
+        trh.selectAll('th').data(keys).enter().append('th').text(d=>d.toUpperCase());
+        td_def = trh.append('th').attr('style','width:300px').append('div').attr('class','flex-row center');
+        td_def.append('div').text('PENYERTAAN ACARA');
+        //BUTTON to set default
+        btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
+
+        trh2 = thead.append('tr');
+        src = trh2.append('td').attr('colspan',3).append('input').attr('type','text').style('width','100%').attr('id','srcfilter');
+
+        src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
+        src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
+
+        var lst2 = lst.slice();
+        lst2.unshift('Belum memilih acara');
+        lst2.unshift('Semua Acara');
+        src3 = trh2.append('td').append('select').style('width','100%');
+        src3.selectAll('option').data(lst2).enter().append('option').text(d=>d);
+
+        src.on('keyup', doFilter);
+        src2.on('change', doFilter);
+
+        tbody = table.append('tbody')
+        tbody.selectAll('tr').data(data.sort((a,b)=>a['tahap/ tingkatan']-b['tahap/ tingkatan'])).enter().append('tr').call((o)=>{
+            o.attr('class',(d)=>'peserta peserta-' + d['no kp']);
+            keys.forEach((key, i)=>{
+                o.append('td').attr('style',(i===3)?'text-align:center':'text-align:left').text((d)=>d[key]);
+            });
+
+            acara = o.append('td').append('div').attr('class','flex-column');
+            acara_header = acara.append('div').attr('class','flex-row');
+            btn_acara = acara_header.append('div')
+                        .attr('class','button width-full flex-row')
+                        .attr('id',(d)=>('button-' + d['no kp']))
+                        .html('<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih acara...');
+
+            btn_acara.on('click', (e, d) => {
+                el = '#container-' + d['no kp'];
+                console.log(el, d3.select(el).classed('hide'));
+
+                d3.select(el).classed('hide',!d3.select(el).classed('hide'));
+            })
+
+            acara_contain = acara.append('div').attr('class','flex-column hide').attr('id',(d)=>('container-' + d['no kp']));
+            acara_contain.selectAll('.acara').data((d)=>{
+                console.log(d);
+                id = d['no kp'];
+                v = [];
+                lst.forEach((x)=>v.push({id:id, acara:x}));
+                return v;
+            }).enter().append('div').call((a)=>{
+                a.attr('class','flex-row').attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('_' + d.id))
+                .attr('id',(d, i)=>('_' + d.id + '_' + i))
+                .attr('name',(d)=>('_' + d.id))
+                .attr('value', d=>d.acara);
+                a.append('label').style('padding-left','6px').attr('for',(d, i)=>('_' + d.id + '_' + i)).text(d=>d.acara);
+
+                chk.on('change',(e, d)=>{
+                    ic = e.target.id.split('_')[1];
+                    nx = d3.selectAll('._' + ic + ':checked').data();
+                    n = nx.length;
+                    
+                    d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih acara...')
+                    console.log(e.target.id, d, ic, n);
+
+                })
+            });
+        });
+    }
+    </script>
+</div>

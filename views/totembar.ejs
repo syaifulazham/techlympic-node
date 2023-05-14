@@ -1,0 +1,25 @@
+<div class="totembar">
+    <div class="flex-column <%=page==='user-panel.ejs'?'selected':''%>">
+        <a href="/user-panel"><i class="fa-solid fa-user fa-2x center"></i></a>
+        
+    </div>
+    <%if(registered>0){%>
+    <div class="flex-column <%=page==='user-peserta-daftar.ejs'?'selected':''%>">
+        <a href="/user-peserta-daftar"><i class="fa-solid fa-list fa-2x center"></i></a>
+        
+    </div>
+    <div class="flex-column <%=page==='user-peserta-urus.ejs'?'selected':''%>">
+        <a href="/user-peserta-urus"><i class="fa-solid fa-address-card fa-2x"></i></a>
+        
+    </div>
+    <div class="flex-column <%=page==='user-peserta-evaluasi.ejs'?'selected':''%>">
+        <a href="/user-peserta-evaluasi"><i class="fa-regular fa-square-check fa-2x"></i></i></a>
+        
+    </div>
+    <div class="flex-column <%=page==='user-peserta-dashboard.ejs'?'selected':''%>">
+        <a href="/user-dashboard"><i class="fa-solid fa-gauge-high fa-2x"></i></a>
+        
+    </div>
+    <%}%>
+</div>
+
