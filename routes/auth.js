@@ -8,6 +8,11 @@ const auth = function(){
             user: process.env.DB_MYSQL_USER,
             password: process.env.DB_MYSQL_PASS,
             database: process.env.DB_MYSQL_DBAS
+        },
+        google:{
+          clientid: process.env.GOOGLE_CLIENT_ID,
+          secret: process.env.GOOGLE_CLIENT_SECRET,
+          callback: process.env.GOOGLE_REDIRECT_URI
         }
     }
 }
