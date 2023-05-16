@@ -125,6 +125,10 @@ app.get('/auth/google/callback',
   
 
 // Start the server
-https.createServer(options, app).listen(443, function() {
-    console.log('Server running on https://localhost:443');
-  });
+//https.createServer(options, app).listen(443, function() {
+//    console.log('Server running on https://localhost:443');
+//  });
+
+app.listen(3000, function() {
+  console.log('Server started on port 3000');
+});
