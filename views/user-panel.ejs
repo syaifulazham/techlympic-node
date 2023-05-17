@@ -164,6 +164,10 @@
 
         </div>
     </div>
+    
+    <div class="idlePopUp hide">
+        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+    </div>
 
     <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
     <script src="./assets/d3/v7/d3.v7.min.js"></script>
@@ -276,7 +280,7 @@
                 if(urole === 'Guru'){
                     var kod = $('#kodsekolah').val();
                     var sek = $('#namasekolah').val();
-
+                    console.log(kod,' --------- ', sek);
                     if(kod !== '' && sek!== ''){
                         var data = {
                             usr_role: urole, 
@@ -288,11 +292,31 @@
                             bandar: $('#bandar').val(), 
                             negeri: $('#negeri').val()
                         }
-                        API.submit(data, (d) => { console.log(d.message)});
+                        API.submit(data, (d) => { 
+                            console.log(d.message);
+                        });
                     }
                 }else{
-
+                        var data = {
+                            usr_role: urole, 
+                            kodsekolah: '', 
+                            namasekolah: '', 
+                            alamat1: $('#alamat1').val(), 
+                            alamat2: $('#alamat2').val(), 
+                            poskod: $('#poskod').val(), 
+                            bandar: $('#bandar').val(), 
+                            negeri: $('#negeri').val()
+                        }
+                        API.submit(data, (d) => { 
+                            console.log(d.message);
+                        });
                 }
+
+                d3.select('.idlePopUp').classed('hide',false);
+                setTimeout(()=>{
+                    window.location.replace("./user-panel");
+                }, 5000);
+                
             }
 
 

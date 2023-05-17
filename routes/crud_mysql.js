@@ -77,8 +77,14 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(
-                    `insert into user(usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri)
-                     values(?,?,?,?,?,?,?,?,?,?,?)
+                    `INSERT INTO user (usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri)
+                    values(?,?,?,?,?,?,?,?,?,?,?)
+                    ON DUPLICATE KEY UPDATE
+                        alamat1 = ?,
+                        alamat2 = ?,
+                        poskod = ?,
+                        bandar = ?,
+                        negeri = ?;
                     `, 
                 [
                     data.usr_name, 
@@ -87,6 +93,11 @@ let API = {
                     data.usr_agent, 
                     data.kodsekolah, 
                     data.namasekolah, 
+                    data.alamat1, 
+                    data.alamat2, 
+                    data.poskod, 
+                    data.bandar, 
+                    data.negeri, 
                     data.alamat1, 
                     data.alamat2, 
                     data.poskod, 

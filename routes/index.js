@@ -12,6 +12,8 @@ const API = require('./crud_mysql');
 
 var auth = require('./auth');
 
+//console.log('auth.auth(): ',auth.auth());
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(session({
   secret: auth._SECRET_,
@@ -19,9 +21,9 @@ router.use(session({
   saveUninitialized: true
 }));
 
-const CLIENT_ID = '825626154228-bi37csi7f3obga4rolikfr6m5jnk3s8h.apps.googleusercontent.com'; //auth.auth()['google'].clientid;
-const CLIENT_SECRET = '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';
-const REDIRECT_URI = 'http://taktakche.tech/auth/google/callback';
+const CLIENT_ID = auth.auth()['google'].clientid;
+const CLIENT_SECRET = auth.auth()['google'].secret;
+const REDIRECT_URI = auth.auth()['google'].callback;
 
 
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -187,10 +189,11 @@ const action = {
         bandar: req.body.bandar, 
         negeri: req.body.negeri
       }
+      console.log('register...', data)
       API.user.register(data, (result) => {
-        //res.send(result);
-        if(result.registered) 
-          res.redirect('/user-peserta-daftar');
+        res.send(result);
+        //if(result.registered) 
+        //  res.redirect('/user-peserta-daftar');
       });
     },
     register1: (req, res, next) => {
