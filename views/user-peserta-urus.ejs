@@ -13,6 +13,10 @@
         </div>
     </div>
 </div>
+    
+<div class="idlePopUp hide">
+    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+</div>
 
     
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
@@ -35,6 +39,18 @@
                         dataType: 'json'
                     });
             },
+            loadPrograms(fn){
+                $.ajax({
+                        type: "POST",
+                        url: '/api/program/list',
+                        data: {},
+                        success: function (res) {
+                            
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            },
             addbulk: (data, fn) => {
                 $.ajax({
                         type: "POST",
@@ -49,13 +65,19 @@
             }
         }
 
+        
+    d3.select('.idlePopUp').classed('hide',false);
     API.load('sekolah', (data)=>{
-        renderD3Table(data);
-        console.log(data);
+        API.loadPrograms((prog)=>{
+            lst = [];
+            prog.forEach((d)=>{
+                lst.push(d.prog_name);
+            });
+            renderD3Table(lst,data);
+            d3.select('.idlePopUp').classed('hide',true);
+        });
     })
 </script>
-
-<%- include ('__program.ejs') %>
 
 <script>
     
@@ -74,7 +96,7 @@
     }
 
 
-    function renderD3Table(data){
+    function renderD3Table(lst, data){
         //const distinct = arr.filter((value, index, self) => {
         //    return self.indexOf(value) === index;
         //});
@@ -158,7 +180,12 @@
             API.addbulk(saving_data, (d)=>{
                 console.log(d);
             });
-            console.log(saving_data);
+            //console.log(saving_data);
+            //console.log(saving_data);
+            d3.select('.idlePopUp').classed('hide',false);
+            setTimeout(()=>{
+                d3.select('.idlePopUp').classed('hide',true);
+            }, 8000);
         })
 
         trh = thead.append('tr');

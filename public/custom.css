@@ -657,7 +657,7 @@ code {
 
 .hide {
     display: none;
-    transition: all 200ms;
+    transition: all 1600ms ease-in-out;
 }
 
 .text-light{
@@ -666,6 +666,10 @@ code {
 
 .text-dark{
     color: var(--text-dark) !important;
+}
+
+.text-green{
+    color:green;
 }
 
 .overflowy-scroll{
@@ -721,6 +725,17 @@ code {
     padding: 0 6px 0 6px;
 }
 
+.col-label{
+    width: 260px;
+    padding-left: 60px;
+}
+
+.capsule{
+    border-radius: 10px;
+    border: 1px solid var(--primary-color);
+    text-decoration: none;
+    padding: 0 10px 0 10px;
+}
 
 
 

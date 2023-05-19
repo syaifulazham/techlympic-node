@@ -9,10 +9,55 @@
     <%- include ('totembar.ejs') %>
     <div class="workspace">
         <h2>Daftar Peserta</h2>
+        <hr>
+        <h5>A. Daftar secara pukal</h5>
+        <div class="flex-row">
+            Sila muat turun &nbsp;
+            <a class="capsule " href="./templates/_templat_pendaftaran_techlympic.xlsx">
+                <i class="fa-solid fa-file-excel text-green"></i>&nbsp;&nbsp;
+                templat pendaftaran
+            </a>&nbsp;
+            untuk mendaftarkan penyertaan secara pukal
+        </div>
+        <div>Fail yang telah dilengkapkan boleh di muat naik pada panel di bawah</div>
         <div id="input-tray" class="input-tray fill-container flex-column center">
-            <span>Drag and drop files here</span>
+            <span>Muat naik borang anda di sini</span>
             <input type="file" class="custom-file-input" id="file-input" onchange="readFile()">
-          </div>
+        </div>
+
+        <hr>
+        <h5>B. Daftar secara individu</h5>
+        <div class="flex-row my-6">
+            <div class="col-label">Nama</div>
+            <div>
+                <input type="text" name="txtnama" id="txtnama">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Kad Pengenalan (KP)</div>
+            <div>
+                <input type="text" name="txtkp" id="txtkp">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Email</div>
+            <div>
+                <input type="text" name="txtemail" id="txtemail">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Darjah/ Tingkatan</div>
+            <div>
+                <input type="text" name="txtdarjah" id="txtdarjah">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Penyertaan</div>
+            <div id="individu_acara" class="flex-column">
+                
+            </div>
+        </div>
+
     </div>
     
     <div class="idlePopUp hide">
@@ -77,11 +122,50 @@
                         },
                         dataType: 'json'
                     });
+            },
+            loadPrograms(fn){
+                $.ajax({
+                        type: "POST",
+                        url: '/api/program/list',
+                        data: {},
+                        success: function (res) {
+                            
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
             }
         }
-    </script>
 
-<%- include ('__program.ejs') %>
+
+        API.loadPrograms((prog)=>{
+            console.log(prog);
+            lst = [];
+            prog.forEach((d)=>{
+                lst.push({id:'__tmp__', acara:d.prog_name});
+            });
+            acara = d3.select('#individu_acara');
+            acara_contain = acara.append('div').attr('class','flex-column');
+            acara_contain.selectAll('.acara').data(lst).enter().append('div').call((a)=>{
+                a.attr('class','flex-row acara').attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('_header'))
+                .attr('id',(d, i)=>('_' + d.id + '_' + i))
+                .attr('name',(d)=>('_' + d.id))
+                .attr('value', d=>d.acara);
+                a.append('label').style('padding-left','6px').attr('for',(d, i)=>('_' + d.id + '_' + i)).text(d=>d.acara);
+
+                chk.on('change',(e, d)=>{
+                    ic = e.target.id.split('_')[1];
+                    nx = d3.selectAll('._' + ic + ':checked').data();
+                    n = nx.length;
+                    
+                    d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
+                    console.log(e.target.id, d, ic, n);
+
+                })
+            });
+        });
+    </script>
 
     <script>
     function readFile() {
@@ -110,8 +194,15 @@
         var jsonData = XLSX.utils.sheet_to_json(worksheet);
     
         // Log the JSON data to the console
-        console.log(jsonData);
-        renderD3Table(jsonData);
+        //console.log(jsonData);
+        API.loadPrograms((prog)=>{
+            lst = [];
+            prog.forEach((d)=>{
+                lst.push(d.prog_name);
+            });
+            renderD3Table(lst, jsonData);
+        })
+        
       };
     
       // Read the file as binary data
@@ -133,16 +224,16 @@
     }
 
 
-    function renderD3Table(data){
+    function renderD3Table(lst, data){
         //const distinct = arr.filter((value, index, self) => {
         //    return self.indexOf(value) === index;
         //});
 
         kelas = [];
         data.forEach((d)=>{
-            d['tahap/ tingkatan'] = d['tahap/ tingkatan'] + '';
+            d['darjah/ tingkatan'] = d['darjah/ tingkatan'] + '';
             d['no kp'] = d['no kp'] + '';
-            kelas.push(d['tahap/ tingkatan']);
+            kelas.push(d['darjah/ tingkatan']);
         });
 
         kelas = kelas.filter((value, index, self) => {
@@ -165,7 +256,7 @@
             val = $('#srcfilter').val();
 
             _d = data.filter((d)=> {
-                return (d['nama'].match(val) || d['email'].match(val)) && d['tahap/ tingkatan'].match($('#kelas').val())
+                return (d['nama'].match(val) || d['email'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
             });
 
             console.log(_d);
@@ -200,7 +291,7 @@
                     nama: d.nama,
                     kp: d['no kp'],
                     email: d.email,
-                    darjah_tingkatan: d['tahap/ tingkatan'],
+                    darjah_tingkatan: d['darjah/ tingkatan'],
                     program: sel
                 });
                 //
@@ -239,7 +330,7 @@
         src2.on('change', doFilter);
 
         tbody = table.append('tbody')
-        tbody.selectAll('tr').data(data.sort((a,b)=>a['tahap/ tingkatan']-b['tahap/ tingkatan'])).enter().append('tr').call((o)=>{
+        tbody.selectAll('tr').data(data.sort((a,b)=>a['darjah/ tingkatan']-b['darjah/ tingkatan'])).enter().append('tr').call((o)=>{
             o.attr('class',(d)=>'peserta peserta-' + d['no kp']);
             keys.forEach((key, i)=>{
                 o.append('td').attr('style',(i===3)?'text-align:center':'text-align:left').text((d)=>d[key]);
@@ -250,7 +341,7 @@
             btn_acara = acara_header.append('div')
                         .attr('class','button width-full flex-row')
                         .attr('id',(d)=>('button-' + d['no kp']))
-                        .html('<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih acara...');
+                        .html('<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...');
 
             btn_acara.on('click', (e, d) => {
                 el = '#container-' + d['no kp'];
@@ -279,7 +370,7 @@
                     nx = d3.selectAll('._' + ic + ':checked').data();
                     n = nx.length;
                     
-                    d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih acara...')
+                    d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
                     console.log(e.target.id, d, ic, n);
 
                 })
