@@ -97,6 +97,7 @@
 
 
     function renderD3Table(lst, data){
+        console.log(data);
         //const distinct = arr.filter((value, index, self) => {
         //    return self.indexOf(value) === index;
         //});
@@ -132,7 +133,7 @@
                 return (d.nama.match(val) || d.email.match(val)) && d.darjah_tingkatan.match($('#kelas').val())
             });
 
-            console.log(_d);
+            //console.log(_d);
 
             d3.selectAll('.peserta').classed('hide',true);
             _d.forEach((d)=>{d3.select('.peserta-' + d.kp).classed('hide',false)});
@@ -140,7 +141,7 @@
 
         keys = getJsonKeys(data);
 
-        keys = keys.filter((d)=>d!=='usr_email' && d!=='program');
+        keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir');
         //keys.push('Penyertaan Acara')
         c = d3.select('#input-tray').attr('class','heigth-90vh overflowy-scroll');
         c.selectAll('*').remove();
@@ -155,7 +156,7 @@
         thead = table.append('thead');
 
         trhs = thead.append('tr');
-        ths = trhs.append('th').attr('colspan',5);
+        ths = trhs.append('th').attr('colspan',7);
         //BUTTON to save
         bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
         bts_simpan.on('click', (e)=>{
@@ -170,6 +171,8 @@
                 saving_data.push({
                     nama: d.nama,
                     kp: d.kp,
+                    jantina:d.jantina,
+                    tarikh_lahir:d.tarikh_lahir,
                     email: d.email,
                     darjah_tingkatan: d.darjah_tingkatan,
                     program: sel
@@ -190,8 +193,10 @@
 
         trh = thead.append('tr');
         trh.selectAll('th').data(keys).enter().append('th').text(d=>d.toUpperCase());
+        trh.append('th').text('JANTINA');
+        trh.append('th').text('TARIKH LAHIR');
         td_def = trh.append('th').attr('style','width:300px').append('div').attr('class','flex-row center');
-        td_def.append('div').text('PENYERTAAN ACARA');
+        td_def.append('div').text('PENYERTAAN PERTANDINGAN');
         //BUTTON to set default
         btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
 
@@ -200,6 +205,11 @@
 
         src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
         src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
+
+        src3 = trh2.append('td').append('select').attr('id','jantina').style('width','100%');
+        src3.selectAll('option').data(['','Lelaki','Perempuan']).enter().append('option').text(d=>d);
+
+        trh2.append('td');
 
         var lst2 = lst.slice();
         lst2.unshift('Belum memilih acara');
@@ -216,6 +226,22 @@
             keys.forEach((key, i)=>{
                 o.append('td').attr('style',(i===3)?'text-align:center':'text-align:left').text((d)=>d[key]);
             });
+
+            var _jantina = o.append('td').append('select').attr('id',(d)=>'gender_' + d.kp).style('width','100%').attr('value',d=>d.jantina);
+            _jantina.selectAll('option').data(d=>{
+                _v = d.jantina;
+
+                return [
+                    {chk: _v===''?true:false, val:''},
+                    {chk: _v==='Lelaki'?true:false, val:'Lelaki'},
+                    {chk: _v==='Perempuan'?true:false, val:'Perempuan'}
+                ]
+            }).enter().append('option')
+                    .attr('value',d=>d.val).text(d=>d.val).property('selected',d=>d.chk);
+
+            var _dob = o.append('td').append('input').attr('id',(d)=>'dob_' + d.kp).attr('type','date').style('width','100%').attr('value',d=>d.tarikh_lahir.substring(0,10));
+
+
 
             acara = o.append('td').append('div').attr('class','flex-column');
             acara_header = acara.append('div').attr('class','flex-row');

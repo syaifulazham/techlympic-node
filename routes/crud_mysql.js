@@ -121,7 +121,7 @@ let API = {
     peserta: {
         addBulk: (usr, data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            const fields = ['usr_email','kp', 'nama', 'email', 'darjah_tingkatan', 'program'];
+            const fields = ['usr_email','kp','jantina','tarikh_lahir', 'nama', 'email', 'darjah_tingkatan', 'program'];
             let sql = `INSERT IGNORE INTO peserta (${fields.join(', ')}) VALUES ?`;
             try {
                 con.query(sql, [data], function (err, result) {
@@ -153,6 +153,8 @@ let API = {
                     SET ?
                     ON DUPLICATE KEY UPDATE
                     nama = VALUES(nama),
+                    jantina = VALUES(jantina),
+                    tarikh_lahir = VALUES(tarikh_lahir),
                     email = VALUES(email),
                     darjah_tingkatan = VALUES(darjah_tingkatan),
                     program = VALUES(program)
@@ -234,7 +236,7 @@ let API = {
             var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
-                con.query(`select * from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
+                con.query(`select kp,nama,email,darjah_tingkatan,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
