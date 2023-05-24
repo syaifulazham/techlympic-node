@@ -17,6 +17,22 @@
 <div class="idlePopUp hide">
     <i class="fa-solid fa-spinner fa-spin-pulse"></i>
 </div>
+    
+<div id="popUp-list" class="popUp hide">
+    <div class="popUp-container flex-column width-full" id="listContainer">
+        <div class="acara-list">
+            <div class="flex-row">
+                <h5>Sila pilih pertandingan</h5>
+                <div class="button float-right" onclick="closePopup()"><i class="fa-solid fa-x"></i></div>
+            </div>
+            <div class="pertandingan"></div>
+            
+            <div class="flex-row py-6">
+                <div class="button" id="btn-selectCommon"><i class="fa-solid fa-square-check"></i>&nbsp;&nbsp;Pilih</div>
+            </div>
+        </div>
+    </div>
+</div>
 
     
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
@@ -101,6 +117,27 @@
         //const distinct = arr.filter((value, index, self) => {
         //    return self.indexOf(value) === index;
         //});
+        
+        
+        var setCommonPertandingan = (e)=>{
+            var r = d3.selectAll('.chk_acara:checked').data();
+            
+            d3.selectAll('.chk-all').property('checked',false);
+            r.forEach((p)=>{
+                d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
+            });
+
+            data.forEach((d)=>{
+                ic = d.kp;
+                //nx = d3.selectAll('._' + ic + ':checked').data();
+                n = r.length;
+                d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
+            });
+
+            $('#popUp-list').addClass('hide');
+            
+        };
+        d3.select('#btn-selectCommon').on('click', setCommonPertandingan);
 
         kelas = [];
         data.forEach((d)=>{
@@ -199,6 +236,23 @@
         td_def.append('div').text('PENYERTAAN PERTANDINGAN');
         //BUTTON to set default
         btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
+        btn_def.on('click', ()=>{
+            console.log('lst: ',lst);
+            d3.select('#popUp-list').classed('hide',false);
+            acara_contain = d3.select('#listContainer > .acara-list > .pertandingan');
+
+            acara_contain.selectAll('.acara').remove();
+            
+            acara_contain.selectAll('.acara').data(lst).enter().append('div').call((a)=>{
+                a.attr('class','flex-row acara').attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('chk_acara'))
+                .attr('id',(d, i)=>('acara_' + i))
+                .attr('name',(d, i)=>('acara_' + i))
+                .attr('value', d=>d);
+                a.append('label').style('padding-left','6px').attr('for',(d, i)=>('acara_' + i)).text(d=>d);
+
+            });
+        });
 
         trh2 = thead.append('tr');
         src = trh2.append('td').attr('colspan',3).append('input').attr('type','text').style('width','100%').attr('id','srcfilter');
@@ -292,7 +346,7 @@
                 return v;
             }).enter().append('div').call((a)=>{
                 a.attr('class','flex-row').attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
-                chk = a.append('input').property('checked',d=>d.checked).attr('type','checkbox').attr('class',(d)=>('_' + d.id))
+                chk = a.append('input').property('checked',d=>d.checked).attr('type','checkbox').attr('class',(d)=>('chk-all _' + d.id))
                 .attr('id',(d, i)=>('_' + d.id + '_' + i))
                 .attr('name',(d)=>('_' + d.id))
                 .attr('value', d=>d.acara);

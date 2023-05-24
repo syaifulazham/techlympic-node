@@ -1,0 +1,39 @@
+<div class="section-1">
+    <div class="login center flex-column">
+        <h3>Daftar</h3>
+        <span>Sila berikan email anda, kata kunci sementara akan dihantar ke email anda</span>
+        <input class="my-6 w-500" type="text" id="txtemail" placeholder="Email"></input>
+        
+        <div class="flex-row width-full pxx-6">
+            <button class="button my-6 w-50p float-right" onclick="register()">Daftar</button>
+        </div>
+        <hr>
+        <span>...atau anda boleh daftar menggunakan akaun google</span>
+        <a class="button my-6 w-500" href="/auth/google">Log Masuk dengan Google</a>
+        
+    </div>
+</div>
+    
+<div class="idlePopUp hide">
+    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+</div>
+<script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+<script>
+    function register(){
+        email = $('#txtemail').val();
+        $.ajax({
+                type: "POST",
+                url: './api/user/create',
+                data: {email: email},
+                dataType: 'json',
+                success: function(res){
+                    console.log(res);
+                },
+            });
+
+        $('.idlePopUp').removeClass('hide');
+        setTimeout(()=>{
+                window.location.replace("./login");
+        }, 3000);
+    }
+</script>

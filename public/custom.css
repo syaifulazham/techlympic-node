@@ -10,6 +10,7 @@
     --text-light: #f2f2f2;
     --text-dark: #333;
     --text-header: #86A5D9;
+    --gold: #a9b67a; /*a9b67a*/
 }
 
 
@@ -97,6 +98,20 @@ body {
     height: 100vh;
     background-color: rgb(100,100,100,0.75);
     z-index: 9999999 !important;
+}
+
+.acara-list {
+    width: 100%;
+    background-color: var(--text-light);
+    border-radius: 8px;
+    min-width: 500px;
+    min-height: 500px;
+    color: var(--text-dark) !important;
+    padding: 80px;
+}
+
+.acara-list h5,span,p{
+    color: var(--text-dark) !important;
 }
 
 .popUp-container{
@@ -281,6 +296,7 @@ h6 {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="date"],
 textarea,
 select {
     display: block;
@@ -600,6 +616,10 @@ footer a:hover {
     width: 500px;
 }
 
+.w-50p{
+    width: 48%;
+}
+
 .py-6 {
     padding-top: 0.6em;
 }
@@ -607,6 +627,12 @@ footer a:hover {
 
 .px-6 {
     padding-left: 0.6em;
+}
+
+
+.pxx-6 {
+    padding-left: 0.6em;
+    padding-right: 0.6em;
 }
 
 .mx-6 {
@@ -737,6 +763,8 @@ code {
     padding: 0 10px 0 10px;
 }
 
-
-
+.myaccordion > .myaccordion-header:hover{
+    cursor: pointer;
+    color: var(--gold) !important;
+}
 

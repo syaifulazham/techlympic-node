@@ -73,6 +73,102 @@ let API = {
                 console.log('------ERROR------>', e);
             }
         },
+        isRegistered: (email, fn)=>{
+            if(email=='') return 0;
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.query("SELECT * from user WHERE usr_email = ?",[email], 
+                function (err, result) {
+                    if(result.length > 0){
+                        fn({
+                            register: false,
+                            msg: email + ' telah didaftarkan'
+                        });
+                    }else {
+                        fn({
+                            register: true,
+                            msg: 'Proceed'
+                        })
+                    }
+                });
+            } catch(e){
+                console.log(e);
+            }
+        },
+        create : (uid, pass, fn)=>{
+            //UPDATE users SET usr_password = AES_ENCRYPT('demo123',CONCAT(usr_name,'sP00n4eat0O0O'))
+            if(uid=='' || pass=='') return 0;
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.query("insert into user(usr_email,usr_name,usr_password,usr_agent) values(?,?,AES_ENCRYPT(?,CONCAT(?,?)),?)",[uid, uid, pass, uid, auth._SECRET_,'Internal'], 
+                function (err, result) {
+                    fn({
+                      status: true,
+                      msg: 'New account has been successfully registered. Please refer to your email for the initial password'
+                    });
+                });
+            } catch(e){
+                console.log(e);
+                fn({
+                  status: false,
+                  msg: 'Error accured! registration failed. Sorry for the inconvenience'
+                })
+            }
+        },
+        login: (uid, pass, fn)=>{
+            if(uid=='' || pass=='') return 0;
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.query("SELECT * from user WHERE usr_agent = 'Internal' and usr_email = ? and usr_password = AES_ENCRYPT(?,CONCAT(?,?))",[uid, pass, uid, auth._SECRET_], 
+                function (err, result) {
+                    if(result.length > 0){
+                        var user = {
+                            displayName: result[0].usr_name,
+                            email: result[0].usr_email,
+                            photo: '',
+                            agent: 'Internal'
+                          }
+                        fn({
+                            authorized: true,
+                            msg: 'User Authorized!',
+                            data: user
+                        });
+                    }else {
+                        fn({
+                            authorized: false,
+                            msg: 'Incorrect Username of Password',
+                            data: []
+                        })
+                    }
+                });
+            } catch(e){
+                console.log(e);
+            }
+        },
+        updatePassword : (uid, pass, fn)=>{
+            //UPDATE users SET usr_password = AES_ENCRYPT('demo123',CONCAT(usr_name,'sP00n4eat0O0O'))
+            if(uid=='' || pass=='') return 0;
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.query(`
+                        update user
+                            set usr_password = AES_ENCRYPT(?,CONCAT(?,?))
+                        where usr_email = ? and usr_agent = ?
+                    `,[pass, uid, auth._SECRET_, uid, 'Internal'], 
+                function (err, result) {
+                    fn({
+                      status: true,
+                      msg: 'Password has been reset'
+                    });
+                });
+            } catch(e){
+                console.log(e);
+                fn({
+                  status: false,
+                  msg: 'Error accured! registration failed. Sorry for the inconvenience'
+                })
+            }
+        },
         register: (data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {

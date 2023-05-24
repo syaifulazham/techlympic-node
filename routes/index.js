@@ -26,6 +26,52 @@ const CLIENT_SECRET = auth.auth()['google'].secret;
 const REDIRECT_URI = auth.auth()['google'].callback;
 
 
+var EMAIL = {
+  send:(email, sbj, msg, fn) => {
+      var nodemailer = require('nodemailer');
+      var transporter = nodemailer.createTransport(auth._EMAIL_);
+    
+      var mailOptions = {
+        from: auth._EMAIL_.auth.user,
+        to: email,
+        subject: sbj,
+        text: msg
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        try{
+          if (error) {
+            console.log(error);
+            fn({
+              status: false,
+              msg: 'Error accured! Sorry for the inconvenience'
+            });
+          } else {
+            //console.log('Email sent: ' + info.response);
+            fn({
+              status: true,
+              msg: 'Email sent: ' + info.response
+            });
+          }
+        }catch(err){
+          fn({
+            status: false,
+            msg: 'Error accured! Sorry for the inconvenience: ' + err
+          });
+        }
+      });
+    },
+    randomString: function (length) {
+      var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      var charLength = chars.length;
+      var result = '';
+      for (var i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * charLength));
+      }
+      return result;
+  },
+}
+
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
 //----------------------------------AUTHENTICATION---------------------------------------------
@@ -92,6 +138,14 @@ router.get('/jadual', function (req, res) {
 
 router.get('/login', function (req, res) {
   res.render('main.ejs', { user: req.session.user, page: 'login.ejs' });
+});
+
+router.get('/daftar', function (req, res) {
+  res.render('main.ejs', { user: req.session.user, page: 'daftar.ejs' });
+});
+
+router.get('/reset-password', function (req, res) {
+  res.render('main.ejs', { user: req.session.user, page: 'reset-password.ejs' });
 });
 
 router.get('/user-panel', function (req, res) {
@@ -198,7 +252,96 @@ const action = {
     },
     register1: (req, res, next) => {
       res.redirect('/user-panel');
-    }
+    },
+    create:(req, res, next)=>{
+      try{
+        //console.log('create START', req.body.email);
+        var email = req.body.email;
+        var pwd = EMAIL.randomString(6);
+  
+        //if(uid=='') return 0;
+  
+        API.user.isRegistered(email, (m)=>{
+          console.log('check if email already exist ', email);
+          if(m.register){ // if true -> proceed
+            API.user.create(email, pwd, (s)=>{
+              console.log('create new account', email);
+              if(s.status){
+                var msg_str = `
+                  Tahniah, akaun anda telah didaftarkan. Gunakan kata kunci berikut. Anda boleh ubah kata laluan pada panel Profil Pengguna 
+                  Kata Laluan: ` + pwd + `
+                `;
+                var sbj = '[noreply] Pendaftaran akaun Techlympic Malaysia';
+                EMAIL.send(email, sbj, msg_str, (em)=>{
+                  console.log('sending confirmation email');
+                  if(em.status){
+                    res.send({msg:'Account created'})
+                  }else{
+                    res.send({msg:'Account fail to create'})
+                  }
+                });
+              }
+            });
+          }else{
+            res.send({msg:'Email anda telah wujud dalam pangkalan data'});
+          }
+        })
+      }catch(e){
+        console.log(e)
+      }
+    },
+    login:(req, res, next)=>{
+      try{
+        var email = req.body.email;
+        var pass = req.body.pass;
+  
+        API.user.login(email,pass, (data)=>{
+          if(data.data.email){
+            var user = {
+              displayName: data.data.displayName,
+              email: data.data.email,
+              photo: data.data.photo,
+              agent: data.data.agent
+            }
+            req.session.user = user;
+            console.log('this is me: ',user);
+            res.send({msg:'logged-in', goto:'./user-panel'});
+          }else{
+            res.send({msg:'Email atau kata laluan tidak sepadan...', goto:'./login'});
+          }
+        });
+      }catch(err){
+        console.log('We got error here: (user.login) ', err)
+        res.send({msg:'error while logging in', goto:'./login'});
+      }
+    },
+    reset:(req, res, next)=>{
+      try{
+        //console.log('create START', req.body.email);
+        var email = req.body.email;
+        var pwd = EMAIL.randomString(6);
+        API.user.updatePassword(email, pwd, (s)=>{
+          console.log('update password for ', email);
+          if(s.status){
+            var msg_str = `
+              Tahniah, kata laluan anda telah di tetapkan semula, berikut adalah kata laluan sementara anda
+              Kata Laluan: ` + pwd + `
+            `;
+            var sbj = '[noreply] Tetapan semula kata kunci Techlympic Malaysia';
+            EMAIL.send(email, sbj, msg_str, (em)=>{
+              console.log('sending confirmation email');
+              if(em.status){
+                res.send({msg:'Account created'})
+              }else{
+                res.send({msg:'Account fail to create'})
+              }
+            });
+          }
+        });
+      }catch(e){
+        console.log(e)
+      }
+    },
   },
   peserta: {
     addBulk: (req, res, next) => {
@@ -256,8 +399,10 @@ const action = {
 
 router.get('/api/sekolah', action.sekolah);
 router.post('/api/sekolah/search', action.search);
-router.post('/api/user/register', action.user.register);
-router.get('/api/user/register-123', action.user.register1);
+router.post('/api/user/register', action.user.register); // register with google OAuth
+router.post('/api/user/create', action.user.create); // internal registration
+router.post('/api/user/reset', action.user.reset); // internal password reset
+router.post('/api/user/login', action.user.login); // internal login
 router.post('/api/peserta/add', action.peserta.insertOrUpdate);
 router.post('/api/peserta/count', action.peserta.count);
 router.post('/api/peserta/load', action.peserta.load);
