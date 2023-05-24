@@ -75,6 +75,18 @@
                         <td><a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a></td>
                     </tr>
 
+                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                        <td class='align-right'>Peringkat</td>
+                        <td>
+                            <select class="mx-6 w-400" name="peringkat" id="peringkat">
+                                <option value="" <%=(registered > 0)?(me.peringkat==''?'selected':''):""%>></option>
+                                <option value="Rendah" <%=(registered > 0)?(me.peringkat=='Rendah'?'selected':''):""%>>Rendah</option>
+                                <option value="Menengah"  <%=(registered > 0)?(me.peringkat=='Menengah'?'selected':''):""%>>Menengah</option>
+                            </select>
+                        </td>
+                        
+                    </tr>
+
                     <tr>
                         <td class='align-right'></td>
                         <td>
@@ -209,7 +221,7 @@
                     //removeHideClass('.popUp')
                     d3.select('#pop').selectAll('*').remove();
 
-                    hdr = ['Kod','Sekolah','Jenis','PPD'];
+                    hdr = ['Kod','Peringkat','Sekolah','Jenis','PPD'];
                     tbl = d3.select('#pop').append('table').attr('class','table-x selectable-tr');
                     thead = tbl.append('thead');
                     thead.append('tr').selectAll('th').data(hdr).enter().append('th').text(d=>d);
@@ -217,8 +229,9 @@
                     tbody = tbl.append('tbody');
                     tbody.selectAll('tr').data(data).enter().append('tr').call((o)=>{
                         o.append('td').text((d)=>d.kodsekolah);
+                        o.append('td').text((d)=>d.peringkat);
                         sek = o.append('td');
-                        g = sek.append('div').attr('class','flex-column')
+                        g = sek.append('div').attr('class','flex-column');
                         g.append('strong').text(d=>d.namasekolah);
                         g.append('small').text(d=>d.alamatsurat + `, `+ d.poskodsurat + `, `+ d.bandarsurat + `, `+ d.negeri);
                        
@@ -229,6 +242,7 @@
                             console.log(e, d);
                             $('#kodsekolah').val(d.kodsekolah);
                             $('#namasekolah').val(d.namasekolah);
+                            $('#peringkat').val(d.peringkat);
                             $('#alamat1').val(d.alamatsurat);
                             $('#poskod').val(d.poskodsurat);
                             $('#bandar').val(d.bandarsurat);
@@ -280,12 +294,14 @@
                 if(urole === 'Guru'){
                     var kod = $('#kodsekolah').val();
                     var sek = $('#namasekolah').val();
+                    var per = $('#peringkat').val();
                     console.log(kod,' --------- ', sek);
                     if(kod !== '' && sek!== ''){
                         var data = {
                             usr_role: urole, 
                             kodsekolah: kod, 
                             namasekolah: sek, 
+                            peringkat: per,
                             alamat1: $('#alamat1').val(), 
                             alamat2: $('#alamat2').val(), 
                             poskod: $('#poskod').val(), 
@@ -301,6 +317,7 @@
                             usr_role: urole, 
                             kodsekolah: '', 
                             namasekolah: '', 
+                            peringkat: (urole==='Belia'?'Belia':''),
                             alamat1: $('#alamat1').val(), 
                             alamat2: $('#alamat2').val(), 
                             poskod: $('#poskod').val(), 

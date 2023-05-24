@@ -236,7 +236,8 @@ const action = {
         usr_role: req.body.usr_role, 
         usr_agent:req.session.user.agent, 
         kodsekolah: req.body.kodsekolah, 
-        namasekolah: req.body.namasekolah, 
+        namasekolah: req.body.namasekolah,  
+        peringkat: req.body.peringkat, 
         alamat1: req.body.alamat1, 
         alamat2: req.body.alamat2, 
         poskod: req.body.poskod, 
@@ -389,7 +390,8 @@ const action = {
   },
   program: {
     list: (req, res, next) => {
-      API.program.list((result)=>{
+      usr = req.session.user.email;
+      API.program.list(usr, (result)=>{
         res.send(result)
       });
     }

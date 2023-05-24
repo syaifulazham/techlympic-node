@@ -99,6 +99,10 @@
                     <h5>Sila pilih pertandingan</h5>
                     <div class="button float-right" onclick="closePopup()"><i class="fa-solid fa-x"></i></div>
                 </div>
+                <div class="flex-row acara" style="font-style:italic;color:var(--secondary-color) !important;padding-bottom:20px;border-bottom: 1px solid rgb(102, 102, 102);">
+                    <input type="checkbox" class="chk_select_all" id="chk_select_all" name="chk_select_all" value="Pilih Semua">
+                    <label for="chk_select_all" style="padding-left: 6px;">Pilih Semua Pertandingan</label>
+                </div>
                 <div class="pertandingan"></div>
                 
                 <div class="flex-row py-6">
@@ -389,7 +393,8 @@
         //BUTTON to set default
         btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
         btn_def.on('click', ()=>{
-            console.log('lst: ',lst);
+            //console.log('lst: ',lst);
+            d3.select('#chk_select_all').property('checked',false);
             d3.select('#popUp-list').classed('hide',false);
             acara_contain = d3.select('#listContainer > .acara-list > .pertandingan');
 
@@ -568,5 +573,10 @@
         function closePopup(){
             $('#popUp-list').addClass('hide');
         }
+
+        d3.select('#chk_select_all').on('change', (e)=>{
+            chk = d3.select('#chk_select_all').property('checked');
+            d3.selectAll('.chk_acara').property('checked',chk)
+        })
     </script>
 </div>

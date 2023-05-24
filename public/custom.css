@@ -110,7 +110,7 @@ body {
     padding: 80px;
 }
 
-.acara-list h5,span,p{
+.acara-list h5{
     color: var(--text-dark) !important;
 }
 

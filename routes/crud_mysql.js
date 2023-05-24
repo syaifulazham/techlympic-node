@@ -173,9 +173,13 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(
-                    `INSERT INTO user (usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri)
-                    values(?,?,?,?,?,?,?,?,?,?,?)
+                    `INSERT INTO user (usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, peringkat, alamat1, alamat2, poskod, bandar, negeri)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?)
                     ON DUPLICATE KEY UPDATE
+                        usr_role = ?,
+                        kodsekolah = ?,
+                        namasekolah = ?,
+                        peringkat = ?,
                         alamat1 = ?,
                         alamat2 = ?,
                         poskod = ?,
@@ -189,11 +193,16 @@ let API = {
                     data.usr_agent, 
                     data.kodsekolah, 
                     data.namasekolah, 
+                    data.peringkat, 
                     data.alamat1, 
                     data.alamat2, 
                     data.poskod, 
                     data.bandar, 
                     data.negeri, 
+                    data.usr_role,
+                    data.kodsekolah, 
+                    data.namasekolah, 
+                    data.peringkat, 
                     data.alamat1, 
                     data.alamat2, 
                     data.poskod, 
@@ -217,7 +226,7 @@ let API = {
     peserta: {
         addBulk: (usr, data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            const fields = ['usr_email','kp','jantina','tarikh_lahir', 'nama', 'email', 'darjah_tingkatan', 'program'];
+            const fields = ['usr_email','kp','jantina','tarikh_lahir', 'nama', 'email', 'darjah_tingkatan','target_group','kumpulan', 'program'];
             let sql = `INSERT IGNORE INTO peserta (${fields.join(', ')}) VALUES ?`;
             try {
                 con.query(sql, [data], function (err, result) {
@@ -348,10 +357,15 @@ let API = {
         },
     },
     program: {
-        list: (fn) => {
+        list: (usr, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
-                con.query("SELECT * FROM program", function (err, result) {
+                con.query(`
+                SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
+                FROM (SELECT usr_email, peringkat FROM user WHERE usr_email=?) a
+                left join program b
+                ON a.peringkat = b.target_group
+                `, [usr],function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
