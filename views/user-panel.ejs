@@ -34,6 +34,7 @@
                     <tr>
                         <td class='align-right'>Jenis</td>
                         <td>
+                            <%if(me.usr_role.length===0){%>
                             <select id="userRole" class="mx-6 w-400" id="userRole" value="<%=(registered > 0)?me.usr_role:'--Pilih Jenis Pengguna--'%>"
                                 onchange="toggleSekolah(event)">
                                 <option>--Pilih Jenis Pengguna--</option>
@@ -41,6 +42,10 @@
                                 <option <%=(me.usr_role==='Ibu Bapa')?'selected':''%>>Ibu Bapa</option>
                                 <option <%=(me.usr_role==='Belia')?'selected':''%>>Belia</option>
                             </select>
+                            <%}else{%>
+                                <input class="mx-6 w-400" readOnly id="userRole" type="text"
+                                value="<%=(registered > 0)?me.usr_role:""%>" />
+                            <%}%>
                             
                         </td>
                         <td></td>
@@ -72,17 +77,26 @@
                         <td><input class="mx-6 w-400" readOnly placeholder="Nama Sekolah" id="namasekolah" type="text"
                                 value="<%=(registered > 0)?me.namasekolah:""%>" />
                         </td>
-                        <td><a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a></td>
+                        <td>
+                            <%if(me.kodsekolah.length===0){%>
+                                <a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            <%}%>
+                        </td>
                     </tr>
 
                     <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
                         <td class='align-right'>Peringkat</td>
                         <td>
+                            <%if(me.kodsekolah.length===0){%>
                             <select class="mx-6 w-400" name="peringkat" id="peringkat">
                                 <option value="" <%=(registered > 0)?(me.peringkat==''?'selected':''):""%>></option>
                                 <option value="Rendah" <%=(registered > 0)?(me.peringkat=='Rendah'?'selected':''):""%>>Rendah</option>
                                 <option value="Menengah"  <%=(registered > 0)?(me.peringkat=='Menengah'?'selected':''):""%>>Menengah</option>
                             </select>
+                            <%}else{%>
+                                <input class="mx-6 w-400" readOnly id="peringkat" type="text"
+                                value="<%=(registered > 0)?me.peringkat:""%>" />
+                            <%}%>
                         </td>
                         
                     </tr>

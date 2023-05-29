@@ -333,6 +333,10 @@ input[type="submit"]:hover {
     background-color: var(--secondary-color);
 }
 
+input:read-only{
+    background-color: #c5c4c4;
+}
+
 .login {
     position: relative;
     width: 550px;

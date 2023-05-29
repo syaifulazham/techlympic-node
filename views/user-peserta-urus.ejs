@@ -323,7 +323,7 @@
                 v = [];
                 var clean = (str)=>{
                     str_ = str;
-                    chr = '()*';
+                    chr = '()*'.split('');
                     chr.forEach((d)=>str_ = str_.replace(d,''));
                     return str_.trim();
                 }
@@ -334,9 +334,10 @@
                     try{
                         if(d.program.length > 0){
                             //console.log('PROGRAMMMMM',d.program);
+                            //console.log(x, clean(x));
                             y = d.program;
                             //console.log('yyyyyy',y);
-                            v.push({id:id, acara:x, checked:x.match(y).length>0?true:false, program:d.program})
+                            v.push({id:id, acara:x, checked:clean(x).match(clean(y)).length>0?true:false, program:d.program})
                         }else{
                             v.push({id:id, acara:x, checked:false})
                         }
