@@ -34,7 +34,7 @@
                     <tr>
                         <td class='align-right'>Jenis</td>
                         <td>
-                            <%if(me.usr_role.length===0){%>
+                            <%if(me.usr_role.length===24){%>
                             <select id="userRole" class="mx-6 w-400" id="userRole" value="<%=(registered > 0)?me.usr_role:'--Pilih Jenis Pengguna--'%>"
                                 onchange="toggleSekolah(event)">
                                 <option>--Pilih Jenis Pengguna--</option>
@@ -66,7 +66,7 @@
 
                     <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
                         <td class='align-right'>Sekolah</td>
-                        <td><input class="mx-6 w-400" readOnly placeholder="Kod Sekolah" id="kodsekolah" type="text"
+                        <td><input class="mx-6 w-400" <%=(me.kodsekolah.length>4)?'readOnly':''%> placeholder="Kod Sekolah" id="kodsekolah" type="text"
                                 value="<%=(registered > 0)?me.kodsekolah:""%>" />
                         </td>
                         <td></td>
@@ -74,7 +74,7 @@
 
                     <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
                         <td class='align-right'></td>
-                        <td><input class="mx-6 w-400" readOnly placeholder="Nama Sekolah" id="namasekolah" type="text"
+                        <td><input class="mx-6 w-400" <%=(me.namasekolah.length>4)?'readOnly':''%> placeholder="Nama Sekolah" id="namasekolah" type="text"
                                 value="<%=(registered > 0)?me.namasekolah:""%>" />
                         </td>
                         <td>
