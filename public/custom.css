@@ -674,6 +674,16 @@ footer a:hover {
     margin-left: auto;
 }
 
+.float-bottom {
+    position: fixed;
+    bottom: 0px;
+    left: 57px;
+    padding:10px;
+    width: 100%;
+    background-color: var(--secondary-color);
+    border-top:1px solid #4e4e4e;
+}
+
 code {
     color: #E01A76;
 }
