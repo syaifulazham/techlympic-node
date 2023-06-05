@@ -11,6 +11,10 @@
         <div id="input-tray" class="input-tray fill-container flex-column center">
             
         </div>
+        
+        <div class="flex-row float-bottom">
+            <button class="button" id="saveThis"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
+        </div>
     </div>
 </div>
     
@@ -194,13 +198,15 @@
 
         table = c.append('table').attr('class','table-x width-full');
 
+        div_save_bottom = c.append('div').attr('class','flex-row float-bottom');
+        btn_save_bottom = c.append('div').attr('class','flex-row float-bottom');
+
         thead = table.append('thead');
 
         trhs = thead.append('tr');
         ths = trhs.append('th').attr('colspan',7);
         //BUTTON to save
-        bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
-        bts_simpan.on('click', (e)=>{
+        var savethis = (e)=>{
             //var _data = d3.selectAll(".peserta", {style: "all"}).data();
             var saving_data = [];
             data.forEach((d)=>{
@@ -230,7 +236,10 @@
             setTimeout(()=>{
                 d3.select('.idlePopUp').classed('hide',true);
             }, 8000);
-        })
+        }
+        bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
+        bts_simpan.on('click', savethis);
+        d3.select('#saveThis').on('click', savethis);
 
         trh = thead.append('tr');
         trh.selectAll('th').data(keys).enter().append('th').text(d=>d.toUpperCase());

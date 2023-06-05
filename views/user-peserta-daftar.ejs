@@ -292,6 +292,7 @@
             });
 
             data.forEach((d)=>{
+                d['no kp'] = d['no kp'].replace('-','').trim();
                 ic = d['no kp'];
                 //nx = d3.selectAll('._' + ic + ':checked').data();
                 n = r.length;
