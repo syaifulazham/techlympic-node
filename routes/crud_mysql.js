@@ -262,6 +262,7 @@ let API = {
                     tarikh_lahir = VALUES(tarikh_lahir),
                     email = VALUES(email),
                     darjah_tingkatan = VALUES(darjah_tingkatan),
+                    bangsa = VALUES(bangsa),
                     program = VALUES(program)
                   `;
             
@@ -282,12 +283,12 @@ let API = {
                       throw err;
                     });
                   }
-                  fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                  //fn(`${pesertaList.length} peserta inserted or updated successfully`);
                 });
             
                 // Close connection
                 con.end();
-                //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                fn(`${pesertaList.length} peserta berjaya ditambah/ dikemaskini`);
               });
         },
 
@@ -311,7 +312,13 @@ let API = {
                     UNION 
 
                     SELECT aa.prog_name, ifnull(bb.peserta,0) peserta
-                    FROM program aa
+                    FROM (
+                        SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
+                        FROM (SELECT usr_email, peringkat FROM user WHERE usr_email=?) a
+                        left join program b
+                        ON a.peringkat = b.target_group
+                        ORDER BY b.prog_code
+                    ) aa
                     LEFT JOIN 
                     (SELECT p prog_name, COUNT(*) peserta
                     FROM(
@@ -323,7 +330,7 @@ let API = {
                     WHERE m.p <> ''
                     GROUP BY m.p) bb USING(prog_name)
                 `
-                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email], function (err, result) {
+                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -341,7 +348,7 @@ let API = {
             var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
-                con.query(`select kp,nama,email,darjah_tingkatan,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
+                con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -358,13 +365,15 @@ let API = {
     },
     program: {
         list: (usr, fn) => {
+            //console.log('my user is: ', usr);
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
                 SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
-                FROM (SELECT usr_email, peringkat FROM user WHERE usr_email=?) a
+                FROM (SELECT usr_email, peringkat FROM user ` + (usr ==='--none--'?'':'WHERE usr_email=?') + ` ) a
                 left join program b
                 ON a.peringkat = b.target_group
+                ORDER BY b.prog_code
                 `, [usr],function (err, result) {
                     if (err) {
                         console.log(err);

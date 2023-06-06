@@ -27,7 +27,7 @@
                     <input type="file" class="custom-file-input" id="file-input" onchange="readFile()">
                 </div>
                 <div class="flex-row float-bottom">
-                    <div class="button"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+                    <div id="simpan-bottom" class="button"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
                 </div>
             </div>
 
@@ -78,6 +78,12 @@
                     </div>
                 </div>
                 <div class="flex-row my-6">
+                    <div class="col-label">Bangsa</div>
+                    <div>
+                        <input type="text" name="txtbangsa" id="txtbangsa">
+                    </div>
+                </div>
+                <div class="flex-row my-6">
                     <div class="col-label">Penyertaan</div>
                     <div id="individu_acara" class="flex-column">
                         
@@ -94,7 +100,9 @@
     </div>
     
     <div class="idlePopUp hide">
-        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+        <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
+        <div id="themsg1"></div>
+        <div id="themsg"></div>
     </div>
     
     <div id="popUp-list" class="popUp hide">
@@ -160,20 +168,71 @@
     <script src="./assets/xlsx/xlsx.full.min.js"></script>
 
     <script>
+        var requestsSent = 0;
+        var responsesReceived = 0;
+        var pages = 0;
+
+        const myIntervalReading = setInterval(()=>{
+            d3.select('#themsg').text(responsesReceived + '/' + pages);
+        }, 1000);
+
+
         var API = {
-            addbulk: (data, fn) => {
-                d3.select('.popUp').classed('hide',false);
-                d3.select('.popUp-container').append('div').text('menyimpan data...')
+            addbulk: (data, i, fn) => {
+                d3.select('.idlePopUp').classed('hide',false);
+                
+                d3.select('#themsg1').text('menyimpan data batch[' + i + '] ' + data.length + ' rekod');
+                //if((i+1)===n){
+                //    d3.select('.idlePopUp').classed('hide',true);
+                //}
                 $.ajax({
                         type: "POST",
                         url: '/api/peserta/add',
                         data: {peserta:data},
                         success: function (res) {
-                            d3.select('.popUp').classed('hide',true);
-                            d3.select('.popUp-container').selectAll('*').remove()
-                            fn(res);
+                            // Handle the success response
+                            
+                            // Increment the responses received count
+                            responsesReceived++;
+                            
+                            // Check if all responses have been received
+                            if (responsesReceived === requestsSent) {
+                                // All requests have been completed
+                                console.log("All requests have returned their responses.");
+                            }
                         },
-                        dataType: 'json'
+                        dataType: 'json',
+                        complete: function(jqXHR, textStatus) {
+                            var response = jqXHR.responseText;
+                            console.log('Response:', response);
+                            // Handle the success response
+                            
+                            // Increment the responses received count
+                            responsesReceived++;
+                            
+                            // Check if all responses have been received
+                            if (responsesReceived >= pages) {
+                                // All requests have been completed
+                                console.log("All requests have returned their responses.");
+                                d3.select('.idlePopUp').classed('hide',true);
+                                pages = 0;
+                            }
+                        },
+                        xhr: function() {
+                            var xhr = new window.XMLHttpRequest();
+                            
+                            // Attach progress event listener
+                            xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                // Update progress bar or display the progress percentage
+                                console.log(percentComplete + "%");
+                                requestsSent++;
+                            }
+                            }, false);
+                            
+                            return xhr;
+                        },
                     });
             },
             loadPrograms(fn){
@@ -305,19 +364,28 @@
         d3.select('#btn-selectCommon').on('click', setCommonPertandingan);
 
         kelas = [];
+        bangsa = [];
         data.forEach((d)=>{
             d['darjah/ tingkatan'] = d['darjah/ tingkatan'] + '';
             d['no kp'] = d['no kp'] + '';
             
-            kelas.push(d['darjah/ tingkatan']);
+            d['bangsa'] = d['bangsa']===undefined?'':d['bangsa'];
+            d['email'] = d['email']===undefined?'':d['email'];
 
+            kelas.push(d['darjah/ tingkatan']);
+            bangsa.push(d['bangsa']);
         });
 
+
+        kelas.unshift('');
         kelas = kelas.filter((value, index, self) => {
             return self.indexOf(value) === index;
         });
 
-        kelas.unshift('');
+        bangsa.unshift('');
+        bangsa = bangsa.filter((value, index, self) => {
+            return self.indexOf(value) === index;
+        });
         /*
         lst = [
                 'Cabaran Kereta Lestari',
@@ -333,6 +401,7 @@
             val = $('#srcfilter').val();
 
             _d = data.filter((d)=> {
+                //console.log(d);
                 return (d['nama'].match(val) || d['email'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
             });
 
@@ -342,7 +411,7 @@
             _d.forEach((d)=>{d3.select('.peserta-' + d['no kp']).classed('hide',false)});
         }
 
-        keys = getJsonKeys(data);
+        keys = ['no kp','nama','email','darjah/ tingkatan','bangsa'];//getJsonKeys(data);
         //keys.push('Penyertaan Acara')
         c = d3.select('#input-tray').attr('class','heigth-90vh overflowy-scroll');
         c.selectAll('*').remove();
@@ -352,13 +421,21 @@
         thead = table.append('thead');
 
         trhs = thead.append('tr');
-        ths = trhs.append('th').attr('colspan',7);
-        //BUTTON to save
-        bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
-        bts_simpan.on('click', (e)=>{
+        ths = trhs.append('th').attr('colspan',8);
+
+        var doSave = (e)=>{
             //var _data = d3.selectAll(".peserta", {style: "all"}).data();
+            d3.select('.idlePopUp').classed('hide',false);
             var saving_data = [];
-            data.forEach((d)=>{
+            var saving_batch = [];
+            //console.log('data.length: ',data.length);
+            var MAX_ROW = 50;
+            console.log('data.length/20: ',Math.ceil(data.length/MAX_ROW));
+
+            var n = Math.ceil(data.length/MAX_ROW);
+            pages = n;
+
+            data.forEach((d, i)=>{
                 sel_ = [];
                 d3.selectAll('._'+d['no kp'] + ':checked').data().forEach((d)=>{
                     sel_.push(d.acara);
@@ -375,20 +452,48 @@
                     tarikh_lahir:dob,
                     email: d.email,
                     darjah_tingkatan: d['darjah/ tingkatan'],
+                    bangsa: d.bangsa,
                     program: sel
                 });
+
+                if(saving_data.length==MAX_ROW){
+                    saving_batch.push(saving_data.slice());
+                    saving_data = [];
+                }
                 //
             });
 
-            API.addbulk(saving_data, (d)=>{
-                console.log(d);
-            });
-            //console.log(saving_data);
-            d3.select('.idlePopUp').classed('hide',false);
-                setTimeout(()=>{
-                    window.location.replace("./user-peserta-urus");
-            }, 8000);
-        })
+            if(saving_data.length > 0){
+                saving_batch.push(saving_data.slice());
+            }
+
+            
+            //console.log(saving_batch);
+            //saving_batch.forEach((dx, i)=>{
+            //});
+            
+            var i = 0;
+            var pushAddInterval = setInterval(()=>{
+                if(saving_batch[i]){
+                    API.addbulk(saving_batch[i], i, (d)=>{
+                        console.log(d);
+                    });
+                }
+                i++;
+                
+                if(i>n){
+                    clearInterval(pushAddInterval,3000);
+                }
+            }, 3000);
+
+           
+            
+        };
+
+        //BUTTON to save
+        bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
+        bts_simpan.on('click', doSave);
+        d3.select('#simpan-bottom').on('click', doSave);
 
         trh = thead.append('tr');
         trh.selectAll('th').data(keys).enter().append('th').text(d=>d.toUpperCase());
@@ -423,6 +528,10 @@
         src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
         src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
 
+        //trh2.append('td');
+        src2x = trh2.append('td').append('select').attr('id','bangsa').style('width','100%');
+        src2x.selectAll('option').data(bangsa.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
+
         src3 = trh2.append('td').append('select').attr('id','jantina').style('width','100%');
         src3.selectAll('option').data(['','Lelaki','Perempuan']).enter().append('option').text(d=>d);
 
@@ -436,6 +545,7 @@
 
         src.on('keyup', doFilter);
         src2.on('change', doFilter);
+        src2x.on('change', doFilter); //bangsa
 
         tbody = table.append('tbody')
         tbody.selectAll('tr').data(data.sort((a,b)=>a['darjah/ tingkatan']-b['darjah/ tingkatan'])).enter().append('tr').call((o)=>{
@@ -490,7 +600,7 @@
 
             acara_contain = acara.append('div').attr('class','flex-column hide').attr('id',(d)=>('container-' + d['no kp']));
             acara_contain.selectAll('.acara').data((d)=>{
-                console.log(d);
+                //console.log(d);
                 id = d['no kp'];
                 v = [];
                 lst.forEach((x)=>v.push({id:id, acara:x}));
@@ -561,10 +671,11 @@
                 tarikh_lahir:$('#txtdob').val(),
                 email: $('#txtemail').val(),
                 darjah_tingkatan: $('#txtdarjah').val(),
+                bangsa: $('#txtbangsa').val(),
                 program: sel
             });
 
-            API.addbulk(saving_data, (d)=>{
+            API.addbulk(saving_data, 1, (d)=>{
                 console.log(d);
             });
             //console.log(saving_data);

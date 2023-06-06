@@ -87,6 +87,30 @@ body {
     justify-items: center;
 }
 
+.popEdit{
+    padding:75px 20px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(100,100,100,0.75);
+    color: var(--text-light);
+    z-index: 9999999 !important;
+    align-items: center;
+    justify-items: center;
+}
+
+.popEdit > .popEdit-container{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #fff;
+    color: #000 !important;
+}
+
 .popUp{
     padding:75px 20px 20px 20px;
     display: flex;
@@ -439,10 +463,13 @@ footer a:hover {
     border-collapse: collapse;
 }
 
+
+
 .table-x>thead {
     position: sticky !important;
     top: -1px !important;
     background-color: var(--text-light);
+    z-index: 999999;
     /* change this value to adjust the y position */
 }
 
@@ -561,7 +588,6 @@ footer a:hover {
     justify-content: center;
     align-items: center;
     background-color: #6a7e8d33;
-    overflow-x: scroll;
 }
 
 .center {
@@ -775,6 +801,7 @@ code {
     border: 1px solid var(--primary-color);
     text-decoration: none;
     padding: 0 10px 0 10px;
+    width: 200px;
 }
 
 .myaccordion > .myaccordion-header:hover{
@@ -782,3 +809,22 @@ code {
     color: var(--gold) !important;
 }
 
+.themes{
+    min-width: 400px;
+    min-height: 22vh;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.themes > .img-r {
+    width: 180px !important;
+    height: 180px !important;
+    border-radius: 50% !important;
+    opacity: 0.65;
+    border: 2px solid #fff;
+}
+
+.themes > .comp {
+    padding: 10px 10px 10px 25px;
+}

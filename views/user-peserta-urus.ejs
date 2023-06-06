@@ -19,7 +19,7 @@
 </div>
     
 <div class="idlePopUp hide">
-    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+    <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
 </div>
     
 <div id="popUp-list" class="popUp hide">
@@ -42,11 +42,84 @@
     </div>
 </div>
 
+<div class="popEdit hide">
+    <div class="popEdit-container">
+        <div class="flex-row width-full">
+            <div class="button float-right" onclick="closeEdit()">
+                X
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Nama</div>
+            <div>
+                <input type="text" name="txtnama" id="txtnama">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Kad Pengenalan (KP)</div>
+            <div>
+                <input type="text" name="txtkp" id="txtkp">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Jantina</div>
+            <div>
+                <select name="seljantina" id="seljantina">
+                    <option value=""></option>
+                    <option value="Lelaki">Lelaki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Tarikh Lahir</div>
+            <div>
+                <input type="date" name="txtdob" id="txtdob">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Email</div>
+            <div>
+                <input type="text" name="txtemail" id="txtemail">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Darjah/ Tingkatan</div>
+            <div>
+                <input type="text" name="txtdarjah" id="txtdarjah">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Bangsa</div>
+            <div>
+                <input type="text" name="txtbangsa" id="txtbangsa">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="col-label">Penyertaan</div>
+            <div id="individu_acara" class="flex-column">
+                
+            </div>
+        </div>
+        <div class="flex-row float-bottom">
+            <button class="button" id="saveIndividu"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
+        </div>
+    </div>
+</div>
+
     
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
 <script src="./assets/d3/v7/d3.v7.min.js"></script>
     
 <script>
+    var requestsSent = 0;
+    var responsesReceived = 0;
+    var pages = 0;
+
+    const myIntervalReading = setInterval(()=>{
+        d3.select('#themsg').text(responsesReceived + '/' + pages);
+    }, 1000);
+
     var API = {
             load: (peringkat, fn) => {
                 d3.select('.popUp').classed('hide',false);
@@ -76,19 +149,86 @@
                     });
             },
             addbulk: (data, fn) => {
+                
                 $.ajax({
                         type: "POST",
                         url: '/api/peserta/add',
                         data: {peserta:data},
                         success: function (res) {
+                            // Handle the success response
                             
-                            fn(res);
+                            // Increment the responses received count
+                            responsesReceived++;
+                            
+                            // Check if all responses have been received
+                            if (responsesReceived === requestsSent) {
+                                // All requests have been completed
+                                console.log("All requests have returned their responses.");
+                            }
                         },
-                        dataType: 'json'
+                        dataType: 'json',
+                        complete: function(jqXHR, textStatus) {
+                            var response = jqXHR.responseText;
+                            console.log('Response:', response);
+                            // Handle the success response
+                            
+                            // Increment the responses received count
+                            responsesReceived++;
+                            
+                            // Check if all responses have been received
+                            if (responsesReceived >= pages) {
+                                // All requests have been completed
+                                console.log("All requests have returned their responses.");
+                                d3.select('.idlePopUp').classed('hide',true);
+                                pages = 0;
+                            }
+                        },
+                        xhr: function() {
+                            var xhr = new window.XMLHttpRequest();
+                            
+                            // Attach progress event listener
+                            xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                // Update progress bar or display the progress percentage
+                                //console.log(percentComplete + "%");
+                                requestsSent++;
+                            }
+                            }, false);
+                            
+                            return xhr;
+                        },
                     });
             }
         }
 
+    API.loadPrograms((prog)=>{
+            console.log(prog);
+            lst = [];
+            prog.forEach((d)=>{
+                lst.push({id:'__tmp__', acara:d.prog_name});
+            });
+            acara = d3.select('#individu_acara');
+            acara_contain = acara.append('div').attr('class','flex-column');
+            acara_contain.selectAll('.acara').data(lst).enter().append('div').call((a)=>{
+                a.attr('class','flex-row acara').attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('_header'))
+                .attr('id',(d, i)=>('_' + d.id + '_' + i))
+                .attr('name',(d)=>('_' + d.id))
+                .attr('value', d=>d.acara);
+                a.append('label').style('padding-left','6px').attr('for',(d, i)=>('_' + d.id + '_' + i)).text(d=>d.acara);
+
+                chk.on('change',(e, d)=>{
+                    ic = e.target.id.split('_')[1];
+                    nx = d3.selectAll('._' + ic + ':checked').data();
+                    n = nx.length;
+                    
+                    d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
+                    console.log(e.target.id, d, ic, n);
+
+                })
+            });
+        });
         
     d3.select('.idlePopUp').classed('hide',false);
     API.load('sekolah', (data)=>{
@@ -147,18 +287,34 @@
         };
         d3.select('#btn-selectCommon').on('click', setCommonPertandingan);
 
+        //KELAS
         kelas = [];
+        bangsa = [];
         data.forEach((d)=>{
             d.darjah_tingkatan = d.darjah_tingkatan + '';
             d.kp = d.kp + '';
+            d.bangsa = d.bangsa===null?'':d.bangsa;
+            d.email = d.email===null?'':d.email;
             kelas.push(d.darjah_tingkatan);
+            bangsa.push(d.bangsa);
         });
 
         kelas = kelas.filter((value, index, self) => {
             return self.indexOf(value) === index;
         });
+        kelas = kelas.sort();
 
         kelas.unshift('');
+
+        //BANGSA
+        
+        bangsa = bangsa.filter((value, index, self) => {
+            return self.indexOf(value) === index;
+        });
+
+        bangsa.unshift('');
+
+        //console.log(data);
 
         /*
         lst = [
@@ -173,9 +329,12 @@
 
         const doFilter = (e, d)=>{
             val = $('#srcfilter').val();
+            _kelas = $('#kelas').val();
+            _bangsa = $('#bangsa').val();
 
             _d = data.filter((d)=> {
-                return (d.nama.match(val) || d.email.match(val)) && d.darjah_tingkatan.match($('#kelas').val())
+                //console.log(d);
+                return (d.nama.toUpperCase().match(val.toUpperCase()) || d.kp.match(val)) && d.darjah_tingkatan.match(_kelas) && d.bangsa.match(_bangsa)
             });
 
             //console.log(_d);
@@ -204,11 +363,16 @@
         thead = table.append('thead');
 
         trhs = thead.append('tr');
-        ths = trhs.append('th').attr('colspan',7);
+        ths = trhs.append('th').attr('colspan',9);
         //BUTTON to save
         var savethis = (e)=>{
             //var _data = d3.selectAll(".peserta", {style: "all"}).data();
+            d3.select('.idlePopUp').classed('hide',false);
             var saving_data = [];
+            var saving_batch = [];
+
+            var MAX_ROW = 50;
+
             data.forEach((d)=>{
                 sel_ = [];
                 d3.selectAll('._'+d.kp + ':checked').data().forEach((d)=>{
@@ -224,9 +388,38 @@
                     darjah_tingkatan: d.darjah_tingkatan,
                     program: sel
                 });
+
+                if(saving_data.length==MAX_ROW){
+                    saving_batch.push(saving_data.slice());
+                    saving_data = [];
+                }
                 //
             });
 
+            if(saving_data.length > 0){
+                saving_batch.push(saving_data.slice());
+            }
+
+            
+            //console.log(saving_batch);
+            //saving_batch.forEach((dx, i)=>{
+            //});
+            
+            var i = 0;
+            var pushAddInterval = setInterval(()=>{
+                if(saving_batch[i]){
+                    API.addbulk(saving_batch[i], i, (d)=>{
+                        console.log(d);
+                    });
+                }
+                i++;
+                
+                if(i>n){
+                    clearInterval(pushAddInterval,3000);
+                }
+            }, 3000);
+
+            /*
             API.addbulk(saving_data, (d)=>{
                 console.log(d);
             });
@@ -236,6 +429,7 @@
             setTimeout(()=>{
                 d3.select('.idlePopUp').classed('hide',true);
             }, 8000);
+            */
         }
         bts_simpan = ths.append('div').attr('class','flex-row').append('div').attr('class','button float-right').html('<i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan')
         bts_simpan.on('click', savethis);
@@ -247,6 +441,9 @@
         trh.append('th').text('TARIKH LAHIR');
         td_def = trh.append('th').attr('style','width:300px').append('div').attr('class','flex-row center');
         td_def.append('div').text('PENYERTAAN PERTANDINGAN');
+
+        trh.append('th'); //empty header
+
         //BUTTON to set default
         btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
         btn_def.on('click', ()=>{
@@ -274,10 +471,15 @@
         src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
         src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
 
+        //trh2.append('td'); // empty header
+        src2x = trh2.append('td').append('select').attr('id','bangsa').style('width','100%');
+        src2x.selectAll('option').data(bangsa.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
+
+
         src3 = trh2.append('td').append('select').attr('id','jantina').style('width','100%');
         src3.selectAll('option').data(['','Lelaki','Perempuan']).enter().append('option').text(d=>d);
 
-        trh2.append('td');
+        trh2.append('td'); // empty header
 
         var lst2 = lst.slice();
         lst2.unshift('Belum memilih acara');
@@ -286,7 +488,10 @@
         src3.selectAll('option').data(lst2).enter().append('option').text(d=>d);
 
         src.on('keyup', doFilter);
-        src2.on('change', doFilter);
+        src2.on('change', doFilter);// kelas
+        src2x.on('change', doFilter); //bangsa
+
+        trh2.append('td'); // empty header
 
         tbody = table.append('tbody')
         tbody.selectAll('tr').data(data.sort((a,b)=>a.darjah_tingkatan-b.darjah_tingkatan)).enter().append('tr').call((o)=>{
@@ -378,7 +583,18 @@
                 })
             });
 
-            
+            btnEdit = o.append('td').append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
+            btnEdit.on('click', (e, d)=>{
+                d3.select('.popEdit').classed('hide', false);
+                $('#txtnama').val(d.nama);
+                $('#txtkp').val(d.kp);
+                $('#seljantina').val(d.jantina);
+                $('#txtdob').val(d.tarikh_lahir);
+                $('#txtemail').val(d.email);
+                $('#txtdarjah').val(d.darjah_tingkatan);
+
+
+            })
         });
         data.forEach((d)=>{
             ic = d.kp;
@@ -386,6 +602,8 @@
             n = nx.length-(d.program.length > 1?0:1);
             d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih acara...');
         });
+
+       
     }
 </script>
 
@@ -394,8 +612,46 @@
         $('#popUp-list').addClass('hide');
     }
 
+    function closeEdit(){
+        $('.popEdit').addClass('hide');
+    }
+
     d3.select('#chk_select_all').on('change', (e)=>{
         chk = d3.select('#chk_select_all').property('checked');
         d3.selectAll('.chk_acara').property('checked',chk)
-    })
+    });
+
+    d3.select('#saveIndividu').on('click', (e, d)=>{
+        //var _data = d3.selectAll(".peserta", {style: "all"}).data();
+        var saving_data = [];
+            sel_ = [];
+            d3.select('#individu_acara') .selectAll('input[type="checkbox"]:checked').data().forEach((d)=>{
+                sel_.push(d.acara);
+            });
+
+            jantina = $('#txtjantina' ).val();
+            dob = $('#txtdob').val();
+
+            sel = sel_.join('|');
+            saving_data.push({
+                nama: $('#txtnama').val(),
+                kp: $('#txtkp').val(),
+                jantina:$('#seljantina').val(),
+                tarikh_lahir:$('#txtdob').val(),
+                email: $('#txtemail').val(),
+                darjah_tingkatan: $('#txtdarjah').val(),
+                bangsa: $('#txtbangsa').val(),
+                program: sel
+            });
+
+            API.addbulk(saving_data, 1, (d)=>{
+                console.log(d);
+            });
+            //console.log(saving_data);
+            d3.select('.idlePopUp').classed('hide',false);
+                setTimeout(()=>{
+                    window.location.replace("./user-peserta-urus");
+            }, 3000);
+    });
+
 </script>

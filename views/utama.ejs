@@ -29,46 +29,118 @@
     -->
 </section>
     <section id="sec-2" class="section-2 flex-row flex-wrap">
-        
-
-        <div class='programs-img flex-row' >
-            <img class='img-l' src="./img/build cars.jpg"/>
-            <div class="flex-column div-r">
-            <span>Cabaran Kereta Lestari | Techlympics Quiz-A-Thon</span> <h2>Teknologi Sohor</h2>
-            </div>
+        <div class="flex-column width-full center">
+            <div><span>Pertandingan</span> <h1>Techlympic 2023</h1></div>
         </div>
-
-        <div class='programs-img flex-row' >
-            <div class="flex-column div-l">
-            <span>Misi Penerbangan Dron</span> <h2>Aeroangkasa</h2>
-            </div>
-            <img class='img-r' src="./img/build drone.jpg"/>
-        </div>
-
-        <div class='programs-img flex-row' >
-            <img class='img-l' src="./img/build robots.jpg"/>
-            <div class="flex-column div-r">
-            <span>Cabaran Mencipta Robot* (keterangkuman) | Program Jangkauan Techlympics</span> <h2>Keterangkuman Malaysia Madani</h2>
-            </div>
-        </div>
-        
-        <div class='programs-img flex-row' >
-            <div class="flex-column div-l">
-            <span>Cabaran Bandar Pintar | Cabaran Binaan Virtual Kreatif Malaysia Madani (Redbrick)</span> <h2>Inovasi, Kreativiti untuk Kesejahteraan Rakyat</h2>
-            </div>
-            <img class='img-r' src="./img/bg-02.png"/>
-        </div>
-
-        <div class='programs-img flex-row' >
-            <img class='img-l' src="./img/play puzzle.jpg"/>
-            <div class="flex-column div-r">
-            <span>Pemikiran Komputasi Kanak-Kanak (FC-1)</span> <h2>Kecerdasan Buatan dan Sains Data</h2>
-            </div>
-        </div>
-
-        
     </section>
-    <section id="sec-3" class="section-1">
-        <div><span>Jadual</span> <h1>Techlympic 2023</h1></div>
-    </section>
+    
 </div>
+
+<script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+    <script src="./assets/d3/v7/d3.v7.min.js"></script>
+    <script src="./assets/xlsx/xlsx.full.min.js"></script>
+
+    <script>
+        var requestsSent = 0;
+        var responsesReceived = 0;
+        var pages = 0;
+
+        const myIntervalReading = setInterval(()=>{
+            d3.select('#themsg').text(responsesReceived + '/' + pages);
+        }, 1000);
+
+
+        var API = {
+            loadPrograms(fn){
+                $.ajax({
+                        type: "POST",
+                        url: '/api/program/list',
+                        data: {},
+                        success: function (res) {
+                            
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            }
+        }
+
+        var imgIcon1 = {
+            'Aeroangkasa': 'themes/AER.svg',
+            'Kecerdasan Buatan dan Sains Data': 'themes/AI.svg',
+            'Teknologi Sohor': 'themes/TS.svg',
+            'Inovasi, Kreativiti untuk Kesejahteraan Rakyat': 'themes/KR.svg',
+            'Keterangkuman Malaysia Madani': 'themes/MDN.svg',
+            'Sains & Inovasi': 'themes/SC.svg'
+        }
+
+
+        API.loadPrograms((prog)=>{
+            
+            var div = d3.select('#sec-2');
+            div.selectAll('.themes').remove();
+
+
+            ['Rendah', 'Menengah', 'Belia'].forEach((tar)=>{
+
+                _theme = [];
+                theme = [];
+                prog.filter(d=>d.target_group===tar).forEach((d)=>{
+                    //lst.push({id:'__tmp__', acara:d.prog_name});
+                    _theme.push(d.theme);
+                });
+
+                _theme = _theme.filter((value, index, self) => {
+                    return self.indexOf(value) === index;
+                });
+
+                _theme.forEach((d)=>{
+                    theme.push({
+                        theme : d,
+                        comp: []
+                    });
+                });
+
+                prog.filter(d=>d.target_group===tar).forEach((d)=>{
+                    theme.forEach((t)=>{
+                        if(d.theme===t.theme){
+                            t.comp.push(d);
+                        }
+                    });
+                });
+
+                theme.forEach((t)=>{
+                    //t.comp
+                    t.comp = t.comp.filter((value, index, self) => {
+                        return self.indexOf(value) === index;
+                    });
+                });
+
+                console.log(theme);
+                if(theme.length > 0){
+                    div.append('div').attr('class','flex-column width-full center bg-green').append('h1').text(tar);
+                }
+
+                
+                div.selectAll('.themes-' + tar).data(theme).enter().append('div').call((o)=>{
+                    box = o.attr('class','themes flex-row themes-' + tar);
+                    //img = box.append('div');
+                    box.append('img').attr('class','img-r').attr('src',d=>'./img/' + imgIcon1[d.theme]);
+                    con = box.append('div').attr('class','comp flex-column');
+                    con.append('span').attr('class','capsule bg-green').text(d=>d.comp[0].target_group);
+                    con.append('h3').text((d)=>d.theme);
+
+                    con.selectAll('.competition').data(d=>{
+                        c = [];
+                        d.comp.forEach((x)=>c.push(x.prog_name));
+                        c = c.filter((value, index, self) => {
+                            return self.indexOf(value) === index;
+                        });
+                        console.log(c);
+                        return c;
+                    }).enter().append('div').text(d=>d);
+                });
+            });
+            
+        });
+    </script>
