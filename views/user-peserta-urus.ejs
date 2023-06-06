@@ -20,6 +20,8 @@
     
 <div class="idlePopUp hide">
     <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
+    <div id="themsg1"></div>
+    <div id="themsg"></div>
 </div>
     
 <div id="popUp-list" class="popUp hide">
@@ -148,7 +150,10 @@
                         dataType: 'json'
                     });
             },
-            addbulk: (data, fn) => {
+            addbulk: (data, i, fn) => {
+                
+                d3.select('.idlePopUp').classed('hide',false);
+                d3.select('#themsg1').text('menyimpan data batch[' + i + '] ' + data.length + ' rekod');
                 
                 $.ajax({
                         type: "POST",
@@ -373,6 +378,9 @@
 
             var MAX_ROW = 50;
 
+            var n = Math.ceil(data.length/MAX_ROW);
+            pages = n;
+
             data.forEach((d)=>{
                 sel_ = [];
                 d3.selectAll('._'+d.kp + ':checked').data().forEach((d)=>{
@@ -386,6 +394,7 @@
                     tarikh_lahir:d.tarikh_lahir,
                     email: d.email,
                     darjah_tingkatan: d.darjah_tingkatan,
+                    bangsa: d.bangsa,
                     program: sel
                 });
 

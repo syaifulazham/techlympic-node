@@ -323,7 +323,7 @@ let API = {
                     (SELECT p prog_name, COUNT(*) peserta
                     FROM(
                     SELECT 
-                        kp,if(a.program REGEXP b.prog_name, b.prog_name,'') p
+                    kp,if(replace(replace(replace(a.program,'(',''),')',''),'*','') REGEXP replace(replace(replace(b.prog_name,'(',''),')',''),'*',''), b.prog_name,'') p
                     FROM peserta a, program b
                     where a.usr_email = ?
                     ) m 

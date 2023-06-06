@@ -180,7 +180,6 @@
         var API = {
             addbulk: (data, i, fn) => {
                 d3.select('.idlePopUp').classed('hide',false);
-                
                 d3.select('#themsg1').text('menyimpan data batch[' + i + '] ' + data.length + ' rekod');
                 //if((i+1)===n){
                 //    d3.select('.idlePopUp').classed('hide',true);
@@ -610,7 +609,7 @@
                 chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('chk-all _' + d.id))
                 .attr('id',(d, i)=>('_' + d.id + '_' + i))
                 .attr('name',(d)=>('_' + d.id))
-                .attr('value', d=>d.acara);
+                .attr('value', d=>d.acara).property('checked',true);
                 a.append('label').style('padding-left','6px').attr('for',(d, i)=>('_' + d.id + '_' + i)).text(d=>d.acara);
 
                 chk.on('change',(e, d)=>{
@@ -619,11 +618,21 @@
                     n = nx.length;
                     
                     d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
-                    console.log(e.target.id, d, ic, n);
+                    //console.log(e.target.id, d, ic, n);
 
                 })
             });
         });
+
+        
+
+        data.forEach((d)=>{
+            console.log('==========>>>', d);
+            ic = d['no kp'];
+            nx = d3.selectAll('._' + ic + ':checked').data();
+            n = nx.length;
+            d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
+        })
     }
     </script>
 
