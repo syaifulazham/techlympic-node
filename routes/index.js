@@ -390,10 +390,16 @@ const action = {
   },
   program: {
     list: (req, res, next) => {
-      usr = (req.session.user==undefined || req.session==undefined) ? '--none--' :req.session.user.email;
-      API.program.list(usr, (result)=>{
-        res.send(result)
-      });
+      try{
+        usr = (req.session.user==undefined || req.session==undefined) ? '--none--' :req.session.user.email;
+        API.program.list(usr, (result)=>{
+          res.send(result)
+        });
+      }catch(err){
+        API.program.list('--none--', (result)=>{
+          res.send(result)
+        });
+      }
     }
   }
 }
