@@ -27,6 +27,7 @@ app.set('views', './views');
 
 // Set up the public folder
 //app.use(express.static('./public'));
+console.log('directory name-path: ',path.join(__dirname, 'public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up the session middleware
