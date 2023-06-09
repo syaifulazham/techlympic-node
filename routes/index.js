@@ -233,6 +233,7 @@ const action = {
       var data = {
         usr_name: req.session.user.displayName, 
         usr_email:req.session.user.email, 
+        notel: req.body.notel,
         usr_role: req.body.usr_role, 
         usr_agent:req.session.user.agent, 
         kodsekolah: req.body.kodsekolah, 

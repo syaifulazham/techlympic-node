@@ -33,6 +33,13 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td class='align-right'>No Telefon</td>
+                        <td>
+                            <input id="notel" class="mx-6 w-400" type="text" value="<%=me.notel%>" placeholder="No telefon..." />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
                         <td class='align-right'>Jenis</td>
                         <td>
                             <%if(me.usr_role.length===24){%>
@@ -320,6 +327,7 @@
                     console.log(kod,' --------- ', sek);
                     if(kod !== '' && sek!== ''){
                         var data = {
+                            notel: $('#notel').val(),
                             usr_role: urole, 
                             kodsekolah: kod, 
                             namasekolah: sek, 
@@ -336,6 +344,7 @@
                     }
                 }else{
                         var data = {
+                            notel: $('#notel').val(),
                             usr_role: urole, 
                             kodsekolah: '', 
                             namasekolah: '', 

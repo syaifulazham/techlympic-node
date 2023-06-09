@@ -173,9 +173,10 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(
-                    `INSERT INTO user (usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, peringkat, alamat1, alamat2, poskod, bandar, negeri)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?)
+                    `INSERT INTO user (usr_name, usr_email, notel, usr_role, usr_agent, kodsekolah, namasekolah, peringkat, alamat1, alamat2, poskod, bandar, negeri)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?)
                     ON DUPLICATE KEY UPDATE
+                        notel = ?,
                         usr_role = ?,
                         kodsekolah = ?,
                         namasekolah = ?,
@@ -189,6 +190,7 @@ let API = {
                 [
                     data.usr_name, 
                     data.usr_email, 
+                    data.notel,
                     data.usr_role, 
                     data.usr_agent, 
                     data.kodsekolah, 
@@ -199,6 +201,7 @@ let API = {
                     data.poskod, 
                     data.bandar, 
                     data.negeri, 
+                    data.notel,
                     data.usr_role,
                     data.kodsekolah, 
                     data.namasekolah, 
