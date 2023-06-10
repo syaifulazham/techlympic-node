@@ -130,6 +130,8 @@ app.get('/auth/google/callback',
 //    console.log('Server running on https://localhost:443');
 //  });
 
-app.listen(3000, function() {
-  console.log('Server started on port 3000');
+require("dotenv").config();
+
+app.listen(process.env.APPLICATION_PORT, function() {
+  console.log('Server started on port ' + process.env.APPLICATION_PORT);
 });
