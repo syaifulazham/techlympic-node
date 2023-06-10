@@ -4,7 +4,7 @@
         
         <div class="flex-row">
             <h2>Profil Pengguna</h2>
-            <button class='button float-right' onclick="fieldsCompleted()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+            <button class='chprofil button float-right' onclick="fieldsCompleted()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
         </div>
         <div class="flex-column">
             <table class='table-smp'>
@@ -19,167 +19,260 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class='w-60 align-right'>Email</td>
-                        <td class='w-400'>
-                            <input readOnly class="mx-6 w-400" type="text" value="<%=user.email%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>Nama</td>
-                        <td>
-                            <input readOnly class="mx-6 w-400" type="text" value="<%=user.displayName%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>No Telefon</td>
-                        <td>
-                            <input id="notel" class="mx-6 w-400" type="text" value="<%=me.notel%>" placeholder="No telefon..." />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>Jenis</td>
-                        <td>
-                            <%if(me.usr_role.length===24){%>
-                            <select id="userRole" class="mx-6 w-400" id="userRole" value="<%=(registered > 0)?me.usr_role:'--Pilih Jenis Pengguna--'%>"
-                                onchange="toggleSekolah(event)">
-                                <option>--Pilih Jenis Pengguna--</option>
-                                <option <%=(me.usr_role==='Guru')?'selected':''%>>Guru</option>
-                                <option <%=(me.usr_role==='Ibu Bapa')?'selected':''%>>Ibu Bapa</option>
-                                <option <%=(me.usr_role==='Belia')?'selected':''%>>Belia</option>
-                            </select>
-                            <%}else{%>
-                                <input class="mx-6 w-400" readOnly id="userRole" type="text"
-                                value="<%=(registered > 0)?me.usr_role:""%>" />
-                            <%}%>
-                            
-                        </td>
-                        <td></td>
-                    </tr>
-
-                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
-                        <td class='align-right'></td>
-                        <td>
-                        </td>
-                        <td></td>
-                    </tr>
-
-                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
                         <td class='align-right' colspan="3">
                             <hr>
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="3">
+                            <h5 id="chprofil" class="accor">
+                                <i class="fa-solid fa-circle-chevron-down"></i>
+                                Profil
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr class="chprofil">
+                        <td colspan="3">
+                            <div class="flex-column">
+                                <table class="table-smp">
+                                    <tbody>
+    
+                                        <tr>
+                                            <td class='w-60 align-right'>Email</td>
+                                            <td class='w-400'>
+                                                <input readOnly class="mx-6 w-400" type="text" value="<%=user.email%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>Nama</td>
+                                            <td>
+                                                <input readOnly class="mx-6 w-400" type="text" value="<%=user.displayName%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>No Telefon</td>
+                                            <td>
+                                                <input id="notel" class="mx-6 w-400" type="text" value="<%=me.notel%>" placeholder="No telefon..." />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>Jenis</td>
+                                            <td>
+                                                <%if(me.usr_role.length===24 || me.usr_role.length ===0){%>
+                                                <select id="userRole" class="mx-6 w-400" id="userRole" value="<%=(registered > 0)?me.usr_role:'--Pilih Jenis Pengguna--'%>"
+                                                    onchange="toggleSekolah(event)">
+                                                    <option>--Pilih Jenis Pengguna--</option>
+                                                    <option <%=(me.usr_role==='Guru')?'selected':''%>>Guru</option>
+                                                    <option <%=(me.usr_role==='Ibu Bapa')?'selected':''%>>Ibu Bapa</option>
+                                                    <option <%=(me.usr_role==='Belia')?'selected':''%>>Belia</option>
+                                                </select>
+                                                <%}else{%>
+                                                    <input class="mx-6 w-400" readOnly id="userRole" type="text"
+                                                    value="<%=(registered > 0)?me.usr_role:""%>" />
+                                                <%}%>
+                                                
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        
+                                        <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                                            <td class='align-right'></td>
+                                            <td>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                    
+                                        <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                                            <td class='align-right' colspan="3">
+                                                <hr>
+                                            </td>
+                                        </tr>
+                    
+                                        <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                                            <td class='align-right'>Sekolah</td>
+                                            <td><input class="mx-6 w-400" <%=(me.kodsekolah.length>4)?'readOnly':''%> placeholder="Kod Sekolah" id="kodsekolah" type="text"
+                                                    value="<%=(registered > 0)?me.kodsekolah:""%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                    
+                                        <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                                            <td class='align-right'></td>
+                                            <td><input class="mx-6 w-400" <%=(me.namasekolah.length>4)?'readOnly':''%> placeholder="Nama Sekolah" id="namasekolah" type="text"
+                                                    value="<%=(registered > 0)?me.namasekolah:""%>" />
+                                            </td>
+                                            <td>
+                                                <%if(me.kodsekolah.length===0){%>
+                                                    <a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                                <%}%>
+                                            </td>
+                                        </tr>
+                    
+                                        <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
+                                            <td class='align-right'>Peringkat</td>
+                                            <td>
+                                                <%if(me.kodsekolah.length===0){%>
+                                                <select class="mx-6 w-400" name="peringkat" id="peringkat">
+                                                    <option value="" <%=(registered > 0)?(me.peringkat==''?'selected':''):""%>></option>
+                                                    <option value="Rendah" <%=(registered > 0)?(me.peringkat=='Rendah'?'selected':''):""%>>Rendah</option>
+                                                    <option value="Menengah"  <%=(registered > 0)?(me.peringkat=='Menengah'?'selected':''):""%>>Menengah</option>
+                                                </select>
+                                                <%}else{%>
+                                                    <input class="mx-6 w-400" readOnly id="peringkat" type="text"
+                                                    value="<%=(registered > 0)?me.peringkat:""%>" />
+                                                <%}%>
+                                            </td>
+                                            
+                                        </tr>
+                    
+                                        <tr>
+                                            <td class='align-right'></td>
+                                            <td>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                    
+                                        <tr>
+                                            <td class='align-right' colspan="3">
+                                                <hr>
+                                            </td>
+                                        </tr>
+                    
+                                        <tr>
+                                            <td class='w-60 align-right'>Alamat</td>
+                                            <td class='w-400'>
+                                                <input class="mx-6 w-400" placeholder="alamat 1" id="alamat1" type="text" value="<%=(registered > 0)?me.alamat1:""%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'></td>
+                                            <td>
+                                                <input class="mx-6 w-400" placeholder="alamat 2" id="alamat2" type="text" value="<%=(registered > 0)?me.alamat2:""%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>Poskod</td>
+                                            <td>
+                                                <input class="mx-6 w-400" placeholder="poskod" id="poskod" type="text" value="<%=(registered > 0)?me.poskod:""%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>Bandar</td>
+                                            <td>
+                                                <input class="mx-6 w-400" placeholder="bandar" id="bandar" type="text" value="<%=(registered > 0)?me.bandar:""%>" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class='align-right'>Negeri</td>
+                                            <td>
+                                                <select id="negeri" class="mx-6 w-400" id="negeri" value="<%=(registered > 0)?me.negeri:""%>">
+                                                    <option <%=(me.negeri==='--Pilih Negeri--')?'selected':''%>>--Pilih Negeri--</option>
+                                                    <option <%=(me.negeri==='JOHOR')?'selected':''%>>JOHOR</option>
+                                                    <option <%=(me.negeri==='KEDAH')?'selected':''%>>KEDAH</option>
+                                                    <option <%=(me.negeri==='KELANTAN')?'selected':''%>>KELANTAN</option>
+                                                    <option <%=(me.negeri==='MELAKA')?'selected':''%>>MELAKA</option>
+                                                    <option <%=(me.negeri==='NEGERI SEMBILAN')?'selected':''%>>NEGERI SEMBILAN</option>
+                                                    <option <%=(me.negeri==='PAHANG')?'selected':''%>>PAHANG</option>
+                                                    <option <%=(me.negeri==='PULAU PINANG')?'selected':''%>>PULAU PINANG</option>
+                                                    <option <%=(me.negeri==='PERAK')?'selected':''%>>PERAK</option>
+                                                    <option <%=(me.negeri==='PERLIS')?'selected':''%>>PERLIS</option>
+                                                    <option <%=(me.negeri==='SELANGOR')?'selected':''%>>SELANGOR</option>
+                                                    <option <%=(me.negeri==='TERENGGANU')?'selected':''%>>TERENGGANU</option>
+                                                    <option <%=(me.negeri==='SABAH')?'selected':''%>>SABAH</option>
+                                                    <option <%=(me.negeri==='SARAWAK')?'selected':''%>>SARAWAK</option>
+                                                    <option <%=(me.negeri==='WILAYAH PERSEKUTUAN KUALA LUMPUR')?'selected':''%>>WILAYAH PERSEKUTUAN KUALA LUMPUR</option>
+                                                    <option <%=(me.negeri==='WILAYAH PERSEKUTUAN LABUAN')?'selected':''%>>WILAYAH PERSEKUTUAN LABUAN</option>
+                                                    <option <%=(me.negeri==='WILAYAH PERSEKUTUAN PUTRAJAYA')?'selected':''%>>WILAYAH PERSEKUTUAN PUTRAJAYA</option>
+                                                </select>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="flex-row float-bottom">
+                                    <button class='button' onclick="fieldsCompleted()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <%if(user.agent==='Internal'){%>
 
-                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
-                        <td class='align-right'>Sekolah</td>
-                        <td><input class="mx-6 w-400" <%=(me.kodsekolah.length>4)?'readOnly':''%> placeholder="Kod Sekolah" id="kodsekolah" type="text"
-                                value="<%=(registered > 0)?me.kodsekolah:""%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-
-                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
-                        <td class='align-right'></td>
-                        <td><input class="mx-6 w-400" <%=(me.namasekolah.length>4)?'readOnly':''%> placeholder="Nama Sekolah" id="namasekolah" type="text"
-                                value="<%=(registered > 0)?me.namasekolah:""%>" />
-                        </td>
-                        <td>
-                            <%if(me.kodsekolah.length===0){%>
-                                <a class="button" onclick="openPopUp(event)"><i class="fa-solid fa-magnifying-glass"></i></a>
-                            <%}%>
-                        </td>
-                    </tr>
-
-                    <tr class="guru <%=(me.usr_role==='Guru')?'':'hide'%>">
-                        <td class='align-right'>Peringkat</td>
-                        <td>
-                            <%if(me.kodsekolah.length===0){%>
-                            <select class="mx-6 w-400" name="peringkat" id="peringkat">
-                                <option value="" <%=(registered > 0)?(me.peringkat==''?'selected':''):""%>></option>
-                                <option value="Rendah" <%=(registered > 0)?(me.peringkat=='Rendah'?'selected':''):""%>>Rendah</option>
-                                <option value="Menengah"  <%=(registered > 0)?(me.peringkat=='Menengah'?'selected':''):""%>>Menengah</option>
-                            </select>
-                            <%}else{%>
-                                <input class="mx-6 w-400" readOnly id="peringkat" type="text"
-                                value="<%=(registered > 0)?me.peringkat:""%>" />
-                            <%}%>
-                        </td>
-                        
-                    </tr>
-
-                    <tr>
-                        <td class='align-right'></td>
-                        <td>
-                        </td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td class='align-right' colspan="3">
-                            <hr>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class='w-60 align-right'>Alamat</td>
-                        <td class='w-400'>
-                            <input class="mx-6 w-400" placeholder="alamat 1" id="alamat1" type="text" value="<%=(registered > 0)?me.alamat1:""%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'></td>
-                        <td>
-                            <input class="mx-6 w-400" placeholder="alamat 2" id="alamat2" type="text" value="<%=(registered > 0)?me.alamat2:""%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>Poskod</td>
-                        <td>
-                            <input class="mx-6 w-400" placeholder="poskod" id="poskod" type="text" value="<%=(registered > 0)?me.poskod:""%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>Bandar</td>
-                        <td>
-                            <input class="mx-6 w-400" placeholder="bandar" id="bandar" type="text" value="<%=(registered > 0)?me.bandar:""%>" />
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class='align-right'>Negeri</td>
-                        <td>
-                            <select id="negeri" class="mx-6 w-400" id="negeri" value="<%=(registered > 0)?me.negeri:""%>">
-                                <option <%=(me.negeri==='--Pilih Negeri--')?'selected':''%>>--Pilih Negeri--</option>
-                                <option <%=(me.negeri==='JOHOR')?'selected':''%>>JOHOR</option>
-                                <option <%=(me.negeri==='KEDAH')?'selected':''%>>KEDAH</option>
-                                <option <%=(me.negeri==='KELANTAN')?'selected':''%>>KELANTAN</option>
-                                <option <%=(me.negeri==='MELAKA')?'selected':''%>>MELAKA</option>
-                                <option <%=(me.negeri==='NEGERI SEMBILAN')?'selected':''%>>NEGERI SEMBILAN</option>
-                                <option <%=(me.negeri==='PAHANG')?'selected':''%>>PAHANG</option>
-                                <option <%=(me.negeri==='PULAU PINANG')?'selected':''%>>PULAU PINANG</option>
-                                <option <%=(me.negeri==='PERAK')?'selected':''%>>PERAK</option>
-                                <option <%=(me.negeri==='PERLIS')?'selected':''%>>PERLIS</option>
-                                <option <%=(me.negeri==='SELANGOR')?'selected':''%>>SELANGOR</option>
-                                <option <%=(me.negeri==='TERENGGANU')?'selected':''%>>TERENGGANU</option>
-                                <option <%=(me.negeri==='SABAH')?'selected':''%>>SABAH</option>
-                                <option <%=(me.negeri==='SARAWAK')?'selected':''%>>SARAWAK</option>
-                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN KUALA LUMPUR')?'selected':''%>>WILAYAH PERSEKUTUAN KUALA LUMPUR</option>
-                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN LABUAN')?'selected':''%>>WILAYAH PERSEKUTUAN LABUAN</option>
-                                <option <%=(me.negeri==='WILAYAH PERSEKUTUAN PUTRAJAYA')?'selected':''%>>WILAYAH PERSEKUTUAN PUTRAJAYA</option>
-                            </select>
-                        </td>
-                        <td></td>
-                    </tr>
+                        <tr>
+                            <td class='align-right' colspan="3">
+                                <hr class="hr-border">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <h5 id="chpass" class="accor">
+                                    <i class="fa-solid fa-circle-chevron-down"></i>
+                                    Tukar kata laluan
+                                </h5>
+                            </td>
+                        </tr>
+                        <tr class="chpass hide">
+                            <td colspan="3">
+                                <div class="flex-column">
+                                    <table class="table-smp">
+                                        <tbody>
+                                            <tr >
+                                                <td class='align-right'>Kata Laluan</td>
+                                                <td>
+                                                    <input class="mx-6 w-400" id="txtcurrpass" placeholder="Kata laluan semasa" type="password" />
+                                                    <span class="valcurrpass err hide">*Taipkan kata laluan semasa anda terlebih dahulu...</span><br class="valcurrpass hide">
+                                                    <span class="valcurrpass err hide">*Sekurang-kurangnya 6 karakter</span>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td class='align-right'></td>
+                                                <td>
+                                                    <input class="mx-6 w-400" id="txtnewpass" placeholder="Kata Laluan baharu" type="password" />
+                                                    <span class="valpass err hide">*Taipkan kata laluan baharu anda sekurang-kurangnya 6 karakter</span><br class="valpass hide">
+                                                    <span class="valpass err hide">*Sekurang-kurangnya 6 karakter</span>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td class='align-right'></td>
+                                                <td>
+                                                    <input class="mx-6 w-400" id="txtrenewpass" placeholder="Taip semula Kata Laluan baharu" type="password" />
+                                                    <span id="valrepass" class="err hide">*Kata laluan yang anda taip semula tidak sepadan dengan kata laluan baharu anda</span>
+                                                </td>
+                                                <td>
+                                                    
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class='align-right'></td>
+                                                <td>
+                                                    
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="flex-row float-bottom">
+                                        <button class='button' onclick="resetPass()"><i class="fa-solid fa-floppy-disk"></i> Tukar Kata Laluan</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    
+                    <%}%>
                 </tbody>
             </table>
-            <div class="flex-row float-bottom">
-                <button class='button' onclick="fieldsCompleted()"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
-            </div>
         </div>
 
     </div>
@@ -201,15 +294,85 @@
 
         </div>
     </div>
+
+    <div class="strippop hide center">
+        <div class="strip-pop-container center">
+            <div id="popmsg"></div>
+        </div>
+    </div>
     
-    <div class="idlePopUp hide">
-        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+    <div class="idlePopUp center hide">
+        <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
     </div>
 
     <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
     <script src="./assets/d3/v7/d3.v7.min.js"></script>
 
+    <%if(user.agent==='Internal'){%>
+        <script>
+            $('#chpass').on('click',()=>{
+                $('.chpass').toggleClass('hide');
+                $('.chprofil').addClass('hide');
+            });
+
+            function resetPass(){
+                $('.valcurrpass').addClass('hide');
+                $('.valpass').addClass('hide');
+                $('#valrepass').addClass('hide');
+
+                if($('#txtcurrpass').val().trim().length<6){
+                    $('.valcurrpass').removeClass('hide');
+                }
+
+                if($('#txtnewpass').val().trim().length<6){
+                    $('.valpass').removeClass('hide');
+                }
+
+                if($('#txtnewpass').val() !== $('#txtrenewpass').val()){
+                    $('#valrepass').removeClass('hide');
+                }
+
+                if($('#txtcurrpass').val().length>=6 && 
+                   $('#txtnewpass').val().length>=6 &&
+                   ($('#txtnewpass').val() == $('#txtrenewpass').val())){
+                    API.renew((res)=>{
+                        $('.idlePopUp').addClass('hide');
+                        if(res.status){
+                            console.log(res);
+                            $('#txtcurrpass').val('');
+                            $('#txtnewpass').val('');
+                            $('#txtrenewpass').val('');
+
+                            $('.strippop').removeClass('hide');
+                            $('.strip-pop-container').addClass('bg-green');
+                            $('#popmsg').text(res.msg);
+                            setTimeout(()=>{
+                                $('.strippop').addClass('hide');
+                                $('.strip-pop-container').removeClass('bg-green');
+                            }, 2000);
+                        }else{
+                            console.log(res);
+
+                            $('.strippop').removeClass('hide');
+                            $('.strip-pop-container').addClass('bg-red');
+                            $('#popmsg').text(res.msg);
+                            setTimeout(()=>{
+                                $('.strippop').addClass('hide');
+                                $('.strip-pop-container').removeClass('bg-red');
+                            }, 2000);
+                        }
+                    });
+                }
+            }
+        </script>
+    <%}%>
+
     <script>
+        $('#chprofil').on('click',()=>{
+                $('.chprofil').toggleClass('hide');
+                $('.chpass').addClass('hide');
+        });
+
         var API = {
             sekolah: {
                 search: (q, fn) => {
@@ -237,6 +400,21 @@
                         dataType: 'json'
                     });
             },
+
+            renew: (fn) => {
+                $('.idlePopUp').removeClass('hide');
+                currp = $('#txtcurrpass').val();
+                newp = $('#txtnewpass').val();
+                    $.ajax({
+                        type: "POST",
+                        url: '/api/user/renew',
+                        data: {currp: currp, newp: newp},
+                        success: function (res) {
+                            fn(res);
+                        },
+                        dataType: 'json'
+                    });
+            }
         }
 
         var searchSekolah = (e) => {

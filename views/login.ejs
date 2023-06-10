@@ -1,40 +1,58 @@
 <div class="section-1">
     <div class="login center flex-column">
         <h3>Login</h3>
-        <!--
+        
         <input class="my-6 w-500" type="text" id="txtemail" placeholder="Email/ ID Pengguna"></input>
         <input class="my-6 w-500" type="password" id="txtpass" placeholder="Kata Laluan"></input>
-        <hr></hr>
         <div class="flex-row width-full pxx-6">
             <button class="button my-6 w-50p" onclick="log()">Log Masuk</button>
             <a class="button my-6 w-50p float-right" href="/daftar">Daftar</a>
         </div>
         <a href="/reset-password">Lupa Kata Laluan...</a>
-        -->
-        <a class="button my-6 w-500" href="/auth/google">Daftar/ Log Masuk dengan Google</a>
+        <br>
+        <hr>
+        
+        <a class="button my-6 w-500" href="/auth/google"><i class="fa-brands fa-google"></i>&nbsp;&nbsp;Daftar/ Log Masuk dengan Google</a>
         <!--
         <a class="button my-6 w-500" href="/auth/microsoft">Daftar/ Log Masuk dengan Microsoft</a>
         -->
     </div>
 </div>
-<div class="idlePopUp hide">
-    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+<div class="idlePopUp center hide">
+    <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
+</div>
+
+<div class="strippop hide center">
+    <div class="strip-pop-container center">
+        <div id="popmsg"></div>
+    </div>
 </div>
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
 <script>
     function log(){
         email = $('#txtemail').val();
         pass = $('#txtpass').val();
+        $('.idlePopUp').removeClass('hide');
         $.ajax({
                 type: "POST",
                 url: './api/user/login',
                 data: {email: email, pass:pass},
                 dataType: 'json',
                 success: (d)=>{
-                    $('.idlePopUp').removeClass('hide');
-                    setTimeout(()=>{
-                            window.location.replace(d.goto);
-                    }, 3000);
+                    if(d.status){
+                        setTimeout(()=>{
+                                window.location.replace(d.goto);
+                        }, 1000);
+                    }else{
+                        $('.idlePopUp').addClass('hide');
+                        $('.strippop').removeClass('hide');
+                        $('.strip-pop-container').addClass('bg-red');
+                        $('#popmsg').text(d.msg);
+                        setTimeout(()=>{
+                            $('.strippop').addClass('hide');
+                            $('.strip-pop-container').removeClass('bg-red');
+                        }, 2000);
+                    }
                 }
             });
     }

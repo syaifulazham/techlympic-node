@@ -19,7 +19,7 @@
             <%}%>
             <h1>Techlympics 2023</h1>
             <% if (!user) { %>
-                <a class="button" href="/login">Sertai kami</a>
+                <a class="button" href="/daftar">Sertai kami</a>
             <%}%>
         
         </div>
@@ -116,7 +116,7 @@
                     });
                 });
 
-                console.log(theme);
+                //console.log(theme);
                 if(theme.length > 0){
                     div.append('div').attr('class','flex-column width-full center bg-green').append('h1').text(tar);
                 }
@@ -136,7 +136,7 @@
                         c = c.filter((value, index, self) => {
                             return self.indexOf(value) === index;
                         });
-                        console.log(c);
+                        //console.log(c);
                         return c;
                     }).enter().append('div').text(d=>d);
                 });

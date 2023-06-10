@@ -1,39 +1,68 @@
 <div class="section-1">
     <div class="login center flex-column">
         <h3>Daftar</h3>
-        <span>Sila berikan email anda, kata kunci sementara akan dihantar ke email anda</span>
+        <div class="width-full text-yellow">Pilihan 1</div>
+        <span>Daftar email anda</span>
+        <span id="valemail" class="err hide">*Sila isikan email dengan format yang betul</span>
         <input class="my-6 w-500" type="text" id="txtemail" placeholder="Email"></input>
-        
+        <span>Daftar Kata Laluan (sekurang-kurangnya 6 karakter)</span>
+        <span id="valpass" class="err hide">*Sila isikan kata laluan sekurang-kurangnya 6 karakter</span>
+        <input class="my-6 w-500" type="password" id="txtpass" placeholder="Kata Laluan"></input>
+        <input class="my-6 w-500" type="password" id="txtrepass" placeholder="Taip Semula Kata Laluan"></input>
+        <span id="valrepass" class="err hide">*Pastikan anda taipkan semula kata laluan dengan betul</span>
         <div class="flex-row width-full pxx-6">
             <button class="button my-6 w-50p float-right" onclick="register()">Daftar</button>
         </div>
-        <hr>
+        <hr class="hr-border">
+
+        <div class="width-full text-yellow">Pilihan 2</div>
         <span>...atau anda boleh daftar menggunakan akaun google</span>
-        <a class="button my-6 w-500" href="/auth/google">Log Masuk dengan Google</a>
+        <a class="button my-6 w-500" href="/auth/google"><i class="fa-brands fa-google"></i>&nbsp;&nbsp;Daftar/ Log Masuk dengan Google</a>
         
     </div>
 </div>
     
-<div class="idlePopUp hide">
+<div class="idlePopUp center hide">
     <i class="fa-solid fa-spinner fa-spin-pulse"></i>
 </div>
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
 <script>
     function register(){
+        $('#valemail').addClass('hide');
+        $('#valpass').addClass('hide');
+        $('#valrepass').addClass('hide');
         email = $('#txtemail').val();
-        $.ajax({
-                type: "POST",
-                url: './api/user/create',
-                data: {email: email},
-                dataType: 'json',
-                success: function(res){
-                    console.log(res);
-                },
-            });
+        if(validateEmail(email) && $('#txtpass').val().length >= 6 && ($('#txtpass').val() === $('#txtrepass').val())){
+            $.ajax({
+                    type: "POST",
+                    url: './api/user/create',
+                    data: {email: email, pw: $('#txtpass').val()},
+                    dataType: 'json',
+                    success: function(res){
+                        $('.idlePopUp').removeClass('hide');
+                        setTimeout(()=>{
+                                window.location.replace("./login");
+                        }, 3000);
+                    },
+                });
 
-        $('.idlePopUp').removeClass('hide');
-        setTimeout(()=>{
-                window.location.replace("./login");
-        }, 3000);
+        }
+
+        if(!validateEmail(email)){
+            $('#valemail').removeClass('hide');
+        }
+
+        if($('#txtpass').val().trim().length<6){
+            $('#valpass').removeClass('hide');
+        }
+
+        if($('#txtpass').val() !== $('#txtrepass').val()){
+            $('#valrepass').removeClass('hide');
+        }
+    }
+
+    function validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
     }
 </script>

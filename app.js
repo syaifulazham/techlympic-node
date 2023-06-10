@@ -32,9 +32,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up the session middleware
 app.use(session({
-  secret: 'your-secret-key',
+  secret: 'techl7mPIC5202E',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false
 }));
 
 // Set up Passport middleware

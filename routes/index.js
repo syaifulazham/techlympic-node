@@ -109,6 +109,7 @@ router.get('/auth/google/callback', (req, res) => {
             photo: data.data.photos[0].url,
             agent: 'google'
           }
+          req.session.username = data.data.emailAddresses[0].value;
           req.session.user = user;
           //console.log('this is me: ',user);
           res.redirect('/user-panel');
@@ -259,7 +260,7 @@ const action = {
       try{
         //console.log('create START', req.body.email);
         var email = req.body.email;
-        var pwd = EMAIL.randomString(6);
+        var pwd = req.body.pw; //EMAIL.randomString(6);
   
         //if(uid=='') return 0;
   
@@ -269,6 +270,9 @@ const action = {
             API.user.create(email, pwd, (s)=>{
               console.log('create new account', email);
               if(s.status){
+                console.log('New Registration for: ' + email);
+                res.send({msg:'Berjaya daftarkan ' + email})
+                /*
                 var msg_str = `
                   Tahniah, akaun anda telah didaftarkan. Gunakan kata kunci berikut. Anda boleh ubah kata laluan pada panel Profil Pengguna 
                   Kata Laluan: ` + pwd + `
@@ -282,6 +286,7 @@ const action = {
                     res.send({msg:'Account fail to create'})
                   }
                 });
+                */
               }
             });
           }else{
@@ -305,11 +310,13 @@ const action = {
               photo: data.data.photo,
               agent: data.data.agent
             }
+
+            req.session.username = data.data.email;
             req.session.user = user;
             console.log('this is me: ',user);
-            res.send({msg:'logged-in', goto:'./user-panel'});
+            res.send({status: true, msg:'logged-in', goto:'./user-panel'});
           }else{
-            res.send({msg:'Email atau kata laluan tidak sepadan...', goto:'./login'});
+            res.send({status: false, msg:'Email atau kata laluan tidak sepadan...', goto:'./login'});
           }
         });
       }catch(err){
@@ -343,6 +350,24 @@ const action = {
       }catch(e){
         console.log(e)
       }
+    },
+    renew: (req, res, next) =>{
+      var email = req.session.user.email;
+      var currp = req.body.currp;
+      var newp = req.body.newp;
+
+      if(newp.length >= 6){
+        API.user.login(email, currp, (msg)=>{
+          if(msg.authorized){
+            API.user.updatePassword(email, newp, (data)=>{
+              res.send({status:true, msg:'Kata laluan berjaya dikemaskini'});
+            })
+          }else{
+            res.send({status:false, msg:'Kata laluan semasa anda tidak sepadan'})
+          }
+        })
+      }
+
     },
   },
   peserta: {
@@ -411,6 +436,7 @@ router.post('/api/sekolah/search', action.search);
 router.post('/api/user/register', action.user.register); // register with google OAuth
 router.post('/api/user/create', action.user.create); // internal registration
 router.post('/api/user/reset', action.user.reset); // internal password reset
+router.post('/api/user/renew', action.user.renew); // internal password renewal
 router.post('/api/user/login', action.user.login); // internal login
 router.post('/api/peserta/add', action.peserta.insertOrUpdate);
 router.post('/api/peserta/count', action.peserta.count);

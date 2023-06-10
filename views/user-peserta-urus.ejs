@@ -18,7 +18,7 @@
     </div>
 </div>
     
-<div class="idlePopUp hide">
+<div class="idlePopUp center hide">
     <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
     <div id="themsg1"></div>
     <div id="themsg"></div>
@@ -352,7 +352,7 @@
 
         keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir');
         //keys.push('Penyertaan Acara')
-        c = d3.select('#input-tray').attr('class','heigth-90vh overflowy-scroll');
+        c = d3.select('#input-tray').attr('class','heigth-90vh overflow-scroll');
         c.selectAll('*').remove();
 
         if(data.length===0){
