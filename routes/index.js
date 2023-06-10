@@ -111,6 +111,8 @@ router.get('/auth/google/callback', (req, res) => {
           }
           req.session.username = data.data.emailAddresses[0].value;
           req.session.user = user;
+
+          console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
           //console.log('this is me: ',user);
           res.redirect('/user-panel');
         }
@@ -313,6 +315,8 @@ const action = {
 
             req.session.username = data.data.email;
             req.session.user = user;
+
+            console.log('Logged in: ',  data.data.email, ' at ', new Date);
             console.log('this is me: ',user);
             res.send({status: true, msg:'logged-in', goto:'./user-panel'});
           }else{
