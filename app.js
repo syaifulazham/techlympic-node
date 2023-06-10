@@ -7,7 +7,7 @@ const options = {
 };
 
 const bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
+//var cookieParser = require('cookie-parser');
 
 const express = require('express');
 const path = require('path');
@@ -31,6 +31,7 @@ console.log('directory name-path: ',path.join(__dirname, 'public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up the session middleware
+/*
 const crypto = require('crypto');
 var sessionSecret = crypto.randomBytes(32).toString('hex');
 app.use(session({
@@ -38,10 +39,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+*/
 
 // Set up Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 app.use('/', indexRouter);
 

@@ -18,11 +18,13 @@ function generateSessionSecret() {
 }
 
 router.use(bodyParser.urlencoded({ extended: true }));
+
 router.use(session({
   secret: generateSessionSecret(),
   resave: false,
   saveUninitialized: false
 }));
+
 
 const CLIENT_ID = auth.auth()['google'].clientid;
 const CLIENT_SECRET = auth.auth()['google'].secret;
@@ -213,6 +215,7 @@ router.get('/user-dashboard', function(req, res, next){
 })
 
 router.get('/logout', function (req, res, next) {
+  /*
   req.logout(function (err) {
     if (err) { return next(err); }
     req.session.destroy(function (err) {
@@ -220,6 +223,9 @@ router.get('/logout', function (req, res, next) {
       res.redirect('/');
     });
   });
+  */
+  req.session.destroy();
+  res.redirect('/');
 });
 
 const action = {
@@ -452,5 +458,9 @@ router.post('/api/peserta/count', action.peserta.count);
 router.post('/api/peserta/load', action.peserta.load);
 router.get('/api/program/list', action.program.list);
 router.post('/api/program/list', action.program.list);
+
+router.get('/sessions', (req, res) => {
+  res.json(req.sessionStore.sessions);
+});
 
 module.exports = router;
