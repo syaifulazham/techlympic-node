@@ -9,16 +9,19 @@ const { OAuth2Client } = require('google-auth-library');
 
 const bodyParser = require('body-parser');
 const API = require('./crud_mysql');  
-
+const crypto = require('crypto');
 var auth = require('./auth');
 
 //console.log('auth.auth(): ',auth.auth());
+function generateSessionSecret() {
+  return crypto.randomBytes(32).toString('hex');
+}
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(session({
-  secret: auth._SECRET_,
+  secret: generateSessionSecret(),
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false
 }));
 
 const CLIENT_ID = auth.auth()['google'].clientid;
@@ -111,6 +114,7 @@ router.get('/auth/google/callback', (req, res) => {
           }
           req.session.username = data.data.emailAddresses[0].value;
           req.session.user = user;
+          req.session.secret = generateSessionSecret();
 
           console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
           //console.log('this is me: ',user);
@@ -315,6 +319,7 @@ const action = {
 
             req.session.username = data.data.email;
             req.session.user = user;
+            req.session.secret = generateSessionSecret();
 
             console.log('Logged in: ',  data.data.email, ' at ', new Date);
             console.log('this is me: ',user);
