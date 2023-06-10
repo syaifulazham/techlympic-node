@@ -31,8 +31,10 @@ console.log('directory name-path: ',path.join(__dirname, 'public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up the session middleware
+const crypto = require('crypto');
+var sessionSecret = crypto.randomBytes(32).toString('hex');
 app.use(session({
-  secret: 'techl7mPIC5202E',
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false
 }));
