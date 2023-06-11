@@ -20,7 +20,10 @@ function generateSessionSecret() {
 }
 
 function mysession(sid){
+  console.log('SID: ', sid);
   sid = sid?sid:'abc123';
+
+  console.log('SID: ', sid);
   var res = '';
   const regex = /s:(.*?)\./;
   const match = sid.match(regex);
