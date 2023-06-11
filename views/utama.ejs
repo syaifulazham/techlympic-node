@@ -15,11 +15,11 @@
         <div class='glow'>
             <span>Selamat Kembali</span> 
             
-            <% if (user) { %>
+            <% if (user.email) { %>
             <strong><%= user.displayName %></strong>
             <%}%>
             <h1>Techlympics 2023</h1>
-            <% if (!user) { %>
+            <% if (!user.email) { %>
                 <a class="button" href="/daftar">Sertai kami</a>
             <%}%>
         

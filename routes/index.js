@@ -1,5 +1,5 @@
 var express = require('express');
-const sessions = require('express-session');
+//const sessions = require('express-session');
 const cookieParser = require('cookie-parser');
 
 var mysql = require('mysql');
@@ -42,6 +42,7 @@ function mysession(sid){
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 
+/*
 router.use(sessions({
   secret: generateSessionSecret(),
   resave: false,
@@ -50,7 +51,7 @@ router.use(sessions({
 
   }
 }));
-
+*/
 
 const CLIENT_ID = auth.auth()['google'].clientid;
 const CLIENT_SECRET = auth.auth()['google'].secret;
@@ -142,10 +143,10 @@ router.get('/auth/google/callback', (req, res) => {
             photo: data.data.photos[0].url,
             agent: 'google'
           }
-          req.session.username = data.data.emailAddresses[0].value;
-          req.session.user = user;
+          //req.session.username = data.data.emailAddresses[0].value;
+          //req.session.user = user;
           var scr = generateSessionSecret();
-          req.session.secret = scr;
+          //req.session.secret = scr;
           res.cookie('localId', {user:user});
 
           console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
@@ -168,7 +169,7 @@ router.get('/', function (req, res) {
 
     console.log('---------------->> ',session);
   }catch(err){
-    console.log(err);
+    //console.log(err);
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
   
@@ -307,7 +308,7 @@ router.get('/logout', function (req, res, next) {
     });
   });
   */
-  req.session.destroy();
+  //req.session.destroy();
   res.clearCookie('localId');
   res.redirect('/');
 });
@@ -412,10 +413,10 @@ const action = {
               agent: data.data.agent
             }
 
-            req.session.username = data.data.email;
-            req.session.user = user;
+            //req.session.username = data.data.email;
+            //req.session.user = user;
             var scr = generateSessionSecret();
-            req.session.secret = scr;
+            //req.session.secret = scr;
             res.set('Set-Cookie', `session=${scr}`);
 
             console.log('Logged in: ',  data.data.email, ' at ', new Date);
@@ -557,7 +558,7 @@ router.get('/api/program/list', action.program.list);
 router.post('/api/program/list', action.program.list);
 
 router.get('/sessions', (req, res) => {
-  res.json(req.sessionStore.sessions);
+  //res.json(req.sessionStore.sessions);
 });
 
 module.exports = router;
