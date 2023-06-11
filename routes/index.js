@@ -417,7 +417,8 @@ const action = {
             //req.session.user = user;
             var scr = generateSessionSecret();
             //req.session.secret = scr;
-            res.set('Set-Cookie', `session=${scr}`);
+            //res.set('Set-Cookie', `session=${scr}`);
+            res.cookie('localId', {user:user});
 
             console.log('Logged in: ',  data.data.email, ' at ', new Date);
             console.log('this is me: ',user);
