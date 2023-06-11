@@ -157,20 +157,24 @@ router.get('/auth/google/callback', (req, res) => {
 
 
 router.get('/', function (req, res) {
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
+  try{
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
         } else {
-          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          if (session) {
+            res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
         }
-      }
-    });
+      });
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
   
 });
 
