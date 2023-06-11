@@ -235,7 +235,7 @@ router.get('/user-panel', function (req, res) {
     //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
     //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
     const session = req.cookies['localId'];
-    console.log(':: 2 :: Capture cookies');
+    console.log(':: 2 :: Fetch cookies');
     //console.log('SESION :',session);
     if(session){
       API.user.isExist(session.user.email, (r) => {
@@ -252,11 +252,14 @@ router.get('/user-panel', function (req, res) {
 });
 
 router.get('/user-peserta-daftar', function (req, res) {
-
+  console.log(':: 1 :: Enter /user-peserta-daftar');
   try{
     var session = req.cookies['localId'];
+    console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      res.render('main.ejs', { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data });
+      var data_ = { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data }
+      console.log(':: 3 :: Passing: ',data_);
+      res.render('main.ejs', data_);
     });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'login.ejs' });
@@ -265,10 +268,14 @@ router.get('/user-peserta-daftar', function (req, res) {
 });
 
 router.get('/user-peserta-urus', function (req, res) {
+  console.log(':: 1 :: Enter /user-peserta-urus');
   try{
     var session = req.cookies['localId'];
+    console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      res.render('main.ejs', { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data });
+      var data = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
+      console.log(':: 3 :: Passing: ',data_);
+      res.render('main.ejs', data_);
     });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
@@ -288,11 +295,15 @@ router.get('/user-peserta-evaluasi', function (req, res) {
 });
 
 router.get('/user-dashboard', function(req, res, next){
+  console.log(':: 1 :: Enter /user-dashboard');
   try{
     var session = req.cookies['localId'];
+    console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
       API.peserta.countPenyertaan(session.user.email, (penyertaan) => {
-        res.render('main.ejs', { user: session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan});
+        var data_ = { user: session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan};
+        console.log(':: 3 :: Passing: ',data_);
+        res.render('main.ejs', data_);
       });
     });
   }catch(err){
