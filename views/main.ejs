@@ -26,7 +26,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/#sec-2">Pertandingan</a>
             </li>
-            <% if (user.displayName) { %>
+            <% if (user && user.displayName) { %>
                 <li class="nav-item">
                   <a class="nav-link" href="/user-panel"><img class="avatar" src=<%=user.photo%> /><%= user.displayName.substring(0,10) %></a>
                 </li>

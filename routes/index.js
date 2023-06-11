@@ -146,7 +146,7 @@ router.get('/auth/google/callback', (req, res) => {
           req.session.user = user;
           var scr = generateSessionSecret();
           req.session.secret = scr;
-          res.cookie('localId', scr);
+          res.cookie('localId', user);
 
           console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
           //console.log('this is me: ',user);
@@ -163,20 +163,12 @@ router.get('/auth/google/callback', (req, res) => {
 router.get('/', function (req, res) {
   try{
     var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
-      });
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
+
+    console.log('---------------->> ',session);
   }catch(err){
+    console.log(err);
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
   
@@ -184,21 +176,8 @@ router.get('/', function (req, res) {
 
 router.get('/utama', function (req, res) {
   try{
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-        }
-      }
-    });
-
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
@@ -207,65 +186,26 @@ router.get('/utama', function (req, res) {
 
 router.get('/program', function (req, res) {
   try{
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'program.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'program.ejs' });
-        }
-      }
-    });
-  
-
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'program.ejs' });
   }catch(err){
-    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'program.ejs' });
   }
 });
 
 router.get('/jadual', function (req, res) {
   try{
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'jadual.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'jadual.ejs' });
-        }
-      }
-    });
-
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'jadual.ejs' });
   }catch(err){
-    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'jadual.ejs' });
   }
 });
 
 router.get('/login', function (req, res) {
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'login.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'login.ejs' });
-        }
-      }
-    });
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'login.ejs' });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
@@ -274,41 +214,17 @@ router.get('/login', function (req, res) {
 
 router.get('/daftar', function (req, res) {
   try{
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'daftar.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
-        }
-      }
-    });
-
+    var session = req.cookies['localId'];
+    res.render('main.ejs', { user: session.user, page: 'daftar.ejs' });
+    
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
 });
 
 router.get('/reset-password', function (req, res) {
-  var sessionId = mysession(req.cookies['connect.sid']);
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          res.render('main.ejs', { user: session.user, page: 'reset-password.ejs' });
-        } else {
-          res.render('main.ejs', { user: {}, page: 'reset-password.ejs' });
-        }
-      }
-    });
+  var session = req.cookies['localId'];
+  res.render('main.ejs', { user: session.user, page: 'reset-password.ejs' });
 });
 
 router.get('/user-panel', function (req, res) {
