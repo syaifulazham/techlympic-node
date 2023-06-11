@@ -146,7 +146,7 @@ router.get('/auth/google/callback', (req, res) => {
           req.session.user = user;
           var scr = generateSessionSecret();
           req.session.secret = scr;
-          res.cookie('localId', user);
+          res.cookie('localId', {user:user});
 
           console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
           //console.log('this is me: ',user);
@@ -162,7 +162,7 @@ router.get('/auth/google/callback', (req, res) => {
 
 router.get('/', function (req, res) {
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
+    //var sessionId = mysession(req.cookies['connect.sid']);
     var session = req.cookies['localId'];
     res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
 
@@ -234,11 +234,14 @@ router.get('/user-panel', function (req, res) {
     //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
     //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
     var session = req.cookies['localId'];
-    API.user.isExist(session.user.email, (r) => {
-      res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
-    });
+    console.log('============SESION=============',session);
+    if(session){
+      API.user.isExist(session.user.email, (r) => {
+        res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
+      });
+    }
   }catch(err){
-    //console.log('error: ', err);
+    console.log('error: ', err);
     res.render('main.ejs', { user: {}, page: 'login.ejs' });
   }
   
