@@ -1,5 +1,5 @@
 var express = require('express');
-const session = require('express-session');
+const sessions = require('express-session');
 const cookieParser = require('cookie-parser');
 
 var mysql = require('mysql');
@@ -42,7 +42,7 @@ function mysession(sid){
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.use(session({
+router.use(sessions({
   secret: generateSessionSecret(),
   resave: false,
   saveUninitialized: false,
