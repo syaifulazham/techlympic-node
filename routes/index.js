@@ -230,41 +230,16 @@ router.get('/reset-password', function (req, res) {
 router.get('/user-panel', function (req, res) {
   
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
+    //var sessionId = mysession(req.cookies['connect.sid']);
     //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
     //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
-
-    req.sessionStore.get(sessionId, (error, session) => {
-      if (error) {
-        // Handle error retrieving session data
-        console.error('Error retrieving session:', error);
-        //res.send('Error retrieving session');
-      } else {
-        if (session) {
-          // Session found, do something with the session data
-          //console.log('Session:', session);
-          //console.log('Session found');
-          API.user.isExist(session.user.email, (r) => {
-            res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
-          });
-        } else {
-          // Session not found or expired
-          //res.send('Session not found or expired');
-          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-        }
-      }
+    var session = req.cookies['localId'];
+    API.user.isExist(session.user.email, (r) => {
+      res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
     });
-
-    //const lid = req.cookies.localId;//req.headers.cookie.split('=')[1];
-    //var sj = JSON.parse(res.json(req.sessionStore.sessions));
-    //const sess = sj.filter(a=>a.secret==lid);
-    //console.log('req.headers.cookie: ', req.headers.cookie);
-    //console.log('my sid: ', sess);
-
-    
   }catch(err){
     //console.log('error: ', err);
-    res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'login.ejs' });
   }
   
 });
