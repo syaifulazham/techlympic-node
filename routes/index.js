@@ -179,6 +179,7 @@ router.get('/', function (req, res) {
 });
 
 router.get('/utama', function (req, res) {
+  try{
   var sessionId = mysession(req.cookies['connect.sid']);
     req.sessionStore.get(sessionId, (error, session) => {
       if (error) {
@@ -193,10 +194,15 @@ router.get('/utama', function (req, res) {
         }
       }
     });
+
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
   //res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
 });
 
 router.get('/program', function (req, res) {
+  try{
   var sessionId = mysession(req.cookies['connect.sid']);
     req.sessionStore.get(sessionId, (error, session) => {
       if (error) {
@@ -212,9 +218,14 @@ router.get('/program', function (req, res) {
       }
     });
   
+
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
 });
 
 router.get('/jadual', function (req, res) {
+  try{
   var sessionId = mysession(req.cookies['connect.sid']);
     req.sessionStore.get(sessionId, (error, session) => {
       if (error) {
@@ -229,10 +240,15 @@ router.get('/jadual', function (req, res) {
         }
       }
     });
+
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
 });
 
 router.get('/login', function (req, res) {
-  var sessionId = mysession(req.cookies['connect.sid']);
+  try{
+    var sessionId = mysession(req.cookies['connect.sid']);
     req.sessionStore.get(sessionId, (error, session) => {
       if (error) {
         // Handle error retrieving session data
@@ -246,9 +262,14 @@ router.get('/login', function (req, res) {
         }
       }
     });
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
+  
 });
 
 router.get('/daftar', function (req, res) {
+  try{
   var sessionId = mysession(req.cookies['connect.sid']);
     req.sessionStore.get(sessionId, (error, session) => {
       if (error) {
@@ -263,6 +284,10 @@ router.get('/daftar', function (req, res) {
         }
       }
     });
+
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
 });
 
 router.get('/reset-password', function (req, res) {
@@ -450,41 +475,45 @@ const action = {
   user: {
     register: (req, res, next) => {
       //usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri
-
-    var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            var data = {
-              usr_name: session.user.displayName, 
-              usr_email:session.user.email, 
-              notel: req.body.notel,
-              usr_role: req.body.usr_role, 
-              usr_agent:req.session.user.agent, 
-              kodsekolah: req.body.kodsekolah, 
-              namasekolah: req.body.namasekolah,  
-              peringkat: req.body.peringkat, 
-              alamat1: req.body.alamat1, 
-              alamat2: req.body.alamat2, 
-              poskod: req.body.poskod, 
-              bandar: req.body.bandar, 
-              negeri: req.body.negeri
+      try{
+        var sessionId = mysession(req.cookies['connect.sid']);
+          req.sessionStore.get(sessionId, (error, session) => {
+            if (error) {
+              // Handle error retrieving session data
+              console.error('Error retrieving session:', error);
+              //res.send('Error retrieving session');
+            } else {
+              if (session) {
+                var data = {
+                  usr_name: session.user.displayName, 
+                  usr_email:session.user.email, 
+                  notel: req.body.notel,
+                  usr_role: req.body.usr_role, 
+                  usr_agent:req.session.user.agent, 
+                  kodsekolah: req.body.kodsekolah, 
+                  namasekolah: req.body.namasekolah,  
+                  peringkat: req.body.peringkat, 
+                  alamat1: req.body.alamat1, 
+                  alamat2: req.body.alamat2, 
+                  poskod: req.body.poskod, 
+                  bandar: req.body.bandar, 
+                  negeri: req.body.negeri
+                }
+                console.log('register...', data)
+                API.user.register(data, (result) => {
+                  res.send(result);
+                  //if(result.registered) 
+                  //  res.redirect('/user-peserta-daftar');
+                });
+              } else {
+                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+              }
             }
-            console.log('register...', data)
-            API.user.register(data, (result) => {
-              res.send(result);
-              //if(result.registered) 
-              //  res.redirect('/user-peserta-daftar');
-            });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
-      });
+          });
+
+      }catch(err){
+        res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+      }
     },
     register1: (req, res, next) => {
       res.redirect('/user-panel');
