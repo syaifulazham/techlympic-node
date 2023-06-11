@@ -44,6 +44,10 @@ app.use(session({
 // Set up Passport middleware
 //app.use(passport.initialize());
 //app.use(passport.session());
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 app.use('/', indexRouter);
 

@@ -273,7 +273,7 @@ router.get('/user-peserta-urus', function (req, res) {
     var session = req.cookies['localId'];
     console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      var data = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
+      var data_ = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
       console.log(':: 3 :: Passing: ',data_);
       res.render('main.ejs', data_);
     });
