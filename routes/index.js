@@ -229,17 +229,18 @@ router.get('/reset-password', function (req, res) {
 });
 
 router.get('/user-panel', function (req, res) {
-  
+  console.log(':: 1 :: Enter /user-panel');
   try{
     //var sessionId = mysession(req.cookies['connect.sid']);
     //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
     //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
     const session = req.cookies['localId'];
+    console.log(':: 2 :: Capture cookies');
     //console.log('SESION :',session);
     if(session){
       API.user.isExist(session.user.email, (r) => {
         var data_ = { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data }
-        console.log('PASSING: ',data_);
+        console.log(':: 3 :: Passing: ',data_);
         res.render('main.ejs', data_);
       });
     }
