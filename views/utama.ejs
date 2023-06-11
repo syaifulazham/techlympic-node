@@ -14,11 +14,11 @@
     <div class="imgBg flex-row center">
         <div class='glow'>
             <span>Selamat Kembali</span> 
-            <% if (user) { %>
+            <% if (user.length>0) { %>
             <strong><%= user.displayName %></strong>
             <%}%>
             <h1>Techlympics 2023</h1>
-            <% if (!user) { %>
+            <% if (!user.length>0) { %>
                 <a class="button" href="/daftar">Sertai kami</a>
             <%}%>
         

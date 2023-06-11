@@ -1,5 +1,6 @@
 var express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 
 var mysql = require('mysql');
 var router = express.Router();
@@ -8,21 +9,42 @@ const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 
 const bodyParser = require('body-parser');
-const API = require('./crud_mysql');  
-const crypto = require('crypto');
+const API = require('./crud_mysql'); 
+
+const uuidv4 = require('uuid').v4;
 var auth = require('./auth');
 
 //console.log('auth.auth(): ',auth.auth());
 function generateSessionSecret() {
-  return crypto.randomBytes(32).toString('hex');
+  return uuidv4();//crypto.randomBytes(32).toString('hex');
 }
 
+function mysession(sid){
+  var res = '';
+  const regex = /s:(.*?)\./;
+  const match = sid.match(regex);
+
+  if (match) {
+    res = match[1];
+    console.log(sid); // Output: "Hello World"
+  } else {
+    console.log("No match found.");
+  }
+
+  return res;
+
+}
+
+router.use(cookieParser());
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.use(session({
   secret: generateSessionSecret(),
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+
+  }
 }));
 
 
@@ -91,6 +113,8 @@ router.get('/auth/google', (req, res) => {
 router.get('/auth/google/callback', (req, res) => {
   const code = req.query.code;
 
+
+
   oauth2Client.getToken(code, (err, tokens) => {
     if (err) {
       console.error('Error getting token:', err);
@@ -116,11 +140,14 @@ router.get('/auth/google/callback', (req, res) => {
           }
           req.session.username = data.data.emailAddresses[0].value;
           req.session.user = user;
-          req.session.secret = generateSessionSecret();
+          var scr = generateSessionSecret();
+          req.session.secret = scr;
+          res.cookie('localId', scr);
 
           console.log('Logged in: ',  data.data.emailAddresses[0].value, ' at ', new Date);
           //console.log('this is me: ',user);
           res.redirect('/user-panel');
+          //res.status(200).send(true);
         }
       });
     }
@@ -130,38 +157,162 @@ router.get('/auth/google/callback', (req, res) => {
 
 
 router.get('/', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+        }
+      }
+    });
+  
 });
 
 router.get('/utama', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'utama.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+        }
+      }
+    });
+  //res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
 });
 
 router.get('/program', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'program.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'program.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'program.ejs' });
+        }
+      }
+    });
+  
 });
 
 router.get('/jadual', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'jadual.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'jadual.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'jadual.ejs' });
+        }
+      }
+    });
 });
 
 router.get('/login', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'login.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'login.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'login.ejs' });
+        }
+      }
+    });
 });
 
 router.get('/daftar', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'daftar.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'daftar.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
+        }
+      }
+    });
 });
 
 router.get('/reset-password', function (req, res) {
-  res.render('main.ejs', { user: req.session.user, page: 'reset-password.ejs' });
+  var sessionId = mysession(req.cookies['connect.sid']);
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          res.render('main.ejs', { user: session.user, page: 'reset-password.ejs' });
+        } else {
+          res.render('main.ejs', { user: {}, page: 'reset-password.ejs' });
+        }
+      }
+    });
 });
 
 router.get('/user-panel', function (req, res) {
+  
   try{
-    API.user.isExist(req.session.user.email, (r) => {
-      res.render('main.ejs', { user: req.session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
+    var sessionId = mysession(req.cookies['connect.sid']);
+    //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
+    //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
+
+    req.sessionStore.get(sessionId, (error, session) => {
+      if (error) {
+        // Handle error retrieving session data
+        console.error('Error retrieving session:', error);
+        //res.send('Error retrieving session');
+      } else {
+        if (session) {
+          // Session found, do something with the session data
+          //console.log('Session:', session);
+          //console.log('Session found');
+          API.user.isExist(session.user.email, (r) => {
+            res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
+          });
+        } else {
+          // Session not found or expired
+          //res.send('Session not found or expired');
+          res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+        }
+      }
     });
+
+    //const lid = req.cookies.localId;//req.headers.cookie.split('=')[1];
+    //var sj = JSON.parse(res.json(req.sessionStore.sessions));
+    //const sess = sj.filter(a=>a.secret==lid);
+    //console.log('req.headers.cookie: ', req.headers.cookie);
+    //console.log('my sid: ', sess);
+
+    
   }catch(err){
     //console.log('error: ', err);
     res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
@@ -171,46 +322,98 @@ router.get('/user-panel', function (req, res) {
 
 router.get('/user-peserta-daftar', function (req, res) {
   try{
-    API.user.isExist(req.session.user.email, (r) => {
-      res.render('main.ejs', { user: req.session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data });
-    });
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
+        } else {
+          if (session) {
+            API.user.isExist(req.session.user.email, (r) => {
+              res.render('main.ejs', { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data });
+            });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
+        }
+      });
   }catch(err){
-    res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
   
 });
 
 router.get('/user-peserta-urus', function (req, res) {
   try{
-    API.user.isExist(req.session.user.email, (r) => {
-      res.render('main.ejs', { user: req.session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data });
-    });
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
+        } else {
+          if (session) {
+            API.user.isExist(req.session.user.email, (r) => {
+              res.render('main.ejs', { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data });
+            });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
+        }
+      });
   }catch(err){
-    res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
   
 });
 
 router.get('/user-peserta-evaluasi', function (req, res) {
   try{
-    API.user.isExist(req.session.user.email, (r) => {
-      res.render('main.ejs', { user: req.session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data });
-    });
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
+        } else {
+          if (session) {
+            API.user.isExist(req.session.user.email, (r) => {
+              res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data });
+            });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
+        }
+      });
   }catch(err){
-    res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
 });
 
 router.get('/user-dashboard', function(req, res, next){
   try{
-    API.user.isExist(req.session.user.email, (r) => {
-      API.peserta.countPenyertaan(req.session.user.email, (penyertaan) => {
-        res.render('main.ejs', { user: req.session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan});
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
+        } else {
+          if (session) {
+            API.user.isExist(session.user.email, (r) => {
+              API.peserta.countPenyertaan(session.user.email, (penyertaan) => {
+                res.render('main.ejs', { user: session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan});
+              });
+            });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
+        }
       });
-    });
   }catch(err){
     //console.log('/user-dashboard --error', err );
-    res.render('main.ejs', { user: req.session.user, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
 })
 
@@ -243,26 +446,40 @@ const action = {
   user: {
     register: (req, res, next) => {
       //usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri
-      var data = {
-        usr_name: req.session.user.displayName, 
-        usr_email:req.session.user.email, 
-        notel: req.body.notel,
-        usr_role: req.body.usr_role, 
-        usr_agent:req.session.user.agent, 
-        kodsekolah: req.body.kodsekolah, 
-        namasekolah: req.body.namasekolah,  
-        peringkat: req.body.peringkat, 
-        alamat1: req.body.alamat1, 
-        alamat2: req.body.alamat2, 
-        poskod: req.body.poskod, 
-        bandar: req.body.bandar, 
-        negeri: req.body.negeri
-      }
-      console.log('register...', data)
-      API.user.register(data, (result) => {
-        res.send(result);
-        //if(result.registered) 
-        //  res.redirect('/user-peserta-daftar');
+
+    var sessionId = mysession(req.cookies['connect.sid']);
+      req.sessionStore.get(sessionId, (error, session) => {
+        if (error) {
+          // Handle error retrieving session data
+          console.error('Error retrieving session:', error);
+          //res.send('Error retrieving session');
+        } else {
+          if (session) {
+            var data = {
+              usr_name: session.user.displayName, 
+              usr_email:session.user.email, 
+              notel: req.body.notel,
+              usr_role: req.body.usr_role, 
+              usr_agent:req.session.user.agent, 
+              kodsekolah: req.body.kodsekolah, 
+              namasekolah: req.body.namasekolah,  
+              peringkat: req.body.peringkat, 
+              alamat1: req.body.alamat1, 
+              alamat2: req.body.alamat2, 
+              poskod: req.body.poskod, 
+              bandar: req.body.bandar, 
+              negeri: req.body.negeri
+            }
+            console.log('register...', data)
+            API.user.register(data, (result) => {
+              res.send(result);
+              //if(result.registered) 
+              //  res.redirect('/user-peserta-daftar');
+            });
+          } else {
+            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+          }
+        }
       });
     },
     register1: (req, res, next) => {
@@ -325,7 +542,9 @@ const action = {
 
             req.session.username = data.data.email;
             req.session.user = user;
-            req.session.secret = generateSessionSecret();
+            var scr = generateSessionSecret();
+            req.session.secret = scr;
+            res.set('Set-Cookie', `session=${scr}`);
 
             console.log('Logged in: ',  data.data.email, ' at ', new Date);
             console.log('this is me: ',user);
@@ -367,20 +586,33 @@ const action = {
       }
     },
     renew: (req, res, next) =>{
-      var email = req.session.user.email;
       var currp = req.body.currp;
       var newp = req.body.newp;
 
       if(newp.length >= 6){
-        API.user.login(email, currp, (msg)=>{
-          if(msg.authorized){
-            API.user.updatePassword(email, newp, (data)=>{
-              res.send({status:true, msg:'Kata laluan berjaya dikemaskini'});
-            })
-          }else{
-            res.send({status:false, msg:'Kata laluan semasa anda tidak sepadan'})
-          }
-        })
+        var sessionId = mysession(req.cookies['connect.sid']);
+          req.sessionStore.get(sessionId, (error, session) => {
+            if (error) {
+              // Handle error retrieving session data
+              console.error('Error retrieving session:', error);
+              //res.send('Error retrieving session');
+            } else {
+              if (session) {
+                var email = session.user.email;
+                API.user.login(email, currp, (msg)=>{
+                  if(msg.authorized){
+                    API.user.updatePassword(email, newp, (data)=>{
+                      res.send({status:true, msg:'Kata laluan berjaya dikemaskini'});
+                    })
+                  }else{
+                    res.send({status:false, msg:'Kata laluan semasa anda tidak sepadan'})
+                  }
+                });
+              } else {
+                res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
+              }
+            }
+          });
       }
 
     },
@@ -389,15 +621,28 @@ const action = {
     addBulk: (req, res, next) => {
       var data_ = [];
       try{
-        req.body.peserta.forEach((d)=>{
-          data_.push([
-            req.session.user.email,d.kp,d.nama,d.email,d.darjah_tingkatan,d.program
-          ])
-        });
-
-        API.peserta.addBulk(req,data_, (d)=>{
-          res.send(d);
-        })
+        var sessionId = mysession(req.cookies['connect.sid']);
+          req.sessionStore.get(sessionId, (error, session) => {
+            if (error) {
+              // Handle error retrieving session data
+              console.error('Error retrieving session:', error);
+              //res.send('Error retrieving session');
+            } else {
+              if (session) {
+                req.body.peserta.forEach((d)=>{
+                  data_.push([
+                    session.user.email,d.kp,d.nama,d.email,d.darjah_tingkatan,d.program
+                  ])
+                });
+        
+                API.peserta.addBulk(req,data_, (d)=>{
+                  res.send(d);
+                })
+              } else {
+                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+              }
+            }
+          });
       }catch(err){
         console.log('error: ', err);
       }
@@ -416,26 +661,65 @@ const action = {
     },
 
     count: (req, res, next) => {
-      usr = req.session.user.email;
-      API.peserta.countPenyertaan(usr,(result)=>{
-        res.send(result)
-      });
+      var sessionId = mysession(req.cookies['connect.sid']);
+        req.sessionStore.get(sessionId, (error, session) => {
+          if (error) {
+            // Handle error retrieving session data
+            console.error('Error retrieving session:', error);
+            //res.send('Error retrieving session');
+          } else {
+            if (session) {
+              usr = session.user.email;
+              API.peserta.countPenyertaan(usr,(result)=>{
+                res.send(result)
+              });
+            } else {
+              res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+            }
+          }
+        });
     },
 
     load: (req, res, next) => {
-      usr = req.session.user.email;
-      API.peserta.loadPeserta(usr, req.body.peringkat, (result)=>{
-        res.send(result);
-      })
+      var sessionId = mysession(req.cookies['connect.sid']);
+        req.sessionStore.get(sessionId, (error, session) => {
+          if (error) {
+            // Handle error retrieving session data
+            console.error('Error retrieving session:', error);
+            //res.send('Error retrieving session');
+          } else {
+            if (session) {
+              usr = session.user.email;
+              API.peserta.loadPeserta(usr, req.body.peringkat, (result)=>{
+                res.send(result);
+              });
+            } else {
+              res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+            }
+          }
+        });
     }
   },
   program: {
     list: (req, res, next) => {
       try{
-        usr = (req.session.user==undefined || req.session==undefined) ? '--none--' :req.session.user.email;
-        API.program.list(usr, (result)=>{
-          res.send(result)
-        });
+        var sessionId = mysession(req.cookies['connect.sid']);
+          req.sessionStore.get(sessionId, (error, session) => {
+            if (error) {
+              // Handle error retrieving session data
+              console.error('Error retrieving session:', error);
+              //res.send('Error retrieving session');
+            } else {
+              if (session) {
+                usr = (session.user==undefined || session==undefined) ? '--none--' :session.user.email;
+                API.program.list(usr, (result)=>{
+                  res.send(result)
+                });
+              } else {
+                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+              }
+            }
+          });
       }catch(err){
         API.program.list('--none--', (result)=>{
           res.send(result)
