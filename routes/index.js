@@ -234,11 +234,13 @@ router.get('/user-panel', function (req, res) {
     //var sessionId = mysession(req.cookies['connect.sid']);
     //console.log('My sessions: ', sessionId, req.sessionStore.sessions[sessionId]);
     //console.log('--------->>>>',req.sessionStore.sessions[_lid].cookie);
-    var session = req.cookies['localId'];
-    console.log('SESION :',session);
+    const session = req.cookies['localId'];
+    //console.log('SESION :',session);
     if(session){
       API.user.isExist(session.user.email, (r) => {
-        res.render('main.ejs', { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data });
+        var data_ = { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data }
+        console.log('PASSING: ',data_);
+        res.render('main.ejs', data_);
       });
     }
   }catch(err){
