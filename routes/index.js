@@ -207,7 +207,7 @@ router.get('/login', function (req, res) {
     var session = req.cookies['localId'];
     res.render('main.ejs', { user: session.user, page: 'login.ejs' });
   }catch(err){
-    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'login.ejs' });
   }
   
 });
@@ -218,7 +218,7 @@ router.get('/daftar', function (req, res) {
     res.render('main.ejs', { user: session.user, page: 'daftar.ejs' });
     
   }catch(err){
-    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
   }
 });
 
