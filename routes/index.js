@@ -334,7 +334,7 @@ const action = {
           usr_email:session.user.email, 
           notel: req.body.notel,
           usr_role: req.body.usr_role, 
-          usr_agent:req.session.user.agent, 
+          usr_agent:session.user.agent, 
           kodsekolah: req.body.kodsekolah, 
           namasekolah: req.body.namasekolah,  
           peringkat: req.body.peringkat, 
@@ -500,7 +500,7 @@ const action = {
     insertOrUpdate: (req, res, next) => {
       try{
         var pesertaList = req.body.peserta;
-        pesertaList.forEach(d=>{d.usr_email = req.session.user.email});
+        pesertaList.forEach(d=>{d.usr_email = session.user.email});
         API.peserta.insertOrUpdate(pesertaList, (d) => {
           res.send(d);
         })
@@ -510,65 +510,29 @@ const action = {
     },
 
     count: (req, res, next) => {
-      var sessionId = mysession(req.cookies['connect.sid']);
-        req.sessionStore.get(sessionId, (error, session) => {
-          if (error) {
-            // Handle error retrieving session data
-            console.error('Error retrieving session:', error);
-            //res.send('Error retrieving session');
-          } else {
-            if (session) {
-              usr = session.user.email;
-              API.peserta.countPenyertaan(usr,(result)=>{
-                res.send(result)
-              });
-            } else {
-              res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-            }
-          }
-        });
+      var session = req.cookies['localId'];
+      usr = session.user.email;
+      API.peserta.countPenyertaan(usr,(result)=>{
+        res.send(result)
+      });
     },
 
     load: (req, res, next) => {
-      var sessionId = mysession(req.cookies['connect.sid']);
-        req.sessionStore.get(sessionId, (error, session) => {
-          if (error) {
-            // Handle error retrieving session data
-            console.error('Error retrieving session:', error);
-            //res.send('Error retrieving session');
-          } else {
-            if (session) {
-              usr = session.user.email;
-              API.peserta.loadPeserta(usr, req.body.peringkat, (result)=>{
-                res.send(result);
-              });
-            } else {
-              res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-            }
-          }
-        });
+      var session = req.cookies['localId'];
+      usr = session.user.email;
+      API.peserta.loadPeserta(usr, req.body.peringkat, (result)=>{
+        res.send(result);
+      });
     }
   },
   program: {
     list: (req, res, next) => {
       try{
-        var sessionId = mysession(req.cookies['connect.sid']);
-          req.sessionStore.get(sessionId, (error, session) => {
-            if (error) {
-              // Handle error retrieving session data
-              console.error('Error retrieving session:', error);
-              //res.send('Error retrieving session');
-            } else {
-              if (session) {
-                usr = (session.user==undefined || session==undefined) ? '--none--' :session.user.email;
-                API.program.list(usr, (result)=>{
-                  res.send(result)
-                });
-              } else {
-                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-              }
-            }
-          });
+        var session = req.cookies['localId'];
+        usr = (session.user==undefined || session==undefined) ? '--none--' :session.user.email;
+        API.program.list(usr, (result)=>{
+          res.send(result)
+        });
       }catch(err){
         API.program.list('--none--', (result)=>{
           res.send(result)
