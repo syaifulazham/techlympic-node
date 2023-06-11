@@ -248,47 +248,24 @@ router.get('/user-panel', function (req, res) {
 });
 
 router.get('/user-peserta-daftar', function (req, res) {
+
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            API.user.isExist(req.session.user.email, (r) => {
-              res.render('main.ejs', { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data });
-            });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
-      });
+    var session = req.cookies['localId'];
+    API.user.isExist(session.user.email, (r) => {
+      res.render('main.ejs', { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data });
+    });
   }catch(err){
-    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    res.render('main.ejs', { user: {}, page: 'login.ejs' });
   }
   
 });
 
 router.get('/user-peserta-urus', function (req, res) {
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            API.user.isExist(req.session.user.email, (r) => {
-              res.render('main.ejs', { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data });
-            });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
-      });
+    var session = req.cookies['localId'];
+    API.user.isExist(session.user.email, (r) => {
+      res.render('main.ejs', { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data });
+    });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
@@ -297,22 +274,10 @@ router.get('/user-peserta-urus', function (req, res) {
 
 router.get('/user-peserta-evaluasi', function (req, res) {
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            API.user.isExist(req.session.user.email, (r) => {
-              res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data });
-            });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
-      });
+    var session = req.cookies['localId'];
+    API.user.isExist(session.user.email, (r) => {
+      res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data });
+    });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
@@ -320,24 +285,12 @@ router.get('/user-peserta-evaluasi', function (req, res) {
 
 router.get('/user-dashboard', function(req, res, next){
   try{
-    var sessionId = mysession(req.cookies['connect.sid']);
-      req.sessionStore.get(sessionId, (error, session) => {
-        if (error) {
-          // Handle error retrieving session data
-          console.error('Error retrieving session:', error);
-          //res.send('Error retrieving session');
-        } else {
-          if (session) {
-            API.user.isExist(session.user.email, (r) => {
-              API.peserta.countPenyertaan(session.user.email, (penyertaan) => {
-                res.render('main.ejs', { user: session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan});
-              });
-            });
-          } else {
-            res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-          }
-        }
+    var session = req.cookies['localId'];
+    API.user.isExist(session.user.email, (r) => {
+      API.peserta.countPenyertaan(session.user.email, (penyertaan) => {
+        res.render('main.ejs', { user: session.user, page: 'user-peserta-dashboard.ejs', registered: r.registered, me: r.data , count:penyertaan});
       });
+    });
   }catch(err){
     //console.log('/user-dashboard --error', err );
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
@@ -355,6 +308,7 @@ router.get('/logout', function (req, res, next) {
   });
   */
   req.session.destroy();
+  res.clearCookie('localId');
   res.redirect('/');
 });
 
@@ -374,41 +328,28 @@ const action = {
     register: (req, res, next) => {
       //usr_name, usr_email, usr_role, usr_agent, kodsekolah, namasekolah, alamat1, alamat2, poskod, bandar, negeri
       try{
-        var sessionId = mysession(req.cookies['connect.sid']);
-          req.sessionStore.get(sessionId, (error, session) => {
-            if (error) {
-              // Handle error retrieving session data
-              console.error('Error retrieving session:', error);
-              //res.send('Error retrieving session');
-            } else {
-              if (session) {
-                var data = {
-                  usr_name: session.user.displayName, 
-                  usr_email:session.user.email, 
-                  notel: req.body.notel,
-                  usr_role: req.body.usr_role, 
-                  usr_agent:req.session.user.agent, 
-                  kodsekolah: req.body.kodsekolah, 
-                  namasekolah: req.body.namasekolah,  
-                  peringkat: req.body.peringkat, 
-                  alamat1: req.body.alamat1, 
-                  alamat2: req.body.alamat2, 
-                  poskod: req.body.poskod, 
-                  bandar: req.body.bandar, 
-                  negeri: req.body.negeri
-                }
-                console.log('register...', data)
-                API.user.register(data, (result) => {
-                  res.send(result);
-                  //if(result.registered) 
-                  //  res.redirect('/user-peserta-daftar');
-                });
-              } else {
-                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-              }
-            }
-          });
-
+        var session = req.cookies['localId'];
+        var data = {
+          usr_name: session.user.displayName, 
+          usr_email:session.user.email, 
+          notel: req.body.notel,
+          usr_role: req.body.usr_role, 
+          usr_agent:req.session.user.agent, 
+          kodsekolah: req.body.kodsekolah, 
+          namasekolah: req.body.namasekolah,  
+          peringkat: req.body.peringkat, 
+          alamat1: req.body.alamat1, 
+          alamat2: req.body.alamat2, 
+          poskod: req.body.poskod, 
+          bandar: req.body.bandar, 
+          negeri: req.body.negeri
+        }
+        console.log('register...', data)
+        API.user.register(data, (result) => {
+          res.send(result);
+          //if(result.registered) 
+          //  res.redirect('/user-peserta-daftar');
+        });
       }catch(err){
         res.render('main.ejs', { user: {}, page: 'utama.ejs' });
       }
@@ -521,29 +462,18 @@ const action = {
       var newp = req.body.newp;
 
       if(newp.length >= 6){
-        var sessionId = mysession(req.cookies['connect.sid']);
-          req.sessionStore.get(sessionId, (error, session) => {
-            if (error) {
-              // Handle error retrieving session data
-              console.error('Error retrieving session:', error);
-              //res.send('Error retrieving session');
-            } else {
-              if (session) {
-                var email = session.user.email;
-                API.user.login(email, currp, (msg)=>{
-                  if(msg.authorized){
-                    API.user.updatePassword(email, newp, (data)=>{
-                      res.send({status:true, msg:'Kata laluan berjaya dikemaskini'});
-                    })
-                  }else{
-                    res.send({status:false, msg:'Kata laluan semasa anda tidak sepadan'})
-                  }
-                });
-              } else {
-                res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
-              }
-            }
-          });
+        var session = req.cookies['localId'];
+        var email = session.user.email;
+        API.user.login(email, currp, (msg)=>{
+          if(msg.authorized){
+            API.user.updatePassword(email, newp, (data)=>{
+              res.send({status:true, msg:'Kata laluan berjaya dikemaskini'});
+            })
+          }else{
+            res.send({status:false, msg:'Kata laluan semasa anda tidak sepadan'})
+          }
+        });
+        
       }
 
     },
@@ -552,28 +482,16 @@ const action = {
     addBulk: (req, res, next) => {
       var data_ = [];
       try{
-        var sessionId = mysession(req.cookies['connect.sid']);
-          req.sessionStore.get(sessionId, (error, session) => {
-            if (error) {
-              // Handle error retrieving session data
-              console.error('Error retrieving session:', error);
-              //res.send('Error retrieving session');
-            } else {
-              if (session) {
-                req.body.peserta.forEach((d)=>{
-                  data_.push([
-                    session.user.email,d.kp,d.nama,d.email,d.darjah_tingkatan,d.program
-                  ])
-                });
-        
-                API.peserta.addBulk(req,data_, (d)=>{
-                  res.send(d);
-                })
-              } else {
-                res.render('main.ejs', { user: {}, page: 'utama.ejs' });
-              }
-            }
-          });
+        var session = req.cookies['localId'];
+        req.body.peserta.forEach((d)=>{
+          data_.push([
+            session.user.email,d.kp,d.nama,d.email,d.darjah_tingkatan,d.program
+          ])
+        });
+
+        API.peserta.addBulk(req,data_, (d)=>{
+          res.send(d);
+        })
       }catch(err){
         console.log('error: ', err);
       }
