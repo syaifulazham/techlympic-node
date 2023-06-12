@@ -901,12 +901,24 @@ code {
         display:flex; flex-direction:column;width:100% !important; 
     }
 
+    .table-x > tbody > tr > td:empty {
+        display:none; 
+    }
+
     .table-x > thead > tr {
         display:flex; flex-direction:column;width:100% !important; 
     }
 
     .table-x > tbody > tr > td{
         text-align: left!important;
+    }
+
+    .table-x > thead > tr > td select,input{
+        width:100%!important;
+    }
+
+    .table-x > tbody > tr > td select,input[type="text"],input[type="date"]{
+        width:100%!important;
     }
 
     .table-smp > tbody{
