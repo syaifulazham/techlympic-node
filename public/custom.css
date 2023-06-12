@@ -885,7 +885,78 @@ code {
       width: 90%;
     }
 
-    .w-500{
-        width:100%
+    .login > .w-500{
+        width:100%!important;
     }
+
+    .w-400{
+        width:90%
+    }
+
+    .table-x > thead > .hd-toggler {
+        display: none!important;
+    }
+
+    .table-x > tbody > tr {
+        display:flex; flex-direction:column;width:100% !important; 
+    }
+
+    .table-x > thead > tr {
+        display:flex; flex-direction:column;width:100% !important; 
+    }
+
+    .table-x > tbody > tr > td{
+        text-align: left!important;
+    }
+
+    .table-smp > tbody{
+        overflow: scroll;
+    }
+
+    .hide{
+        display: none!important;
+    }
+
+    .custom-file-input{
+        width: 90%;
+    }
+
+    .myaccordion-body > .flex-row{
+        flex-direction: column!important;
+    }
+
+    .myaccordion-body > .flex-row > .col-label{
+        padding-left: 5px;
+    }
+
+    .myaccordion-body > .flex-row select,input[type="text"],input[type="date"]{
+        width:90%!important;
+    }
+
+    .popEdit {
+        width: 100%;
+        padding: 60px 0 0 0;
+    }
+
+    .popEdit > .popEdit-container {
+        padding: 0;
+    }
+
+    .popEdit > .popEdit-container > .flex-row {
+        flex-direction: column!important;
+        padding-left: 5px;
+    }
+
+    .popEdit > .popEdit-container > .flex-row.float-bottom {
+        left: 0;
+    }
+
+    .popEdit > .popEdit-container > .flex-row > .col-label{
+        padding-left: 5px;
+    }
+
+    .popEdit > .popEdit-container > .flex-row select,input[type="text"],input[type="date"]{
+        width:90%!important;
+    }
+
   }

@@ -280,6 +280,7 @@
 
     <script>
     function readFile() {
+      $('.idlePopUp').removeClass('hide');  
       // Get the file input element
       var fileInput = document.getElementById('file-input');
     
@@ -348,8 +349,13 @@
             r.forEach((p)=>{
                 d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
             });
+            
+            var filter_ = (d)=> {
+                val = $('#srcfilter').val();
+                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
+            };
 
-            data.forEach((d)=>{
+            data.filter(filter_).forEach((d)=>{
                 d['no kp'] = d['no kp'].replace('-','').trim();
                 ic = d['no kp'];
                 //nx = d3.selectAll('._' + ic + ':checked').data();
@@ -401,7 +407,7 @@
 
             _d = data.filter((d)=> {
                 //console.log(d);
-                return (d['nama'].match(val) || d['email'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
+                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
             });
 
             //console.log(_d);
@@ -632,7 +638,10 @@
             nx = d3.selectAll('._' + ic + ':checked').data();
             n = nx.length;
             d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
-        })
+        });
+
+
+        $('.idlePopUp').addClass('hide');
     }
     </script>
 

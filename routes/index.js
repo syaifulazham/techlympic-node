@@ -224,8 +224,8 @@ router.get('/daftar', function (req, res) {
 });
 
 router.get('/reset-password', function (req, res) {
-  var session = req.cookies['localId'];
-  res.render('main.ejs', { user: session.user, page: 'reset-password.ejs' });
+  //var session = req.cookies['localId'];
+  res.render('main.ejs', { user: {}, page: 'reset-password.ejs' });
 });
 
 router.get('/user-panel', function (req, res) {

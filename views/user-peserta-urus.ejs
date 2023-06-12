@@ -280,7 +280,16 @@
                 d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
             });
 
-            data.forEach((d)=>{
+            val = $('#srcfilter').val();
+            _kelas = $('#kelas').val();
+            _bangsa = $('#bangsa').val();
+            _jantina = $('#jantina').val();
+            var filter_ = (d)=> {
+                //console.log(d);
+                return (d.nama.toUpperCase().match(val.toUpperCase()) || d.kp.match(val)) && d.darjah_tingkatan.match(_kelas) && d.bangsa.match(_bangsa) && d.jantina.match(_jantina)
+            };
+
+            data.filter(filter_).forEach((d)=>{
                 ic = d.kp;
                 //nx = d3.selectAll('._' + ic + ':checked').data();
                 n = r.length;
@@ -336,10 +345,11 @@
             val = $('#srcfilter').val();
             _kelas = $('#kelas').val();
             _bangsa = $('#bangsa').val();
-
+            _jantina = $('#jantina').val();
+            _pertandingan = $('#pertandingan').val();
             _d = data.filter((d)=> {
                 //console.log(d);
-                return (d.nama.toUpperCase().match(val.toUpperCase()) || d.kp.match(val)) && d.darjah_tingkatan.match(_kelas) && d.bangsa.match(_bangsa)
+                return (d.nama.toUpperCase().match(val.toUpperCase()) || d.kp.match(val)) && d.darjah_tingkatan.match(_kelas) && d.bangsa.match(_bangsa) && d.jantina.match(_jantina) && d.program.match(_pertandingan)
             });
 
             //console.log(_d);
@@ -367,7 +377,7 @@
 
         thead = table.append('thead');
 
-        trhs = thead.append('tr');
+        trhs = thead.append('tr').attr('class','hd-toggler');;
         ths = trhs.append('th').attr('colspan',9);
         //BUTTON to save
         var savethis = (e)=>{
@@ -378,10 +388,19 @@
 
             var MAX_ROW = 50;
 
-            var n = Math.ceil(data.length/MAX_ROW);
+            _kelas = $('#kelas').val();
+            _bangsa = $('#bangsa').val();
+            _jantina = $('#jantina').val();
+            _pertandingan = $('#pertandingan').val();
+            var filter_ = (d)=> {
+                //console.log(d);
+                return (d.nama.toUpperCase().match(val.toUpperCase()) || d.kp.match(val)) && d.darjah_tingkatan.match(_kelas) && d.bangsa.match(_bangsa) && d.jantina.match(_jantina) && d.program.match(_pertandingan)
+            };
+
+            var n = Math.ceil(data.filter(filter_).length/MAX_ROW);
             pages = n;
 
-            data.forEach((d)=>{
+            data.filter(filter_).forEach((d)=>{
                 sel_ = [];
                 d3.selectAll('._'+d.kp + ':checked').data().forEach((d)=>{
                     sel_.push(d.acara);
@@ -444,7 +463,7 @@
         bts_simpan.on('click', savethis);
         d3.select('#saveThis').on('click', savethis);
 
-        trh = thead.append('tr');
+        trh = thead.append('tr').attr('class','hd-toggler');
         trh.selectAll('th').data(keys).enter().append('th').text(d=>d.toUpperCase());
         trh.append('th').text('JANTINA');
         trh.append('th').text('TARIKH LAHIR');
@@ -475,7 +494,7 @@
         });
 
         trh2 = thead.append('tr');
-        src = trh2.append('td').attr('colspan',3).append('input').attr('type','text').style('width','100%').attr('id','srcfilter');
+        src = trh2.append('td').attr('colspan',3).append('input').attr('type','text').style('width','100%').attr('id','srcfilter').attr('placeholder','taipkan tapisan anda di sini...');
 
         src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
         src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
@@ -491,14 +510,18 @@
         trh2.append('td'); // empty header
 
         var lst2 = lst.slice();
-        lst2.unshift('Belum memilih acara');
-        lst2.unshift('Semua Acara');
-        src3 = trh2.append('td').append('select').style('width','100%');
-        src3.selectAll('option').data(lst2).enter().append('option').text(d=>d);
+        //lst2.unshift('Belum memilih acara');
+        lst2.unshift('');
+        src4 = trh2.append('td').append('select').attr('id','pertandingan').style('width','100%');
+        src4.selectAll('option').data(lst2).enter().append('option').text(d=>d);
 
+        //filter
         src.on('keyup', doFilter);
         src2.on('change', doFilter);// kelas
         src2x.on('change', doFilter); //bangsa
+        src3.on('change', doFilter); //jantina
+        src4.on('change', doFilter); //pertandingan
+
 
         trh2.append('td'); // empty header
 
