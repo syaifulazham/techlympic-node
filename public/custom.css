@@ -913,6 +913,21 @@ code {
         overflow: scroll;
     }
 
+    .table-smp.detail-profile > tbody > tr {
+        display:flex; flex-direction:column;width:100% !important; 
+    }
+
+    .table-smp.detail-profile > tbody > tr > td {
+        text-align: left;
+        width: 100%;
+        height: 35px!important;
+    }
+
+    .table-smp.detail-profile > tbody > tr > td:empty {
+        display: none;
+    }
+      
+
     .hide{
         display: none!important;
     }
@@ -958,5 +973,7 @@ code {
     .popEdit > .popEdit-container > .flex-row select,input[type="text"],input[type="date"]{
         width:90%!important;
     }
+
+
 
   }
