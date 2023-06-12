@@ -515,6 +515,7 @@ const action = {
     },
     insertOrUpdate: (req, res, next) => {
       try{
+        var session = req.cookies['localId'];
         var pesertaList = req.body.peserta;
         pesertaList.forEach(d=>{d.usr_email = session.user.email});
         API.peserta.insertOrUpdate(pesertaList, (d) => {
