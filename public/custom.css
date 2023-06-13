@@ -879,6 +879,15 @@ code {
     padding: 10px 10px 10px 25px;
 }
 
+.header-pilihan:hover{
+    cursor: pointer;
+    color: var(--gold);
+}
+
+.login-toggler{
+    display: hide;
+    margin-left: 5px;
+}
 
 @media (max-width: 767px) {
     .login {
@@ -886,6 +895,10 @@ code {
     }
 
     .login > .w-500{
+        width:100%!important;
+    }
+
+    .login > .pilihan > .w-500{
         width:100%!important;
     }
 
@@ -986,6 +999,8 @@ code {
         width:90%!important;
     }
 
-
+    .login-toggler{
+        display: block;
+    }
 
   }

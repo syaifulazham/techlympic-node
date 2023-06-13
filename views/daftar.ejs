@@ -2,23 +2,27 @@
     <div class="login center flex-column">
         <h3>Daftar</h3>
         
-        <div class="width-full text-yellow">Pilihan 2</div>
-        <span>...atau anda boleh daftar menggunakan akaun google</span>
-        <a class="button my-6 w-500" href="/auth/google"><i class="fa-brands fa-google"></i>&nbsp;&nbsp;Daftar/ Log Masuk dengan Google</a>
+        <div class="width-full text-yellow header-pilihan"><i class="fa-solid fa-circle-chevron-down"></i>&nbsp;&nbsp;Pilihan 1</div>
+        <div class="pilihan">
+            <span>Anda boleh daftar menggunakan akaun google anda</span>
+            <a class="button my-6 w-500" href="/auth/google"><i class="fa-brands fa-google"></i>&nbsp;&nbsp;Daftar/ Log Masuk dengan Google</a>
+        </div>
         
         <hr class="hr-border">
         
-        <div class="width-full text-yellow">Pilihan 1</div>
-        <span>Daftar email anda</span>
-        <span id="valemail" class="err hide">*Sila isikan email dengan format yang betul</span>
-        <input class="my-6 w-500" type="text" id="txtemail" placeholder="Email"></input>
-        <span>Daftar Kata Laluan (sekurang-kurangnya 6 karakter)</span>
-        <span id="valpass" class="err hide">*Sila isikan kata laluan sekurang-kurangnya 6 karakter</span>
-        <input class="my-6 w-500" type="password" id="txtpass" placeholder="Kata Laluan"></input>
-        <input class="my-6 w-500" type="password" id="txtrepass" placeholder="Taip Semula Kata Laluan"></input>
-        <span id="valrepass" class="err hide">*Pastikan anda taipkan semula kata laluan dengan betul</span>
-        <div class="flex-row width-full pxx-6">
-            <button class="button my-6 w-50p float-right" onclick="register()">Daftar</button>
+        <div class="width-full text-yellow header-pilihan"><i class="fa-solid fa-circle-chevron-down"></i>&nbsp;&nbsp;Pilihan 2</div>
+        <div class="pilihan hide">
+            <span>Atau daftarkan email dan kata laluan anda di sini</span>
+            <span id="valemail" class="err hide">*Sila isikan email dengan format yang betul</span>
+            <input class="my-6 w-500" type="text" id="txtemail" placeholder="Email"></input>
+            <span>Daftar Kata Laluan (sekurang-kurangnya 6 karakter)</span>
+            <span id="valpass" class="err hide">*Sila isikan kata laluan sekurang-kurangnya 6 karakter</span>
+            <input class="my-6 w-500" type="password" id="txtpass" placeholder="Kata Laluan"></input>
+            <input class="my-6 w-500" type="password" id="txtrepass" placeholder="Taip Semula Kata Laluan"></input>
+            <span id="valrepass" class="err hide">*Pastikan anda taipkan semula kata laluan dengan betul</span>
+            <div class="flex-row width-full pxx-6">
+                <button class="button my-6 w-50p float-right" onclick="register()">Daftar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -28,6 +32,9 @@
 </div>
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
 <script>
+    $('.header-pilihan').on('click', ()=>{
+        $('.pilihan').toggleClass('hide');
+    })
     function register(){
         $('#valemail').addClass('hide');
         $('#valpass').addClass('hide');

@@ -20,7 +20,10 @@
             <%}%>
             <h1>Techlympics 2023</h1>
             <% if (!user.email) { %>
-                <a class="button" href="/daftar">Sertai kami</a>
+                <div class="flex-row">
+                    <a class="button" href="/daftar">Sertai kami</a>
+                    <a class="button login-toggler" href="/login">Log Masuk</a>
+                </div>
             <%}%>
         
         </div>
