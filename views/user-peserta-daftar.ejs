@@ -343,17 +343,21 @@
         
         
         var setCommonPertandingan = (e)=>{
-            var r = d3.selectAll('.chk_acara:checked').data();
-            
-            d3.selectAll('.chk-all').property('checked',false);
-            r.forEach((p)=>{
-                d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
-            });
-            
+           
             var filter_ = (d)=> {
                 val = $('#srcfilter').val();
                 return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
             };
+
+            var r = d3.selectAll('.chk_acara:checked').data();
+
+            console.log('data for r: ', r);
+            
+            d3.selectAll('.peserta:not(.hide) .chk-all').property('checked',false);
+            r.forEach((p)=>{
+                d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
+            });
+            
 
             data.filter(filter_).forEach((d)=>{
                 d['no kp'] = d['no kp'].replace('-','').trim();
@@ -471,6 +475,9 @@
             if(saving_data.length > 0){
                 saving_batch.push(saving_data.slice());
             }
+
+
+            console.log('saving_data', saving_data);
 
             
             //console.log(saving_batch);
