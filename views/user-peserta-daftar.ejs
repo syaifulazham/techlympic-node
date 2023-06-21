@@ -336,6 +336,24 @@
     }
 
 
+    function repareIC(kp){
+        var kp_ = kp.replace('-','').replace('-','').trim();
+        var res = kp_;
+
+        if(kp.length < 12){
+            var n = 12 - kp.length;
+            var zero = '';
+            for(i=0;i<n;i++){
+                zero+='0';
+            }
+
+            res = zero + kp_ + '';
+        }
+
+        return res;
+    }
+
+
     function renderD3Table(lst, data){
         //const distinct = arr.filter((value, index, self) => {
         //    return self.indexOf(value) === index;
@@ -377,6 +395,7 @@
         data.forEach((d)=>{
             d['darjah/ tingkatan'] = d['darjah/ tingkatan'] + '';
             d['no kp'] = d['no kp'] + '';
+            d['no kp'] = repareIC(d['no kp']);
             
             d['bangsa'] = d['bangsa']===undefined?'':d['bangsa'];
             d['email'] = d['email']===undefined?'':d['email'];
