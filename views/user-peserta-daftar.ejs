@@ -364,7 +364,7 @@
            
             var filter_ = (d)=> {
                 val = $('#srcfilter').val();
-                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val()) && d['jantina'].match($('#jantina').val())
+                return (d['nama'].toUpperCase().match(val.toUpperCase()) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val()) && d['jantina'].match($('#jantina').val())
             };
 
             var r = d3.selectAll('.chk_acara:checked').data();
