@@ -402,7 +402,13 @@
 
             kelas.push(d['darjah/ tingkatan']);
             bangsa.push(d['bangsa']);
+
+            _j = d['no kp'].charAt(d['no kp'].length - 1)*1;
+            _v = _j%2==0?'Perempuan':'Lelaki';
+            d['jantina'] = _v;
         });
+
+        console.table(data);
 
 
         kelas.unshift('');
@@ -429,8 +435,8 @@
             val = $('#srcfilter').val();
 
             _d = data.filter((d)=> {
-                //console.log(d);
-                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())
+                console.log(d,$('#jantina').val(), d['jantina'], d['jantina'].match($('#jantina').val()));
+                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())  && d['jantina'].match($('#jantina').val());
             });
 
             //console.log(_d);
@@ -571,12 +577,13 @@
         var lst2 = lst.slice();
         lst2.unshift('Belum memilih acara');
         lst2.unshift('Semua Acara');
-        src3 = trh2.append('td').append('select').style('width','100%');
-        src3.selectAll('option').data(lst2).enter().append('option').text(d=>d);
+        src4 = trh2.append('td').append('select').style('width','100%');
+        src4.selectAll('option').data(lst2).enter().append('option').text(d=>d);
 
         src.on('keyup', doFilter);
         src2.on('change', doFilter);
         src2x.on('change', doFilter); //bangsa
+        src3.on('change', doFilter); //jantina
 
         tbody = table.append('tbody')
         tbody.selectAll('tr').data(data.sort((a,b)=>a['darjah/ tingkatan']-b['darjah/ tingkatan'])).enter().append('tr').call((o)=>{
