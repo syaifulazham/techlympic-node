@@ -435,8 +435,8 @@
             val = $('#srcfilter').val();
 
             _d = data.filter((d)=> {
-                console.log(d,$('#jantina').val(), d['jantina'], d['jantina'].match($('#jantina').val()));
-                return (d['nama'].match(val) || d['no kp'].match(val)) && d['darjah/ tingkatan'].match($('#kelas').val())  && d['jantina'].match($('#jantina').val());
+                console.log(d['nama'],d['nama'].match(val));
+                return (d['no kp'].match(val) || d['nama'].toUpperCase().match(val.toUpperCase())) && d['darjah/ tingkatan'].match($('#kelas').val())  && d['jantina'].match($('#jantina').val());
             });
 
             //console.log(_d);
