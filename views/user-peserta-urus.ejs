@@ -615,8 +615,11 @@
                 })
             });
 
+            
+
             btnEdit = o.append('td').append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
             btnEdit.on('click', (e, d)=>{
+                d3.select('#individu_acara') .selectAll('input[type="checkbox"]').property('checked', false);
                 d3.select('.popEdit').classed('hide', false);
                 $('#txtnama').val(d.nama);
                 $('#txtkp').val(d.kp);
@@ -625,7 +628,9 @@
                 $('#txtemail').val(d.email);
                 $('#txtdarjah').val(d.darjah_tingkatan);
 
-
+                d3.selectAll('._' + d.kp + ':checked').data().forEach((k)=>{
+                    d3.select('#individu_acara') .selectAll('input[type="checkbox"]').filter(a=> a.acara === k.acara).property('checked', true);
+                })
             })
         });
         data.forEach((d)=>{
