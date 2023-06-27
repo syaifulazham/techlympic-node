@@ -277,7 +277,7 @@
             
             d3.selectAll('.peserta:not(.hide) .chk-all').property('checked',false);
             r.forEach((p)=>{
-                d3.selectAll('.chk-all[value="' + p.program + '"]').property('checked',true);
+                d3.selectAll('.peserta:not(.hide) .chk-all[value="' + p.program + '"]').property('checked',true);
             });
 
             val = $('#srcfilter').val();

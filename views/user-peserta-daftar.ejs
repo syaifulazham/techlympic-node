@@ -374,7 +374,7 @@
             d3.selectAll('.peserta:not(.hide) .chk-all').property('checked',false);
             r.forEach((p)=>{
                 //console.log('pppp', p);
-                d3.selectAll('.chk-all[value="' + p.program + '"]').property('checked',true);
+                d3.selectAll('.peserta:not(.hide) .chk-all[value="' + p.program + '"]').property('checked',true);
             });
             
 
@@ -480,6 +480,7 @@
                 dob = $('#dob_' +d['no kp'] ).val();
 
                 var sel = sel_.join('|');
+                console.log(d['no kp'],' === ', sel);
                 saving_data.push({
                     nama: d.nama,
                     kp: d['no kp'],
@@ -497,6 +498,8 @@
                 }
                 //
             });
+
+            console.log('saving_data====================================>>>>>>>>>',saving_data);
 
             if(saving_data.length > 0){
                 saving_batch.push(saving_data.slice());
