@@ -45,6 +45,10 @@
     background-color: red !important;
 }
 
+.bg-light{
+    background-color: var(--text-light);
+}
+
 .score{
     background-color: #000;
     color: #fff;
@@ -777,6 +781,10 @@ code {
     color: yellow;
 }
 
+.text-red{
+    color: red;
+}
+
 .overflowy-scroll{
     overflow-y: scroll;
 }
@@ -832,6 +840,11 @@ code {
 
 .toggle-next-level{
     padding: 0 6px 0 6px;
+}
+
+.kumpulan{
+    display: flex;
+    flex-direction: row;
 }
 
 .col-label{
@@ -950,6 +963,27 @@ code {
 
     .table-smp.detail-profile > tbody > tr > td:empty {
         display: none;
+    }
+
+    #peserta-container{
+        flex-direction: column !important;
+    }
+
+    .program-card{
+        width: 98%;
+    }
+
+    .program-peserta{
+        min-height: 60px;
+    }
+
+    .program-peserta > div > strong::after {
+        content: "..."; /* Display an ellipsis at the end of the text */
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: white;
+        padding-left: 4px;
     }
       
 

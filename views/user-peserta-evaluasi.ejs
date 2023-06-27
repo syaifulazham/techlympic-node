@@ -120,9 +120,18 @@
             
             data.filter((b)=>{
                 //console.log('filtered...',a.prog_name.match(b.program));
-                return a.prog_name.match(b.program) && b.program.length>2
+                a1 = a.prog_name.replace('(','').replace(')','').replace('*','');
+                a2 = b.program.replace('(','').replace(')','').replace('*','');
+                return a1.match(a2.program) && a2.length>2
             }).forEach((d)=>{
-                tmp.peserta.push(d);
+                var p = {
+                    nama: d.nama,
+                    kp: d.kp,
+                    kumpulan: 0,
+                    pertandingan: a.prog_name.split(' ')[0].replace('.','')
+                }
+                
+                tmp.peserta.push(p);
             });
             prog_.push(tmp);
         });
@@ -133,22 +142,45 @@
             hdr = o.append('div').attr('class','program-card-header flex-row center').append('span').text(d=>d.program);
 
             bdy = o.append('div').attr('class','program-body');
-            bdy.selectAll('.program-peserta').data(d=>d.peserta).enter().append().call((b)=>{
-                b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp);
+            bdy.selectAll('.program-peserta').data(d=>d.peserta).enter().append('div').call((b)=>{
+                b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp + ' a' + d.pertandingan);
                 nama = b.append('div').attr('class','flex-column');
                 nama.append('strong').style('line-height','0.7').style('margin-top','5px').text(d=>d.nama);
                 nama.append('small').text(d=>d.kp);
 
-                btn = b.append('div').attr('class','toggle-next-level flext-row float-right center text-dark').append('i').attr('class','fa-solid fa-toggle-off fa-2x');
+                gkumpulan = b.append('div').attr('class','kumpulan float-right');
 
-                b.on('mousemove',(e, d)=>{
-                    d3.selectAll('.p_' + d.kp).classed('bg-light',true).classed('text-dark',true);
+                btn1 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class','k1 fa-solid fa-toggle-off fa-2x');
+                btn2 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class','k2 fa-solid fa-toggle-off fa-2x');
+
+                btn1.on('mousemove',(e, d)=>{
+                    d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',true).classed('text-dark',true);
                 }).on('mouseout',(e, d)=>{
-                    d3.selectAll('.p_' + d.kp).classed('bg-light',false).classed('text-dark',false);
+                    d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
                 }).on('click',(e, d)=>{
                     //d3.selectAll('.program-peserta').classed('bg-green',false);
-                    toggle = d3.selectAll('.p_' + d.kp).classed('bg-green');
-                    d3.selectAll('.p_' + d.kp).classed('bg-green',!toggle);
+                    toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red');
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',!toggle);
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('fa-toggle-off',toggle).classed('fa-toggle-on',!toggle);
+                    
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',false);
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
+                    d.kumpulan = toggle?1:0;
+                });
+
+                btn2.on('mousemove',(e, d)=>{
+                    d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',true).classed('text-dark',true);
+                }).on('mouseout',(e, d)=>{
+                    d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
+                }).on('click',(e, d)=>{
+                    //d3.selectAll('.program-peserta').classed('bg-green',false);
+                    toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green');
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',!toggle);
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('fa-toggle-off',toggle).classed('fa-toggle-on',!toggle);
+
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',false);
+                    d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
+                    d.kumpulan = toggle?2:0;
                 })
             });
         });
