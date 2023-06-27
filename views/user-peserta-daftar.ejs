@@ -373,7 +373,8 @@
             
             d3.selectAll('.peserta:not(.hide) .chk-all').property('checked',false);
             r.forEach((p)=>{
-                d3.selectAll('.chk-all[value="' + p + '"]').property('checked',true);
+                //console.log('pppp', p);
+                d3.selectAll('.chk-all[value="' + p.program + '"]').property('checked',true);
             });
             
 
@@ -470,7 +471,7 @@
             pages = n;
 
             data.forEach((d, i)=>{
-                sel_ = [];
+                var sel_ = [];
                 d3.selectAll('._'+d['no kp'] + ':checked').data().forEach((d)=>{
                     sel_.push(d.acara);
                 });
@@ -478,7 +479,7 @@
                 jantina = $('#gender_' +d['no kp'] ).val();
                 dob = $('#dob_' +d['no kp'] ).val();
 
-                sel = sel_.join('|');
+                var sel = sel_.join('|');
                 saving_data.push({
                     nama: d.nama,
                     kp: d['no kp'],
