@@ -12,7 +12,9 @@
                     </div>
                     <hr>
                     <div class="card-label">
-                        <span><%=d.prog_name%></span>
+                        <%if(d.prog_name){%>
+                            <span><%=d.prog_name%></span>
+                        <%}%>
                     </div>
                 </div>    
             <%})%>

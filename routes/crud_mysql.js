@@ -299,39 +299,39 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 sqlstr = `
-                    SELECT 'Jumlah Peserta' prog_name, COUNT(*) peserta 
-                    FROM peserta where usr_email = ?
-
-                    UNION 
-
-                    SELECT 'Peserta telah didaftarkan program' prog_name, COUNT(*) peserta 
-                    FROM peserta WHERE program <> '' and usr_email = ?
-
-                    UNION 
-
-                    SELECT 'Peserta belum didaftarkan program' prog_name, COUNT(*) peserta 
-                    FROM peserta WHERE program = '' and usr_email = ?
-
-                    UNION 
-
-                    SELECT aa.prog_name, ifnull(bb.peserta,0) peserta
-                    FROM (
-                        SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
-                        FROM (SELECT usr_email, peringkat FROM user WHERE usr_email=?) a
-                        left join program b
-                        ON a.peringkat = b.target_group
-                        ORDER BY b.prog_code
-                    ) aa
-                    LEFT JOIN 
-                    (SELECT p prog_name, COUNT(*) peserta
-                    FROM(
-                    SELECT 
-                    kp,if(replace(replace(replace(a.program,'(',''),')',''),'*','') REGEXP replace(replace(replace(b.prog_name,'(',''),')',''),'*',''), b.prog_name,'') p
-                    FROM peserta a, program b
-                    where a.usr_email = ?
-                    ) m 
-                    WHERE m.p <> ''
-                    GROUP BY m.p) bb USING(prog_name)
+                SELECT 'Jumlah Peserta' prog_name, COUNT(*) peserta 
+                FROM peserta where usr_email = ?
+                
+                UNION 
+                
+                SELECT 'Peserta telah didaftarkan program' prog_name, COUNT(*) peserta 
+                FROM peserta WHERE program <> '' and usr_email = ?
+                
+                UNION 
+                
+                SELECT 'Peserta belum didaftarkan program' prog_name, COUNT(*) peserta 
+                FROM peserta WHERE program = '' and usr_email = ?
+                
+                UNION 
+                
+                SELECT aa.prog_name, ifnull(bb.peserta,0) peserta
+                FROM (
+                   SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
+                    FROM (SELECT usr_role, usr_email, if(usr_role='Ibu Bapa','All',peringkat) lvl, peringkat FROM user WHERE usr_email=? ) a
+                    left JOIN (SELECT prog_code, prog_name, prog_desc, theme, color, target_group from program) b
+                    ON if(usr_role='Ibu Bapa','All',peringkat) = if(usr_role='Ibu Bapa','All',b.target_group) 
+                    ORDER BY target_group, b.prog_code
+                ) aa
+                LEFT JOIN 
+                (SELECT p prog_name, COUNT(*) peserta
+                FROM(
+                SELECT 
+                kp,if(replace(replace(replace(a.program,'(',''),')',''),'*','') REGEXP replace(replace(replace(b.prog_name,'(',''),')',''),'*',''), b.prog_name,'') p
+                FROM peserta a, program b
+                where a.usr_email = ?
+                ) m 
+                WHERE m.p <> ''
+                GROUP BY m.p) bb USING(prog_name);
                 `
                 con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
                     if (err) {
@@ -371,13 +371,21 @@ let API = {
             //console.log('my user is: ', usr);
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
-                con.query(`
+                /*
                 SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
                 FROM (SELECT usr_email, peringkat FROM user ` + (usr ==='--none--'?'':'WHERE usr_email=?') + ` ) a
                 left join program b
                 ON a.peringkat = b.target_group
                 ORDER BY b.prog_code
-                `, [usr],function (err, result) {
+                */
+                var sql = `
+                SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
+                FROM (SELECT usr_role, usr_email, if(usr_role='Ibu Bapa','All',peringkat) lvl, peringkat FROM user ` + (usr ==='--none--'?'':'WHERE usr_email=?') + ` ) a
+                left JOIN (SELECT prog_code, prog_name, prog_desc, theme, color, target_group from program) b
+                ON if(usr_role='Ibu Bapa','All',peringkat) = if(usr_role='Ibu Bapa','All',b.target_group) 
+                ORDER BY target_group, b.prog_code
+                `;
+                con.query(sql, [usr],function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {

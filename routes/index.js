@@ -547,6 +547,8 @@ const action = {
       try{
         var session = req.cookies['localId'];
         usr = (session.user==undefined || session==undefined) ? '--none--' :session.user.email;
+
+        console.log('USER_ROLE____>>>>', session.usr_role);
         API.program.list(usr, (result)=>{
           res.send(result)
         });

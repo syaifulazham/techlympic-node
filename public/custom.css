@@ -163,10 +163,16 @@ body {
     min-height: 500px;
     color: var(--text-dark) !important;
     padding: 80px;
+    overflow-y: scroll;
 }
 
 .acara-list h5{
     color: var(--text-dark) !important;
+}
+
+#individu_acara{
+    height: 300px;
+    overflow-y: scroll;
 }
 
 .popUp-container{
@@ -800,6 +806,21 @@ code {
 .left-border{
     border-left: 1px solid var(--text-light);
     margin-left: 8px;
+}
+
+.Belia{
+    background-color: #fff;
+    color: #000;
+}
+
+.Menengah{
+    background-color: #091d49;
+    color: #fff;
+}
+
+.Rendah{
+    background-color: #1f7681;
+    color: #fff;
 }
 
 /*-------program-card-----------*/
