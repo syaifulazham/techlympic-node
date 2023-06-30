@@ -8,7 +8,7 @@
                         <tr>
                             <th colspan="5">
                                 <div class="flex-row">
-                                    <div class="button float-right"><i
+                                    <div id="btnSave" class="button float-right"><i
                                             class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
                                 </div>
                             </th>
@@ -124,11 +124,13 @@
                 a2 = b.program.replace('(','').replace(')','').replace('*','');
                 return a1.match(a2.program) && a2.length>2
             }).forEach((d)=>{
+                console.log('-----d: ',d)
                 var p = {
                     nama: d.nama,
                     kp: d.kp,
                     kumpulan: 0,
-                    pertandingan: a.prog_name.split(' ')[0].replace('.','')
+                    pertandingan: a.prog_name.split(' ')[0].replace('.',''),
+                    nama_pertandingan: a.prog_name
                 }
                 
                 tmp.peserta.push(p);
@@ -165,7 +167,7 @@
                     
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',false);
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
-                    d.kumpulan = toggle?1:0;
+                    d.kumpulan = !toggle?1:0;
                 });
 
                 btn2.on('mousemove',(e, d)=>{
@@ -180,7 +182,7 @@
 
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',false);
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
-                    d.kumpulan = toggle?2:0;
+                    d.kumpulan = !toggle?2:0;
                 })
             });
         });
@@ -193,6 +195,11 @@
             API.load(peringkat, (data)=>{
                 renderCards(data, prog);
             });
+        });
+
+        d3.select('#btnSave').on('click', ()=>{
+            var g1 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan=1);
+            var g2 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan=2);
         });
     }
 </script>
