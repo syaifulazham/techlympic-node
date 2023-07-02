@@ -198,8 +198,10 @@
         });
 
         d3.select('#btnSave').on('click', ()=>{
-            var g1 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan=1);
-            var g2 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan=2);
+            var g1 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===1);
+            var g2 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===2);
+
+            console.log(g1, g2);
         });
     }
 </script>
