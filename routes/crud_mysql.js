@@ -295,6 +295,71 @@ let API = {
               });
         },
 
+        deletePesertaNegeri: (usr, fn) =>{
+            if(usr=='') return 0;
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.query("delete from peserta_negri WHERE usr_email = ?",[usr], 
+                function (err, result) {
+                    if(err){
+                        fn({
+                            status: false,
+                            msg: ''
+                        });
+                    }else {
+                        fn({
+                            status: true,
+                            msg: 'Proceed'
+                        })
+                    }
+                });
+            } catch(e){
+                console.log(e);
+            }
+        },
+
+        insertOrUpdateNegeri: (pesertaList, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            con.beginTransaction((err) => {
+                if (err) throw err;
+                
+                
+                // Loop through pesertaList and build INSERT or UPDATE query
+                pesertaList.forEach((peserta) => {
+                  const query = `
+                    INSERT INTO peserta_negeri
+                    SET ?
+                    ON DUPLICATE KEY UPDATE
+                    program = VALUES(program),
+                    kumpulan = VALUES(kumpulan)
+                  `;
+            
+                  // Execute query
+                  con.query(query, peserta, (err, result) => {
+                    if (err) {
+                        con.rollback(() => {
+                        throw err;
+                      });
+                    }
+                  });
+                });
+            
+                // Commit transaction
+                con.commit((err) => {
+                  if (err) {
+                    con.rollback(() => {
+                      throw err;
+                    });
+                  }
+                  //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                });
+            
+                // Close connection
+                con.end();
+                fn(`${pesertaList.length} peserta negeri berjaya ditambah/ dikemaskini`);
+              });
+        },
+
         countPenyertaan: (usr_email, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
@@ -352,6 +417,32 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        loadPesertaNegeri: (email, peringkat, fn) => {
+            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`
+                        SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
+                                DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
+                                a.program, ifnull(b.program,'') program_negeri, 
+                                ifnull(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
+                                ifnull(b.kumpulan,0) kumpulan
+                        from peserta a
+                        LEFT JOIN peserta_negeri b USING(usr_email,kp)
+                        where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {

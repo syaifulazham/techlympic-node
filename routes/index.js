@@ -526,6 +526,24 @@ const action = {
       }
     },
 
+    addPesertaNegeri: (req, res, next)=>{
+      try{
+        var session = req.cookies['localId'];
+        var pesertaList = req.body.peserta;
+        pesertaList.forEach(d=>{d.usr_email = session.user.email});
+        console.log('pesertaList: ', pesertaList);
+        API.peserta.deletePesertaNegeri(session.user.email, ()=>{
+          API.peserta.insertOrUpdateNegeri(pesertaList, (result) => {
+            res.send({
+              msg: result
+            });
+          })
+        });
+      }catch(err){
+        console.log('error: ', err);
+      }
+    },
+
     count: (req, res, next) => {
       var session = req.cookies['localId'];
       usr = session.user.email;
@@ -540,6 +558,14 @@ const action = {
       API.peserta.loadPeserta(usr, req.body.peringkat, (result)=>{
         res.send(result);
       });
+    },
+
+    load_negeri: (req, res, next) => {
+      var session = req.cookies['localId'];
+      usr = session.user.email;
+      API.peserta.loadPesertaNegeri(usr, req.body.peringkat, (result)=>{
+        res.send(result);
+      });
     }
   },
   program: {
@@ -548,7 +574,7 @@ const action = {
         var session = req.cookies['localId'];
         usr = (session.user==undefined || session==undefined) ? '--none--' :session.user.email;
 
-        console.log('USER_ROLE____>>>>', session.usr_role);
+        console.log('USER_ROLE____>>>>', session.user);
         API.program.list(usr, (result)=>{
           res.send(result)
         });
@@ -570,8 +596,10 @@ router.post('/api/user/reset', action.user.reset); // internal password reset
 router.post('/api/user/renew', action.user.renew); // internal password renewal
 router.post('/api/user/login', action.user.login); // internal login
 router.post('/api/peserta/add', action.peserta.insertOrUpdate);
+router.post('/api/peserta/add-negeri', action.peserta.addPesertaNegeri);
 router.post('/api/peserta/count', action.peserta.count);
 router.post('/api/peserta/load', action.peserta.load);
+router.post('/api/peserta/load-negeri', action.peserta.load_negeri);
 router.get('/api/program/list', action.program.list);
 router.post('/api/program/list', action.program.list);
 

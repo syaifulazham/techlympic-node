@@ -1,7 +1,8 @@
 <div class="section-1">
     <%- include ('totembar.ejs') %>
         <div class="workspace">
-            <h2>Evaluasi Peserta</h2>
+            <h2>Peserta Peringkat Negeri</h2>
+            <span>Pilih Peserta anda untuk menyertai pertandingan peringkat negeri</span>
             <div class="heigth-90vh overflow-scroll">
                 <table class="table-x width-full">
                     <thead>
@@ -44,7 +45,7 @@
             load: (peringkat, fn) => {
                 $.ajax({
                         type: "POST",
-                        url: '/api/peserta/load',
+                        url: '/api/peserta/load-negeri',
                         data: {peringkat:peringkat},
                         success: function (res) {
                             d3.select('.popUp').classed('hide',true);
@@ -68,7 +69,7 @@
             addbulk: (data, fn) => {
                 $.ajax({
                         type: "POST",
-                        url: '/api/peserta/add',
+                        url: '/api/peserta/add-negeri',
                         data: {peserta:data},
                         success: function (res) {
                             
@@ -115,6 +116,7 @@
         prog.forEach((a)=>{
             tmp = {
                 program: a.prog_name,
+                pertandingan: a.prog_name.split(' ')[0].replace('.',''),
                 peserta:[]
             };
             
@@ -124,12 +126,13 @@
                 a2 = b.program.replace('(','').replace(')','').replace('*','');
                 return a1.match(a2.program) && a2.length>2
             }).forEach((d)=>{
-                console.log('-----d: ',d)
+                //console.log('-----d: ',d)
                 var p = {
                     nama: d.nama,
                     kp: d.kp,
-                    kumpulan: 0,
+                    kumpulan: d.kumpulan,
                     pertandingan: a.prog_name.split(' ')[0].replace('.',''),
+                    pertandingan_negeri: d.kod_program_negeri,
                     nama_pertandingan: a.prog_name
                 }
                 
@@ -140,26 +143,29 @@
 
         console.log(prog_);
         c.selectAll('.program-card').data(prog_).enter().append('div').call((o)=>{
-            o.attr('class','program-card flex-grow-4');
-            hdr = o.append('div').attr('class','program-card-header flex-row center').append('span').text(d=>d.program);
+            o.attr('class',d=>'program-card flex-grow-4 p' + d.pertandingan);
+            hdr = o.append('div').attr('class','program-card-header flex-row center');
+            hdr.append('span').text(d=>d.program);
+            tot = hdr.append('div').attr('class','npeserta float-right').text(0);
 
             bdy = o.append('div').attr('class','program-body');
             bdy.selectAll('.program-peserta').data(d=>d.peserta).enter().append('div').call((b)=>{
                 b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp + ' a' + d.pertandingan);
                 nama = b.append('div').attr('class','flex-column');
-                nama.append('strong').style('line-height','0.7').style('margin-top','5px').text(d=>d.nama);
+                nama.append('strong').style('line-height','1').style('margin-top','5px').text(d=>d.nama);
                 nama.append('small').text(d=>d.kp);
 
                 gkumpulan = b.append('div').attr('class','kumpulan float-right');
 
-                btn1 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class','k1 fa-solid fa-toggle-off fa-2x');
-                btn2 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class','k2 fa-solid fa-toggle-off fa-2x');
+                btn1 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class',d=>{return 'k1 fa-solid ' + (d.pertandingan==d.pertandingan_negeri && d.kumpulan==1?'fa-toggle-on text-red':'fa-toggle-off') + ' fa-2x'}).html('<sub style="font-size:x-small">1</sub>');
+                btn2 = gkumpulan.append('div').attr('class','toggle-next-level text-dark').append('i').attr('class',d=>{return 'k2 fa-solid ' + (d.pertandingan==d.pertandingan_negeri && d.kumpulan==2?'fa-toggle-on text-green':'fa-toggle-off') + ' fa-2x'}).html('<sub style="font-size:x-small">2</sub>');
 
                 btn1.on('mousemove',(e, d)=>{
                     d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',true).classed('text-dark',true);
                 }).on('mouseout',(e, d)=>{
                     d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
                 }).on('click',(e, d)=>{
+                    console.log(d);
                     //d3.selectAll('.program-peserta').classed('bg-green',false);
                     toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red');
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',!toggle);
@@ -168,6 +174,10 @@
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',false);
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
                     d.kumpulan = !toggle?1:0;
+
+                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('hide',!toggle);
+                    nPeserta = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
+                    d3.select('.p' + d.pertandingan + ' .npeserta').text(nPeserta);
                 });
 
                 btn2.on('mousemove',(e, d)=>{
@@ -175,6 +185,7 @@
                 }).on('mouseout',(e, d)=>{
                     d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
                 }).on('click',(e, d)=>{
+                    console.log(d);
                     //d3.selectAll('.program-peserta').classed('bg-green',false);
                     toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green');
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',!toggle);
@@ -183,6 +194,10 @@
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',false);
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
                     d.kumpulan = !toggle?2:0;
+
+                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('hide',!toggle);
+                    nPeserta = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
+                    d3.select('.p' + d.pertandingan + ' .npeserta').text(nPeserta);
                 })
             });
         });
@@ -200,8 +215,27 @@
         d3.select('#btnSave').on('click', ()=>{
             var g1 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===1);
             var g2 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===2);
+            var mg = [];
 
-            console.log(g1, g2);
+            g1.forEach(d=>{
+                mg.push({
+                    kp: d.kp,
+                    program: d.nama_pertandingan,
+                    kumpulan: d.kumpulan
+                })
+            });
+            g2.forEach(d=>{
+                mg.push({
+                    kp: d.kp,
+                    program: d.nama_pertandingan,
+                    kumpulan: d.kumpulan
+                })
+            });
+
+            console.log(mg);
+            API.addbulk(mg, (msg)=>{
+                console.log(msg)
+            })
         });
     }
 </script>
