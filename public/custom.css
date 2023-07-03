@@ -767,8 +767,14 @@ code {
 
 
 .hide {
-    display: none;
+    display: none!important;
     transition: all 1600ms ease-in-out;
+}
+
+.lock{
+    pointer-events: none!important;
+    color: #707070!important;
+
 }
 
 .text-light{
@@ -856,7 +862,7 @@ code {
     height: 40px;
     padding-left: 10px;
     cursor: pointer;
-    border-bottom: 1px solid var(--text-light);
+    border-bottom: 1px solid #9b9b9b;
 }
 
 .toggle-next-level{
@@ -921,6 +927,21 @@ code {
 .login-toggler{
     display: hide;
     margin-left: 5px;
+}
+
+.npeserta-1{
+    min-width: 35px;
+    width: 35px;
+    background-color: red;
+    border-radius: 25%;
+    color: #fff;
+}
+
+.npeserta-2{
+    min-width: 35px;
+    background-color: green;
+    border-radius: 25%;
+    color: #fff;
 }
 
 @media (max-width: 767px) {

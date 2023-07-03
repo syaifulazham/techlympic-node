@@ -17,16 +17,14 @@
                         
                         <tr>
                             <td>Carian<input placeholder="cari nama/kp peserta..." type="text" id="srcfilter" style="width: 100%;"></td>
-                            <td>Peringkat<select id="peringkat" style="width: 100%;">
-                                    <option value="sekolah">Sekolah</option>
-                                    <option value="daerah">Daerah</option>
-                                    <option value="negeri">Negeri</option>
-                                    <option value="kebangsaan">Kebangsaan</option>
+                            <td>Darjah/ Tingkatan<select id="kelas" style="width: 100%;">
+                                    
                                 </select></td>
                             <td>Program<select id="program" style="width: 100%;">
                                     <option value="">Semua Acara</option>
                                     
-                                </select></td>
+                                </select>
+                            </td>
                         </tr>
                     </thead>
                 </table>
@@ -90,6 +88,7 @@
         console.log('prog -------------------');
         API.programList((prog)=>{
             console.log('-----------',prog);
+            prog = prog.filter(a=>!a.prog_name.match('Quiz-A-Thon'));
             var prog_sel = d3.select('#program');
             prog_sel.selectAll('.prog').data(prog).enter().append('option').attr('value',d=>d.prog_name).text(d=>d.prog_name);
 
@@ -100,6 +99,39 @@
         });
     }
 
+    d3.select('#program').on('change', (e, d)=>{
+        var val = $('#program').val();
+        var kod = val.split(' ')[0].replace('.','');
+
+        d3.selectAll('.program-card').classed('hide',false);
+        if(val.length>2)
+            d3.selectAll('.program-card:not(.p' + kod + ')').classed('hide',true);
+    });
+
+    var dofilter = (d)=>{
+        var val_src = $('#srcfilter').val().toUpperCase();
+        var val_kelas = $('#kelas').val();
+
+        d3.selectAll('.program-peserta').classed('hide',d=>{
+            fsrc = (val_src.length>0?(d.nama.match(val_src) || d.kp.match(val_src)):true);
+            fkelas = (val_kelas.length>0?d.kelas == val_kelas:true);
+            //console.log(val_kelas,d, fsrc, fkelas);
+            return (fsrc && fkelas)?false:true
+        });
+
+    };
+
+    d3.select('#kelas').on('change', (e, d)=>{
+        dofilter(d);
+    });
+
+    d3.select('#srcfilter').on('keyup', (e, d)=>{
+        dofilter(d);
+        //var val = $('#srcfilter').val().toUpperCase();
+
+        //d3.selectAll('.program-peserta').classed('hide',d=>d.nama.match(val) || d.kp.match(val)?false:true);
+    })
+
     go();
 
 </script>
@@ -109,6 +141,21 @@
 <script>
     function renderCards(data, prog){
         console.log('xxxx------>>>',data);
+
+        kelas = [];
+        data.forEach(d=>{
+            kelas.push(d.darjah_tingkatan);
+        });
+
+        kelas = kelas.filter((value, index, self) => {
+            return self.indexOf(value) === index;
+        });
+        kelas = kelas.sort();
+
+        kelas.unshift('');
+
+        d3.select('#kelas').selectAll('option').data(kelas).enter().append('option').attr('value',d=>d).text(d=>d=''?'SEMUA':d.toUpperCase());
+
         var c = d3.select('#peserta-container');
         c.selectAll('*').remove();
 
@@ -129,8 +176,9 @@
                 //console.log('-----d: ',d)
                 var p = {
                     nama: d.nama,
+                    kelas: d.darjah_tingkatan,
                     kp: d.kp,
-                    kumpulan: d.kumpulan,
+                    kumpulan: (a.prog_name.split(' ')[0].replace('.','') === d.kod_program_negeri)?d.kumpulan:0,
                     pertandingan: a.prog_name.split(' ')[0].replace('.',''),
                     pertandingan_negeri: d.kod_program_negeri,
                     nama_pertandingan: a.prog_name
@@ -146,11 +194,14 @@
             o.attr('class',d=>'program-card flex-grow-4 p' + d.pertandingan);
             hdr = o.append('div').attr('class','program-card-header flex-row center');
             hdr.append('span').text(d=>d.program);
-            tot = hdr.append('div').attr('class','npeserta float-right').text(0);
+            
+            nVal = hdr.append('div').attr('class','flex-row npeserta float-right');
+            nVal.append('div').attr('class','npeserta-1').text(0);
+            nVal.append('div').attr('class','npeserta-2').text(0);
 
             bdy = o.append('div').attr('class','program-body');
             bdy.selectAll('.program-peserta').data(d=>d.peserta).enter().append('div').call((b)=>{
-                b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp + ' a' + d.pertandingan);
+                b.attr('class',(d)=>'program-peserta flex-row p_' + d.kp + ' a' + d.pertandingan + (d.pertandingan!==d.pertandingan_negeri && d.pertandingan_negeri.length > 0?' lock':''));
                 nama = b.append('div').attr('class','flex-column');
                 nama.append('strong').style('line-height','1').style('margin-top','5px').text(d=>d.nama);
                 nama.append('small').text(d=>d.kp);
@@ -165,7 +216,7 @@
                 }).on('mouseout',(e, d)=>{
                     d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
                 }).on('click',(e, d)=>{
-                    console.log(d);
+                    //console.log(d);
                     //d3.selectAll('.program-peserta').classed('bg-green',false);
                     toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red');
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('text-red',!toggle);
@@ -174,10 +225,34 @@
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',false);
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
                     d.kumpulan = !toggle?1:0;
+                    //d.pertandingan_negeri = !d.kumpulan>0?d.pertandingan:'';
+                    //console.log('d.pertandingan_negeri :',pertandingan_negeri);
 
-                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('hide',!toggle);
-                    nPeserta = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
-                    d3.select('.p' + d.pertandingan + ' .npeserta').text(nPeserta);
+                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('lock',!toggle);
+                    nPeserta1 = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length*1;
+                    nPeserta2 = d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length*1;
+                    nPeserta = nPeserta1 + nPeserta2;//d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
+                    d3.select('.p' + d.pertandingan + ' .npeserta-1').text(nPeserta1);
+                    d3.select('.p' + d.pertandingan + ' .npeserta-2').text(nPeserta2);
+
+                    //if(nPeserta1>=2){
+                    //    //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
+                    //    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+                    //}else{
+                    //    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1.lock').classed('lock',d=>(d.pertandingan_negeri.length == 0 ?false:true));
+                    //}
+
+                    if(nPeserta>=4){
+                        //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
+                        d3.selectAll('.p' + d.pertandingan + ' .program-peserta:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+                    }else{
+                        d3.selectAll('.p' + d.pertandingan + ' .program-peserta.lock').classed('lock',d=>{
+                            nr = d3.selectAll('.p_' + d.kp + ' .text-red').data().length;
+                            ng = d3.selectAll('.p_' + d.kp + ' .text-green').data().length;
+                            //console.log(d.kp + ' :', (nr+ng));
+                            return ((nr+ng) == 0 ?false:true);
+                        });
+                    }
                 });
 
                 btn2.on('mousemove',(e, d)=>{
@@ -185,7 +260,7 @@
                 }).on('mouseout',(e, d)=>{
                     d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan).classed('bg-light',false).classed('text-dark',false);
                 }).on('click',(e, d)=>{
-                    console.log(d);
+                    //console.log(d);
                     //d3.selectAll('.program-peserta').classed('bg-green',false);
                     toggle = d3.selectAll('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green');
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k2').classed('text-green',!toggle);
@@ -195,12 +270,51 @@
                     d3.select('.p_' + d.kp + '.a' + d.pertandingan + ' i.k1').classed('fa-toggle-off',true).classed('fa-toggle-on',false);
                     d.kumpulan = !toggle?2:0;
 
-                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('hide',!toggle);
-                    nPeserta = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
-                    d3.select('.p' + d.pertandingan + ' .npeserta').text(nPeserta);
+                    d3.selectAll('.p_' + d.kp + ':not(.a' + d.pertandingan + ')').classed('lock',!toggle);
+                    nPeserta1 = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length*1;
+                    nPeserta2 = d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length*1;
+                    nPeserta = nPeserta1 + nPeserta2;//d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
+                    d3.select('.p' + d.pertandingan + ' .npeserta-1').text(nPeserta1);
+                    d3.select('.p' + d.pertandingan + ' .npeserta-2').text(nPeserta2);
+
+                    if(nPeserta>=4){
+                        //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
+                        d3.selectAll('.p' + d.pertandingan + ' .program-peserta:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+                    }else{
+                        //d3.selectAll('.p' + d.pertandingan + ' .program-peserta').classed('lock',d=>(d.pertandingan!==d.pertandingan_negeri && d.kumpulan !== 0?true:false));
+                        d3.selectAll('.p' + d.pertandingan + ' .program-peserta.lock').classed('lock',d=>{
+                            nr = d3.selectAll('.p_' + d.kp + ' .text-red').data().length;
+                            ng = d3.selectAll('.p_' + d.kp + ' .text-green').data().length;
+                            //console.log(d.kp + ' :', (nr+ng));
+                            return ((nr+ng) == 0 ?false:true);
+                        });
+                    }
                 })
             });
         });
+
+        
+        prog_.forEach(d=>{
+            nPeserta1 = d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length*1;
+            nPeserta2 = d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length*1;
+            nPeserta = nPeserta1 + nPeserta2;//d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-on').data().length + d3.selectAll('.p' + d.pertandingan + ' .k2.fa-toggle-on').data().length;
+            d3.select('.p' + d.pertandingan + ' .npeserta-1').text(nPeserta1);
+            d3.select('.p' + d.pertandingan + ' .npeserta-2').text(nPeserta2);
+
+            if(nPeserta>=4){
+                //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
+                d3.selectAll('.p' + d.pertandingan + ' .program-peserta:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+            }else{
+                //d3.selectAll('.p' + d.pertandingan + ' .program-peserta').classed('lock',d=>(d.pertandingan!==d.pertandingan_negeri && d.pertandingan_negeri.length > 0?true:false));
+                d3.selectAll('.p' + d.pertandingan + ' .program-peserta.lock').classed('lock',d=>{
+                    nr = d3.selectAll('.p_' + d.kp + ' .text-red').data().length;
+                    ng = d3.selectAll('.p_' + d.kp + ' .text-green').data().length;
+                    //console.log(d.kp + ' :', (nr+ng));
+                    return ((nr+ng) == 0 ?false:true);
+                });
+            }
+        });
+        
         //c.selectAll('.card-program flex-column').data()
 
         
