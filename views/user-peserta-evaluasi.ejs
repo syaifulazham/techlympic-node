@@ -243,10 +243,11 @@
                 }
 
 
-                toLock = $('#chkHide').prop('checked');
-                console.log('To Lock-------------------------------<>',toLock);
-                d3.selectAll('.p' + d.pertandingan + ' .program-peserta.lock').classed('hide',toLock);
             });
+            toLock = $('#chkHide').prop('checked');
+            console.log('To Lock-------------------------------<>',toLock);
+            d3.selectAll('.program-peserta.lock').classed('hide',toLock);
+            d3.selectAll('.program-peserta.hide:not(.lock)').classed('hide',false);
         }
 
         $('#chkHide').on('change', ()=>{
