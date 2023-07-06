@@ -9,8 +9,10 @@
                         <tr>
                             <th colspan="5">
                                 <div class="flex-row">
-                                    <div id="btnSave" class="button float-right"><i
-                                            class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+                                    <div><input type="checkbox" id="chkHide"><label for="chkHide">&nbsp;&nbsp;Sembunyikan yang tidak berkenaan</label></div>
+                                    <div id="btnSave" class="button float-right">
+                                        <i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan
+                                    </div>
                                 </div>
                             </th>
                         </tr>
@@ -207,7 +209,7 @@
 
                 if((nPeserta1>=2 && d.pertandingan==='33KA') || (nPeserta1>=4 && d.pertandingan!=='33KA')){
                             //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
-                    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+                    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1:not(.lock)').classed('lock',d=>d.kumpulan!==1?true:false);
                 }else{
                     d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1.lock').classed('lock',d=>{
                         nr = d3.selectAll('.p_' + d.kp + ' .text-red').data().length;
@@ -218,7 +220,7 @@
                 
                 if((nPeserta2>=2 && d.pertandingan==='33KA') || (nPeserta2>=4 && d.pertandingan!=='33KA')){
                             //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
-                    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k2:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
+                    d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k2:not(.lock)').classed('lock',d=>d.kumpulan!==2?true:false);
                 }else{
                     d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k2.lock').classed('lock',d=>{
                         nr = d3.selectAll('.p_' + d.kp + ' .text-red').data().length;
@@ -239,8 +241,18 @@
                         return ((nr+ng) == 0 ?false:true);
                     });
                 }
+
+
+                toLock = $('#chkHide').prop('checked');
+                console.log('To Lock-------------------------------<>',toLock);
+                d3.selectAll('.p' + d.pertandingan + ' .program-peserta.lock').classed('hide',toLock);
             });
         }
+
+        $('#chkHide').on('change', ()=>{
+            //d3.selectAll('.p' + d.pertandingan + ' .program-peserta:not(.lock)')
+            saring();
+        })
         
         c.selectAll('.program-card').data(prog_).enter().append('div').call((o)=>{
             o.attr('class',d=>'program-card flex-grow-4 p' + d.pertandingan);
