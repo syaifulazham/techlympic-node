@@ -207,7 +207,7 @@
                 d3.select('.p' + d.pertandingan + ' .npeserta-1').text(nPeserta1);
                 d3.select('.p' + d.pertandingan + ' .npeserta-2').text(nPeserta2);
 
-                if((nPeserta1>=2 && d.pertandingan==='33KA') || (nPeserta1>=4 && d.pertandingan!=='33KA')){
+                if((nPeserta1>=2 && (d.pertandingan==='33KA' || d.pertandingan==='52R')) || (nPeserta1>=4 && (d.pertandingan!=='33KA' || d.pertandingan!=='52R'))){
                             //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
                     d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k1:not(.lock)').classed('lock',d=>d.kumpulan!==1?true:false);
                 }else{
@@ -218,7 +218,7 @@
                     });
                 }
                 
-                if((nPeserta2>=2 && d.pertandingan==='33KA') || (nPeserta2>=4 && d.pertandingan!=='33KA')){
+                if((nPeserta2>=2 && (d.pertandingan==='33KA' || d.pertandingan==='52R')) || (nPeserta2>=4 && (d.pertandingan!=='33KA' || d.pertandingan!=='52R'))){
                             //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
                     d3.selectAll('.p' + d.pertandingan + ' .program-peserta .k2:not(.lock)').classed('lock',d=>d.kumpulan!==2?true:false);
                 }else{
@@ -229,7 +229,7 @@
                     });
                 }
 
-                if((nPeserta>=4 && d.pertandingan==='33KA') || (nPeserta>=8 && d.pertandingan!=='33KA')){
+                if((nPeserta>=4 && (d.pertandingan==='33KA' || d.pertandingan==='52R')) || (nPeserta>=8 && (d.pertandingan!=='33KA' || d.pertandingan!=='52R'))){
                     //d3.selectAll('.p' + d.pertandingan + ' .k1.fa-toggle-off').classed('hide','true');
                     d3.selectAll('.p' + d.pertandingan + ' .program-peserta:not(.lock)').classed('lock',d=>d.kumpulan==0?true:false);
                 }else{
