@@ -96,7 +96,7 @@
         console.log('prog -------------------');
         API.programList((prog)=>{
             console.log('-----------',prog);
-            prog = prog.filter(a=>!a.prog_name.match('Quiz-A-Thon'));
+            prog = prog.filter(a=>!a.prog_name.match('Quiz-A-Thon') && !a.prog_name.match('Math Whiz'));
             var prog_sel = d3.select('#program');
             prog_sel.selectAll('.prog').data(prog).enter().append('option').attr('value',d=>d.prog_name).text(d=>d.prog_name);
 
