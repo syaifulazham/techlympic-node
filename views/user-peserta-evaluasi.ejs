@@ -9,7 +9,17 @@
                         <tr>
                             <th colspan="5">
                                 <div class="flex-row">
-                                    <div><input type="checkbox" id="chkHide"><label for="chkHide">&nbsp;&nbsp;Sembunyikan yang tidak berkenaan</label></div>
+                                    <div>** Terlebih dahulu sila kemaskini tetapan kumpulan anda</div>
+                                    <div id="btnSet" class="button float-right">
+                                        <i class="fa-solid fa-cog"></i>&nbsp;&nbsp;Tetapan Kumpulan
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="5">
+                                <div class="flex-row">
+                                    
                                     <div id="btnSave" class="button float-right">
                                         <i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan
                                     </div>
@@ -28,6 +38,14 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <th colspan="5">
+                                <div class="flex-row">
+                                    <div><input type="checkbox" id="chkHide"><label for="chkHide">&nbsp;&nbsp;Sembunyikan yang tidak berkenaan</label></div>
+                                    
+                                </div>
+                            </th>
+                        </tr>
                     </thead>
                 </table>
                 <div id="peserta-container" class="flex-row width-full flex-wrap">
@@ -37,6 +55,36 @@
         </div>
 </div>
 
+<div class="scale-up-center popEdit hide">
+    <div class="popEdit-container">
+        <div class="flex-row width-full">
+            <div class="button float-right" onclick="closeEdit()">
+                X
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="capsule bg-green col-label">Kumpulan 1</div>
+            <div>
+                <input type="text" name="txtKumpulan1" id="txtKumpulan1" placeholder="nama kumpulan 1">
+            </div>
+            <div>
+                <input type="text" name="emailKumpulan1" id="emailKumpulan1" placeholder="email kumpulan 1">
+            </div>
+        </div>
+        <div class="flex-row my-6">
+            <div class="capsule bg-red col-label">Kumpulan 2</div>
+            <div>
+                <input type="text" name="txtKumpulan2" id="txtKumpulan2" placeholder="nama kumpulan 2">
+            </div>
+            <div>
+                <input type="text" name="emailKumpulan2" id="emailKumpulan2" placeholder="email kumpulan 2">
+            </div>
+        </div>
+        <div class="flex-row float-bottom">
+            <button class="button" id="saveKumpulan"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
+        </div>
+    </div>
+</div>
  
 <div class="idlePopUp center hide">
     <i class="fa-solid fa-spinner fa-spin-pulse fa-3x"></i>
@@ -92,8 +140,16 @@
     //    
     //});
 
+    $('#btnSet').on('click', ()=>{
+        $('.popEdit').removeClass('hide');
+    });
+
+    function closeEdit(){
+        $('.popEdit').addClass('hide');
+    }
+
     function go(){
-        console.log('prog -------------------');
+        //console.log('prog -------------------');
         API.programList((prog)=>{
             console.log('-----------',prog);
             prog = prog.filter(a=>!a.prog_name.match('Quiz-A-Thon') && !a.prog_name.match('Math Whiz'));
@@ -148,7 +204,7 @@
 
 <script>
     function renderCards(data, prog){
-        console.log('xxxx------>>>',data);
+        //console.log('xxxx------>>>',data);
 
         kelas = [];
         data.forEach(d=>{
@@ -197,7 +253,7 @@
             prog_.push(tmp);
         });
 
-        console.log(prog_);
+        //console.log(prog_);
 
         var saring = ()=>{
             prog_.forEach(d=>{
@@ -256,7 +312,7 @@
         })
         
         c.selectAll('.program-card').data(prog_).enter().append('div').call((o)=>{
-            o.attr('class',d=>'program-card flex-grow-4 p' + d.pertandingan);
+            o.attr('class',d=>'anim-slide-in-top program-card flex-grow-4 p' + d.pertandingan);
             hdr = o.append('div').attr('class','program-card-header flex-row center');
             hdr.append('span').text(d=>d.program);
             

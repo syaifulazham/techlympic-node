@@ -360,6 +360,24 @@ let API = {
               });
         },
 
+        getKumpulan: (usr, fn)=>{
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                sqlstr = `SELECT * FROM peserta_negeri_kumpulan WHERE usr_email = ?`
+            }catch(err){
+                con.query(sqlstr, [usr], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+
+                        fn(result);
+                    }
+                });
+            }
+        },
+
         countPenyertaan: (usr_email, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
