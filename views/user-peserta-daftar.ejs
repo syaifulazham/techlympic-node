@@ -199,13 +199,13 @@
                             // Check if all responses have been received
                             if (responsesReceived === requestsSent) {
                                 // All requests have been completed
-                                console.log("All requests have returned their responses.");
+                                //console.log("All requests have returned their responses.");
                             }
                         },
                         dataType: 'json',
                         complete: function(jqXHR, textStatus) {
                             var response = jqXHR.responseText;
-                            console.log('Response:', response);
+                            //console.log('Response:', response);
                             // Handle the success response
                             
                             // Increment the responses received count
@@ -214,7 +214,7 @@
                             // Check if all responses have been received
                             if (responsesReceived >= pages) {
                                 // All requests have been completed
-                                console.log("All requests have returned their responses.");
+                                //console.log("All requests have returned their responses.");
                                 d3.select('.idlePopUp').classed('hide',true);
                                 pages = 0;
                             }
@@ -227,7 +227,7 @@
                             if (evt.lengthComputable) {
                                 var percentComplete = (evt.loaded / evt.total) * 100;
                                 // Update progress bar or display the progress percentage
-                                console.log(percentComplete + "%");
+                                //console.log(percentComplete + "%");
                                 requestsSent++;
                             }
                             }, false);
@@ -252,7 +252,7 @@
 
 
         API.loadPrograms((prog)=>{
-            console.log(prog);
+            //console.log(prog);
             lst = [];
             prog.forEach((d)=>{
                 lst.push({id:d.prog_code.replace('.',''), acara:d.prog_name, peringkat: d.target_group});
@@ -273,7 +273,7 @@
                     n = nx.length;
                     
                     d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
-                    console.log(e.target.id, d, ic, n);
+                    //console.log(e.target.id, d, ic, n);
 
                 })
             });
@@ -308,7 +308,7 @@
         var jsonData = XLSX.utils.sheet_to_json(worksheet);
     
         // Log the JSON data to the console
-        //console.log(jsonData);
+        ////console.log(jsonData);
         API.loadPrograms((prog)=>{
             lst = [];
             prog.forEach((d)=>{
@@ -339,7 +339,7 @@
 
 
     function repareIC(kp){
-        var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').trim();
+        var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').replace('/','').replace('\\','').trim();
         var res = kp_;
 
         if(kp.length < 12){
@@ -371,11 +371,11 @@
 
             var r = d3.selectAll('.chk_acara:checked').data();
 
-            console.log('data for r: ', r);
+            //console.log('data for r: ', r);
             
             d3.selectAll('.peserta:not(.hide) .chk-all').property('checked',false);
             r.forEach((p)=>{
-                //console.log('pppp', p);
+                ////console.log('pppp', p);
                 d3.selectAll('.peserta:not(.hide) .chk-all[value="' + p.program + '"]').property('checked',true);
             });
             
@@ -438,11 +438,11 @@
             val = $('#srcfilter').val();
 
             _d = data.filter((d)=> {
-                console.log(d['nama'],d['nama'].match(val));
+                //console.log(d['nama'],d['nama'].match(val));
                 return (d['no kp'].match(val) || d['nama'].toUpperCase().match(val.toUpperCase())) && d['darjah/ tingkatan'].match($('#kelas').val())  && d['jantina'].match($('#jantina').val());
             });
 
-            //console.log(_d);
+            ////console.log(_d);
 
             d3.selectAll('.peserta').classed('hide',true);
             _d.forEach((d)=>{d3.select('.peserta-' + d['no kp']).classed('hide',false)});
@@ -465,9 +465,9 @@
             d3.select('.idlePopUp').classed('hide',false);
             var saving_data = [];
             var saving_batch = [];
-            //console.log('data.length: ',data.length);
+            ////console.log('data.length: ',data.length);
             var MAX_ROW = 50;
-            console.log('data.length/20: ',Math.ceil(data.length/MAX_ROW));
+            ////console.log('data.length/20: ',Math.ceil(data.length/MAX_ROW));
 
             var n = Math.ceil(data.length/MAX_ROW);
             pages = n;
@@ -482,7 +482,7 @@
                 dob = $('#dob_' +d['no kp'] ).val();
 
                 var sel = sel_.join('|');
-                console.log(d['no kp'],' === ', sel);
+                ////console.log(d['no kp'],' === ', sel);
                 saving_data.push({
                     nama: d.nama,
                     kp: d['no kp'],
@@ -501,17 +501,17 @@
                 //
             });
 
-            console.log('saving_data====================================>>>>>>>>>',saving_data);
+            ////console.log('saving_data====================================>>>>>>>>>',saving_data);
 
             if(saving_data.length > 0){
                 saving_batch.push(saving_data.slice());
             }
 
 
-            console.log('saving_data', saving_data);
+            ////console.log('saving_data', saving_data);
 
             
-            //console.log(saving_batch);
+            ////console.log(saving_batch);
             //saving_batch.forEach((dx, i)=>{
             //});
             
@@ -519,7 +519,7 @@
             var pushAddInterval = setInterval(()=>{
                 if(saving_batch[i]){
                     API.addbulk(saving_batch[i], i, (d)=>{
-                        console.log(d);
+                        ////console.log(d);
                     });
                 }
                 i++;
@@ -547,7 +547,7 @@
         //BUTTON to set default
         btn_def = td_def.append('div').attr('class','button float-right').html('<i class="fa-solid fa-list"></i>');
         btn_def.on('click', ()=>{
-            //console.log('lst: ',lst);
+            ////console.log('lst: ',lst);
             d3.select('#chk_select_all').property('checked',false);
             d3.select('#popUp-list').classed('hide',false);
             acara_contain = d3.select('#listContainer > .acara-list > .pertandingan');
@@ -623,7 +623,7 @@
                 _d = d['no kp'].substring(4, 6); 
 
                 //dd = new Date(_y,_m,_d);
-                //console.log(_y,_m,_d,'tarikh......',dd);
+                ////console.log(_y,_m,_d,'tarikh......',dd);
 
                 return _y + '-' + _m + '-' + _d
             });
@@ -637,17 +637,17 @@
 
             btn_acara.on('click', (e, d) => {
                 el = '#container-' + d['no kp'];
-                console.log(el, d3.select(el).classed('hide'));
+                ////console.log(el, d3.select(el).classed('hide'));
 
                 d3.select(el).classed('hide',!d3.select(el).classed('hide'));
             })
 
             acara_contain = acara.append('div').attr('class','flex-column hide').attr('id',(d)=>('container-' + d['no kp']));
             acara_contain.selectAll('.acara').data((d)=>{
-                //console.log(d);
+                ////console.log(d);
                 id = d['no kp'];
                 v = [];
-                console.log('LST-LST-LST-LST:::::::',lst);
+                ////console.log('LST-LST-LST-LST:::::::',lst);
                 lst.forEach((x)=>v.push({id:id, acara:x.program, peringkat: x.peringkat}));
                 return v;
             }).enter().append('div').call((a)=>{
@@ -664,7 +664,7 @@
                     n = nx.length;
                     
                     d3.select('#button-' + ic).classed('bg-green',n>0?true:false).html((n>0)?'<i class="fa-solid fa-person-walking-arrow-right"></i>&nbsp;&nbsp;Penyertaan<div class="float-right score">' + n + '</div>':'<i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;Pilih penyertaan...')
-                    //console.log(e.target.id, d, ic, n);
+                    ////console.log(e.target.id, d, ic, n);
 
                 })
             });
@@ -673,7 +673,7 @@
         
 
         data.forEach((d)=>{
-            console.log('==========>>>', d);
+            ////console.log('==========>>>', d);
             ic = d['no kp'];
             nx = d3.selectAll('._' + ic + ':checked').data();
             n = nx.length;
@@ -734,9 +734,9 @@
             });
 
             API.addbulk(saving_data, 1, (d)=>{
-                console.log(d);
+                //console.log(d);
             });
-            //console.log(saving_data);
+            ////console.log(saving_data);
             d3.select('.idlePopUp').classed('hide',false);
                 setTimeout(()=>{
                     window.location.replace("./user-peserta-urus");
