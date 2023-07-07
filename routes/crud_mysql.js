@@ -266,6 +266,8 @@ let API = {
                     email = VALUES(email),
                     darjah_tingkatan = VALUES(darjah_tingkatan),
                     bangsa = VALUES(bangsa),
+                    ipt = VALUES(ipt),
+                    bidang = VALUES(bidang),
                     program = VALUES(program)
                   `;
             
@@ -363,18 +365,59 @@ let API = {
         getKumpulan: (usr, fn)=>{
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try{
-                sqlstr = `SELECT * FROM peserta_negeri_kumpulan WHERE usr_email = ?`
-            }catch(err){
+                sqlstr = `SELECT * FROM peserta_negeri_kumpulan WHERE usr_email = ?`;
                 con.query(sqlstr, [usr], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+                        console.log(result);
                         con.end();
 
                         fn(result);
                     }
                 });
+            }catch(err){
+                console.log('Error getKumpulan: ', err);
+            }
+        },
+
+        saveKumpulan: (kumpulan, fn)=>{
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try{
+                con.beginTransaction((err) => {
+                    if (err) throw err;
+                    kumpulan.forEach((grp) => {
+                        sqlstr = `
+                        INSERT INTO peserta_negeri_kumpulan
+                            SET ?
+                            ON DUPLICATE KEY UPDATE
+                            kumpulan1 = value(kumpulan1),
+                            email1 = value(email1),
+                            kumpulan2 = value(kumpulan2),
+                            email2 = value(email2)
+                        `;
+
+                        con.query(sqlstr, grp, function (err, result) {
+                    
+                            if (err) {
+                                con.rollback(() => {
+                                throw err;
+                              });
+                              fn([]);
+                            } else {
+                                
+                                con.end();
+        
+                                fn(result);
+                            }
+                        });
+                    });
+
+                });
+
+                
+            }catch(err){
+                console.log('Error saveKumpulan: ', err);
             }
         },
 
@@ -434,7 +477,7 @@ let API = {
             var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
-                con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
+                con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,ipt,bidang,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {

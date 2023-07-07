@@ -540,7 +540,33 @@ const action = {
           })
         });
       }catch(err){
-        console.log('error: ', err);
+        console.log('Error addPesertaNegeri: ', err);
+      }
+    },
+
+    getKumpulanNegeri: (req, res, next)=>{
+      try{
+        var session = req.cookies['localId'];
+        usr = session.user.email;
+        API.peserta.getKumpulan(usr,(result)=>{
+          res.send(result)
+        });
+      }catch(err){
+        console.log('Error getKumpulanNegeri: ', err);
+      }
+    },
+
+    saveKumpulanNegeri: (req, res, next)=>{
+      try{
+        var session = req.cookies['localId'];
+        var kumpulan = req.body.kumpulan;
+        kumpulan.forEach(d=>{d.usr_email = session.user.email});
+        console.log('kumpulan: ', kumpulan);
+        API.peserta.saveKumpulan(kumpulan, (result)=>{
+          res.send(result);
+        });
+      }catch(err){
+        console.log('Error addPesertaNegeri: ', err);
       }
     },
 
@@ -599,6 +625,8 @@ router.post('/api/peserta/add', action.peserta.insertOrUpdate);
 router.post('/api/peserta/add-negeri', action.peserta.addPesertaNegeri);
 router.post('/api/peserta/count', action.peserta.count);
 router.post('/api/peserta/load', action.peserta.load);
+router.post('/api/peserta/get-kumpulan', action.peserta.getKumpulanNegeri);
+router.post('/api/peserta/save-kumpulan', action.peserta.saveKumpulanNegeri);
 router.post('/api/peserta/load-negeri', action.peserta.load_negeri);
 router.get('/api/program/list', action.program.list);
 router.post('/api/program/list', action.program.list);

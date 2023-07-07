@@ -10,6 +10,7 @@
     <div class="workspace">
         <h2>Daftar Peserta</h2>
         <hr>
+        <%if(me.usr_role!=='Belia'){%>
         <div class="myaccordion flex-column width-full">
             <h5 class="myaccordion-header"><i class="fa-solid fa-circle-chevron-down"></i> A. Daftar secara pukal</h5>
             <div class="myaccordion-body hide">
@@ -34,24 +35,26 @@
         </div>
 
         <hr>
+        <%}%>
+
         <div class="myaccordion flex-column width-full">
-            <h5 class="myaccordion-header"><i class="fa-solid fa-circle-chevron-down"></i> B. Daftar secara individu</h5>
-            <div class="myaccordion-body hide">
+            <h5 class="myaccordion-header"><i class="fa-solid fa-circle-chevron-down"></i> <%=me.usr_role!=='Belia'?'B':'A'%>. Daftar secara individu</h5>
+            <div class="myaccordion-body <%=me.usr_role!=='Belia'?'hide':''%>">
                 <div class="flex-row my-6">
                     <div class="col-label">Nama</div>
-                    <div>
+                    <div class="input-div">
                         <input type="text" name="txtnama" id="txtnama">
                     </div>
                 </div>
                 <div class="flex-row my-6">
                     <div class="col-label">Kad Pengenalan (KP)</div>
-                    <div>
+                    <div class="input-div">
                         <input type="text" name="txtkp" id="txtkp">
                     </div>
                 </div>
                 <div class="flex-row my-6">
                     <div class="col-label">Jantina</div>
-                    <div>
+                    <div class="input-div">
                         <select name="seljantina" id="seljantina">
                             <option value=""></option>
                             <option value="Lelaki">Lelaki</option>
@@ -61,33 +64,98 @@
                 </div>
                 <div class="flex-row my-6">
                     <div class="col-label">Tarikh Lahir</div>
-                    <div>
+                    <div class="input-div">
                         <input type="date" name="txtkp" id="txtdob">
                     </div>
                 </div>
                 <div class="flex-row my-6">
                     <div class="col-label">Email</div>
-                    <div>
+                    <div class="input-div">
                         <input type="text" name="txtemail" id="txtemail">
                     </div>
                 </div>
-                <%if(user.peringkat!=='Belia'){%>
+                <%if(me.usr_role!=='Belia'){%>
                 <div class="flex-row my-6">
                     <div class="col-label">Darjah/ Tingkatan</div>
-                    <div>
+                    <div class="input-div">
                         <input type="text" name="txtdarjah" id="txtdarjah">
                     </div>
                 </div>
+                <%}else{%>
+                    <div class="flex-row my-6">
+                        <div class="col-label">IPT/ Organisasi</div>
+                        <div class="input-div">
+                            <input type="text" name="txtipt" id="txtipt">
+                        </div>
+                    </div>
+                    <div class="flex-row my-6">
+                        <div class="col-label">Bidang</div>
+                        <div class="input-div">
+                            <select id="cmbBidang">
+                                <option></option>
+                                <option>Antropologi dan Sains Sosial</option>
+                                <option>Arkeologi</option>
+                                <option>Astronomi</option>
+                                <option>Bahasa dan Linguistik</option>
+                                <option>Biologi</option>
+                                <option>Bioteknologi</option>
+                                <option>Ekonomi</option>
+                                <option>Farmasi</option>
+                                <option>Fizik</option>
+                                <option>Geografi</option>
+                                <option>Geologi</option>
+                                <option>Hubungan Antarabangsa</option>
+                                <option>Hukum</option>
+                                <option>Sains Komputer dan Teknologi Maklumat</option>
+                                <option>Industri Penerbangan</option>
+                                <option>Kajian Alam Sekitar</option>
+                                <option>Kajian Kesusasteraan</option>
+                                <option>Kajian Media</option>
+                                <option>Keagamaan</option>
+                                <option>Kejuruteraan (Mekanikal, Awam, Elektrik, Kimia, dll.)</option>
+                                <option>Kepimpinan dan Pengurusan</option>
+                                <option>Kesihatan dan Perubatan</option>
+                                <option>Komunikasi dan Hubungan Awam</option>
+                                <option>Matematik</option>
+                                <option>Pendidikan</option>
+                                <option>Pengurusan Perniagaan</option>
+                                <option>Perancangan Bandar dan Wilayah</option>
+                                <option>Perhotelan dan Pelancongan</option>
+                                <option>Pertanian dan Sains Pertanian</option>
+                                <option>Perubatan</option>
+                                <option>Psikologi</option>
+                                <option>Sains Aktuari</option>
+                                <option>Seni dan Sejarah Seni</option>
+                                <option>Seni Persembahan</option>
+                                <option>Sosiologi</option>
+                                <option>Sumber Manusia</option>
+                                <option>Teknologi Makanan</option>
+                                <option>Teknologi Perubatan</option>
+                                <option>Zoologi</option>
+                                <option>Lain-lain Tidak dinyatakan</option>
+                            </select>
+                        </div>
+                    </div>
                 <%}%>
                 <div class="flex-row my-6">
                     <div class="col-label">Bangsa</div>
-                    <div>
-                        <input type="text" name="txtbangsa" id="txtbangsa">
+                    <div class="input-div">
+                        <!--<input type="text" name="txtbangsa" id="txtbangsa">-->
+                        <select name="txtbangsa" id="txtbangsa">
+                            <option value=""></option>
+                            <option value="MELAYU">MELAYU</option>
+                            <option value="CINA">CINA</option>
+                            <option value="INDIA">INDIA</option>
+                            <option value="ORANG ASLI">ORANG ASLI</option>
+                            <option value="BUMIPUTRA SABAH">BUMIPUTRA SABAH</option>
+                            <option value="BUMIPUTRA SARAWAK">BUMIPUTRA SARAWAK</option>
+                            <option value="LAIN-LAIN">LAIN-LAIN</option>
+                        </select>
                     </div>
                 </div>
                 <div class="flex-row my-6">
                     <div class="col-label">Penyertaan</div>
-                    <div id="individu_acara" class="flex-column">
+                    <div id="individu_acara" class="flex-column input-div">
                         
                     </div>
                 </div>
@@ -260,7 +328,7 @@
             acara = d3.select('#individu_acara');
             acara_contain = acara.append('div').attr('class','flex-column');
             acara_contain.selectAll('.acara').data(lst).enter().append('div').call((a)=>{
-                a.attr('class',d=>'flex-row acara ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                a.attr('class',d=>'flex-row acara center ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
                 chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('_header'))
                 .attr('id',(d, i)=>('_' + d.id + '_' + i))
                 .attr('name',(d)=>('_' + d.id))
@@ -491,6 +559,8 @@
                     email: d.email,
                     darjah_tingkatan: d['darjah/ tingkatan'],
                     bangsa: d.bangsa,
+                    ipt: '',
+                    bidang: '',
                     program: sel
                 });
 
@@ -651,7 +721,7 @@
                 lst.forEach((x)=>v.push({id:id, acara:x.program, peringkat: x.peringkat}));
                 return v;
             }).enter().append('div').call((a)=>{
-                a.attr('class',d=>'flex-row ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                a.attr('class',d=>'flex-row acara ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
                 chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('chk-all _' + d.id))
                 .attr('id',(d, i)=>('_' + d.id + '_' + i))
                 .attr('name',(d)=>('_' + d.id))
@@ -728,8 +798,10 @@
                 jantina:$('#seljantina').val(),
                 tarikh_lahir:$('#txtdob').val(),
                 email: $('#txtemail').val(),
-                darjah_tingkatan: $('#txtdarjah').val(),
+                darjah_tingkatan: $('#txtdarjah').val()===undefined?'':$('#txtdarjah').val(),
                 bangsa: $('#txtbangsa').val(),
+                ipt: $('#txtipt').val(),
+                bidang: $('#cmbBidang').val(),
                 program: sel
             });
 

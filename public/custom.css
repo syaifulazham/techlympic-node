@@ -253,6 +253,10 @@ body {
     width: 100%;
 }
 
+.acara  label{
+    width: 80% !important;
+}
+
 .acara-list {
     width: 100%;
     background-color: var(--text-light);
@@ -479,6 +483,13 @@ select {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+input[type="checkbox"]{
+    height: 25px!important;
+    width: 25px!important;
+    max-height: 25px!important;
+    max-width: 25px!important;
+}
+
 input:focus {
     border: 0 solid #fff;
 }
@@ -502,6 +513,14 @@ input[type="submit"]:hover {
 
 input:read-only{
     background-color: #c5c4c4;
+}
+
+.input-div{
+    width: 500px;
+}
+
+.input-div > input[type="text"],input[type="date"],select{
+    width: 100%;
 }
 
 .login {
@@ -867,6 +886,7 @@ code {
 .hide {
     display: none!important;
     transition: all 1600ms ease-in-out;
+  
 }
 
 .lock{
@@ -1046,6 +1066,10 @@ code {
 
 
 @media (max-width: 767px) {
+    .input-div{
+        width: 100%;
+    }
+
     .login {
       width: 90%;
     }
@@ -1148,6 +1172,10 @@ code {
 
     .myaccordion-body > .flex-row select,input[type="text"],input[type="date"]{
         width:90%!important;
+    }
+
+    .myaccordion-body input{
+        width: 100%;
     }
 
     .popEdit {

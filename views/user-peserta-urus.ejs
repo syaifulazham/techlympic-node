@@ -53,19 +53,19 @@
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Nama</div>
-            <div>
+            <div class="input-div">
                 <input type="text" name="txtnama" id="txtnama">
             </div>
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Kad Pengenalan (KP)</div>
-            <div>
+            <div class="input-div">
                 <input type="text" name="txtkp" id="txtkp">
             </div>
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Jantina</div>
-            <div>
+            <div class="input-div">
                 <select name="seljantina" id="seljantina">
                     <option value=""></option>
                     <option value="Lelaki">Lelaki</option>
@@ -75,31 +75,88 @@
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Tarikh Lahir</div>
-            <div>
+            <div class="input-div">
                 <input type="date" name="txtdob" id="txtdob">
             </div>
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Email</div>
-            <div>
+            <div class="input-div">
                 <input type="text" name="txtemail" id="txtemail">
             </div>
         </div>
-        <div class="flex-row my-6">
-            <div class="col-label">Darjah/ Tingkatan</div>
-            <div>
-                <input type="text" name="txtdarjah" id="txtdarjah">
+        <%if(me.usr_role!=='Belia'){%>
+            <div class="flex-row my-6">
+                <div class="col-label">Darjah/ Tingkatan</div>
+                <div class="input-div">
+                    <input type="text" name="txtdarjah" id="txtdarjah">
+                </div>
             </div>
-        </div>
+            <%}else{%>
+                <div class="flex-row my-6">
+                    <div class="col-label">IPT/ Organisasi</div>
+                    <div class="input-div">
+                        <input type="text" name="txtipt" id="txtipt">
+                    </div>
+                </div>
+                <div class="flex-row my-6">
+                    <div class="col-label">Bidang</div>
+                    <div class="input-div">
+                        <select id="cmbBidang">
+                            <option></option>
+                            <option>Antropologi dan Sains Sosial</option>
+                            <option>Arkeologi</option>
+                            <option>Astronomi</option>
+                            <option>Bahasa dan Linguistik</option>
+                            <option>Biologi</option>
+                            <option>Bioteknologi</option>
+                            <option>Ekonomi</option>
+                            <option>Farmasi</option>
+                            <option>Fizik</option>
+                            <option>Geografi</option>
+                            <option>Geologi</option>
+                            <option>Hubungan Antarabangsa</option>
+                            <option>Hukum</option>
+                            <option>Sains Komputer dan Teknologi Maklumat</option>
+                            <option>Industri Penerbangan</option>
+                            <option>Kajian Alam Sekitar</option>
+                            <option>Kajian Kesusasteraan</option>
+                            <option>Kajian Media</option>
+                            <option>Keagamaan</option>
+                            <option>Kejuruteraan (Mekanikal, Awam, Elektrik, Kimia, dll.)</option>
+                            <option>Kepimpinan dan Pengurusan</option>
+                            <option>Kesihatan dan Perubatan</option>
+                            <option>Komunikasi dan Hubungan Awam</option>
+                            <option>Matematik</option>
+                            <option>Pendidikan</option>
+                            <option>Pengurusan Perniagaan</option>
+                            <option>Perancangan Bandar dan Wilayah</option>
+                            <option>Perhotelan dan Pelancongan</option>
+                            <option>Pertanian dan Sains Pertanian</option>
+                            <option>Perubatan</option>
+                            <option>Psikologi</option>
+                            <option>Sains Aktuari</option>
+                            <option>Seni dan Sejarah Seni</option>
+                            <option>Seni Persembahan</option>
+                            <option>Sosiologi</option>
+                            <option>Sumber Manusia</option>
+                            <option>Teknologi Makanan</option>
+                            <option>Teknologi Perubatan</option>
+                            <option>Zoologi</option>
+                            <option>Lain-lain Tidak dinyatakan</option>
+                        </select>
+                    </div>
+                </div>
+            <%}%>
         <div class="flex-row my-6">
             <div class="col-label">Bangsa</div>
-            <div>
+            <div class="input-div">
                 <input type="text" name="txtbangsa" id="txtbangsa">
             </div>
         </div>
         <div class="flex-row my-6">
             <div class="col-label">Penyertaan</div>
-            <div id="individu_acara" class="flex-column">
+            <div id="individu_acara" class="flex-column input-div">
                 
             </div>
         </div>
@@ -360,7 +417,14 @@
 
         keys = getJsonKeys(data);
 
-        keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir');
+        <%if(me.usr_role==='Belia'){%>
+            keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir' && d!=='ipt' && d!=='bidang' && d!=='darjah_tingkatan');
+        <%}else{%>
+            keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir' && d!=='ipt' && d!=='bidang');
+        <%}%>
+        
+        //keys = keys.filter((d)=>d!=='usr_email' && d!=='program' && d!=='jantina' && d!=='tarikh_lahir' && d!=='ipt' && d!=='bidang');
+        
         //keys.push('Penyertaan Acara')
         c = d3.select('#input-tray').attr('class','heigth-90vh overflow-scroll');
         c.selectAll('*').remove();
@@ -378,7 +442,7 @@
         thead = table.append('thead');
 
         trhs = thead.append('tr').attr('class','hd-toggler');;
-        ths = trhs.append('th').attr('colspan',9);
+        ths = trhs.append('th').attr('colspan',<%=me.usr_role=='Belia'?8:9%>);
         //BUTTON to save
         var savethis = (e)=>{
             //var _data = d3.selectAll(".peserta", {style: "all"}).data();
@@ -414,6 +478,8 @@
                     email: d.email,
                     darjah_tingkatan: d.darjah_tingkatan,
                     bangsa: d.bangsa,
+                    ipt: d.ipt,
+                    bidang: d.bidang,
                     program: sel
                 });
 
@@ -496,8 +562,10 @@
         trh2 = thead.append('tr');
         src = trh2.append('td').attr('colspan',3).append('input').attr('type','text').style('width','100%').attr('id','srcfilter').attr('placeholder','taipkan tapisan anda di sini...');
 
+        <%if(me.usr_role!=='Belia'){%>
         src2 = trh2.append('td').append('select').attr('id','kelas').style('width','100%');
         src2.selectAll('option').data(kelas.sort((a,b)=>a-b)).enter().append('option').text(d=>d);
+        <%}%>
 
         //trh2.append('td'); // empty header
         src2x = trh2.append('td').append('select').attr('id','bangsa').style('width','100%');
@@ -517,7 +585,9 @@
 
         //filter
         src.on('keyup', doFilter);
+        <%if(me.usr_role!=='Belia'){%>
         src2.on('change', doFilter);// kelas
+        <%}%>
         src2x.on('change', doFilter); //bangsa
         src3.on('change', doFilter); //jantina
         src4.on('change', doFilter); //pertandingan
@@ -529,7 +599,7 @@
         tbody.selectAll('tr').data(data.sort((a,b)=>a.darjah_tingkatan-b.darjah_tingkatan)).enter().append('tr').call((o)=>{
             o.attr('class',(d)=>'peserta peserta-' + d.kp);
             keys.forEach((key, i)=>{
-                o.append('td').attr('style',(i===3)?'text-align:center':'text-align:left').text((d)=>d[key]);
+                o.append('td').attr('style',(i===3)?'text-align:center':'text-align:left').text((d)=>d[key]==='null'?'':d[key]);
             });
 
             var _jantina = o.append('td').append('select').attr('id',(d)=>'gender_' + d.kp).style('width','100%').attr('value',d=>d.jantina);
@@ -575,7 +645,7 @@
                 }
                 //console.log('PROGRAMMMMM',d);
                 lst.forEach((x)=>{
-                    console.log('xxxxxxxxxxxxxxxxxx',x);
+                    //console.log('xxxxxxxxxxxxxxxxxx',x);
                     //console.log('PROGRAMMMMM dasffsdf sdfsdfsdfsd fsdfsdfsdf',d.program);
                     //console.log(((d.program!=='')?false:(d.program.match(x).length>0?true:false)),'----->',x,'===',d.program);
                     try{
@@ -598,7 +668,7 @@
                 //console.log('vvvv====>',v);
                 return v;
             }).enter().append('div').call((a)=>{
-                a.attr('class',d=>'flex-row ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
+                a.attr('class',d=>'flex-row acara ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
                 chk = a.append('input').property('checked',d=>d.checked).attr('type','checkbox').attr('class',(d)=>('chk-all _' + d.id))
                 .attr('id',(d, i)=>('_' + d.id + '_' + i))
                 .attr('name',(d)=>('_' + d.id))
@@ -620,6 +690,7 @@
 
             btnEdit = o.append('td').append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
             btnEdit.on('click', (e, d)=>{
+                console.log(d);
                 d3.select('#individu_acara') .selectAll('input[type="checkbox"]').property('checked', false);
                 d3.select('.popEdit').classed('hide', false);
                 $('#txtnama').val(d.nama);
@@ -628,6 +699,9 @@
                 $('#txtdob').val(d.tarikh_lahir);
                 $('#txtemail').val(d.email);
                 $('#txtdarjah').val(d.darjah_tingkatan);
+                $('#txtbangsa').val(d.bangsa);
+                $('#txtipt').val(d.ipt);
+                $('#cmbBidang').val(d.bidang);
 
                 d3.selectAll('._' + d.kp + ':checked').data().forEach((k)=>{
                     d3.select('#individu_acara') .selectAll('input[type="checkbox"]').filter(a=> a.acara === k.acara).property('checked', true);
@@ -679,6 +753,8 @@
                 email: $('#txtemail').val(),
                 darjah_tingkatan: $('#txtdarjah').val(),
                 bangsa: $('#txtbangsa').val(),
+                ipt: $('#txtipt').val(),
+                bidang: $('#cmbBidang').val(),
                 program: sel
             });
 
