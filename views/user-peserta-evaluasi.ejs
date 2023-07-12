@@ -80,6 +80,9 @@
             <div>
                 <input type="text" name="emailKumpulan1" id="emailKumpulan1" placeholder="email kumpulan 1">
             </div>
+            <div>
+                <input type="text" name="txtGuru1" id="txtGuru1" placeholder="guru pengiring kumpulan 1">
+            </div>
         </div>
         <div class="flex-row my-6">
             <div class="capsule bg-red col-label">Kumpulan 2</div>
@@ -88,6 +91,9 @@
             </div>
             <div>
                 <input type="text" name="emailKumpulan2" id="emailKumpulan2" placeholder="email kumpulan 2">
+            </div>
+            <div>
+                <input type="text" name="txtGuru2" id="txtGuru2" placeholder="guru pengiring kumpulan 2">
             </div>
         </div>
         <div class="flex-row">
@@ -180,7 +186,9 @@
             kumpulan1: $('#txtKumpulan1').val(),
             email1: $('#emailKumpulan1').val(),
             kumpulan2: $('#txtKumpulan2').val(),
-            email2: $('#emailKumpulan2').val()
+            email2: $('#emailKumpulan2').val(),
+            guru1: $('#txtGuru1').val(),
+            guru2: $('#txtGuru2').val()
         });
 
         API.saveKumpulan(tosave, (result)=>{
@@ -197,6 +205,8 @@
                 $('#emailKumpulan1').val(data[0].email1);
                 $('#txtKumpulan2').val(data[0].kumpulan2);
                 $('#emailKumpulan2').val(data[0].email2);
+                $('#txtGuru1').val(data[0].guru1);
+                $('#txtGuru2').val(data[0].guru2);
             }
             
         })

@@ -394,7 +394,9 @@ let API = {
                             kumpulan1 = value(kumpulan1),
                             email1 = value(email1),
                             kumpulan2 = value(kumpulan2),
-                            email2 = value(email2)
+                            email2 = value(email2),
+                            guru1 = value(guru1),
+                            guru2 = value(guru2)
                         `;
 
                         con.query(sqlstr, grp, function (err, result) {
