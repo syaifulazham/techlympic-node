@@ -493,6 +493,23 @@ let API = {
                 console.log(e);
             }
         },
+        deletePeserta: (email, kp, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`delete from peserta where usr_email = ? and kp = ?`, [email, kp], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
         loadPesertaNegeri: (email, peringkat, fn) => {
             var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
