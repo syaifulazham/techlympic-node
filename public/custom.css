@@ -231,6 +231,35 @@ body {
     z-index: 9999999 !important;
 }
 
+.message-box{
+    background-color: #fff;
+    border-radius: 15px;
+    color: #000;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    width: 500px;
+    height: 250px;
+    padding: 20px;
+    text-align: center;
+}
+
+.message-header{
+    font-weight: bold;
+}
+
+.message-footer > .button{
+    margin-right: 5px;
+}
+
+#deleteNama, #deleteKP{
+    font-weight: bold;
+}
+
+.message-body{
+    background-color: #fffeb3;
+    height: 200px;
+    padding: 15px;
+}
+
 .strippop{
     display: flex;
     flex-direction: column;

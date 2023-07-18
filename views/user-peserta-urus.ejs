@@ -14,6 +14,7 @@
         
         <div class="flex-row float-bottom">
             <button class="button" id="saveThis"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
+            <a class="button bg-green" id="downloadThis" href="/download-excel" target="_blank"><i class="fa-solid fa-file-excel"></i>&nbsp;&nbsp;Muat Turun</a>
         </div>
     </div>
 </div>
@@ -40,6 +41,28 @@
             <div class="flex-row py-6">
                 <div class="button" id="btn-selectCommon"><i class="fa-solid fa-square-check"></i>&nbsp;&nbsp;Pilih</div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="popUp-delete" class="popUp center hide">
+    <div class="message-box flex-column">
+        <div class="message-header">
+            Anda pasti untuk memadamkan data berikut?
+        </div>
+        <div class="message-body flex-column">
+            <div class="flex-row">
+                <div>Nama :</div>
+                <div id="deleteNama"></div>
+            </div>
+            <div class="flex-row">
+                <div>KP :</div>
+                <div id="deleteKP"></div>
+            </div>
+        </div>
+        <div class="message-footer flex-row center">
+            <button class="button" id="batalDelete">Batal</button> 
+            <button class="button bg-red" id="padamDelete">Padam</button>
         </div>
     </div>
 </div>
@@ -321,6 +344,18 @@
         return keys;
     }
 
+    d3.select('#downloadThis').on('click', ()=>{
+        console.log('dad asdas dasdasdasd');
+        $.ajax({
+            type: "POST",
+            url: '/download-excel',
+            dataType: 'json',
+            success: (data)=>{
+                
+            }
+        });
+    });
+
 
     function renderD3Table(lst, data){
         //console.log(lst, data);
@@ -442,7 +477,7 @@
         thead = table.append('thead');
 
         trhs = thead.append('tr').attr('class','hd-toggler');;
-        ths = trhs.append('th').attr('colspan',<%=me.usr_role=='Belia'?8:9%>);
+        ths = trhs.append('th').attr('colspan',<%=me.usr_role=='Belia'?9:9%>);
         //BUTTON to save
         var savethis = (e)=>{
             //var _data = d3.selectAll(".peserta", {style: "all"}).data();
@@ -687,8 +722,8 @@
             });
 
             
-
-            btnEdit = o.append('td').append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
+            btnTD = o.append('td').append('div').attr('class','flex-row');
+            btnEdit = btnTD.append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
             btnEdit.on('click', (e, d)=>{
                 console.log(d);
                 d3.select('#individu_acara') .selectAll('input[type="checkbox"]').property('checked', false);
@@ -706,7 +741,43 @@
                 d3.selectAll('._' + d.kp + ':checked').data().forEach((k)=>{
                     d3.select('#individu_acara') .selectAll('input[type="checkbox"]').filter(a=> a.acara === k.acara).property('checked', true);
                 })
-            })
+            });
+
+            btnDelete = btnTD.append('div').attr('class','button bg-red').html('<i class="fa-solid fa-trash-can"></i>');
+            btnDelete.on('click', (e, d)=>{
+                console.log(d.kp);
+                $('#popUp-delete').removeClass('hide');
+                $('#deleteNama').text(d.nama);
+                $('#deleteKP').text(d.kp);
+
+                $('#batalDelete').on('click',()=>{
+                    $('#popUp-delete').addClass('hide');
+                });
+
+                $('#padamDelete').on('click',()=>{
+                    $.ajax({
+                        type: "POST",
+                        url: '/api/peserta/delete',
+                        data: {kp:d.kp},
+                        dataType: 'json',
+                        success: (data)=>{
+                            $('#popUp-delete').addClass('hide');
+                            d3.select('.peserta-' + d.kp).remove();
+                        }
+                    });
+                    
+                });
+                /*
+                $.ajax({
+                    type: "POST",
+                    url: '/api/peserta/delete',
+                    dataType: 'json',
+                    success: (data)=>{
+                        
+                    }
+                });
+                */
+            });
         });
         data.forEach((d)=>{
             ic = d.kp;

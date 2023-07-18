@@ -1,4 +1,3 @@
-
 var mysql = require('mysql');
 const auth = require('./auth');
 
@@ -480,6 +479,24 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,ipt,bidang,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        loadPesertaList: (email, peringkat, fn) => {
+            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
