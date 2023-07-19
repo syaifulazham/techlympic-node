@@ -175,6 +175,7 @@ let API = {
                     `INSERT INTO user (usr_name, usr_email, notel, usr_role, usr_agent, kodsekolah, namasekolah, peringkat, alamat1, alamat2, poskod, bandar, negeri)
                     values(?,?,?,?,?,?,?,?,?,?,?,?,?)
                     ON DUPLICATE KEY UPDATE
+                        usr_name = ?,
                         notel = ?,
                         usr_role = ?,
                         kodsekolah = ?,
@@ -200,6 +201,7 @@ let API = {
                     data.poskod, 
                     data.bandar, 
                     data.negeri, 
+                    data.usr_name,
                     data.notel,
                     data.usr_role,
                     data.kodsekolah, 

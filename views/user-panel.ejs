@@ -47,7 +47,7 @@
                                         <tr>
                                             <td class='align-right'>Nama</td>
                                             <td>
-                                                <input readOnly class="mx-6 w-400" type="text" value="<%=user.displayName%>" />
+                                                <input id="usr_name" class="mx-6 w-400" type="text" value="<%=me.usr_name?me.usr_name:user.displayName%>" />
                                             </td>
                                             <td></td>
                                         </tr>
@@ -526,6 +526,7 @@
                     console.log(kod,' --------- ', sek);
                     if(kod !== '' && sek!== ''){
                         var data = {
+                            usr_name: $('#usr_name').val(),
                             notel: $('#notel').val(),
                             usr_role: urole, 
                             kodsekolah: kod, 
@@ -543,6 +544,7 @@
                     }
                 }else{
                         var data = {
+                            usr_name: $('#usr_name').val(),
                             notel: $('#notel').val(),
                             usr_role: urole, 
                             kodsekolah: '', 

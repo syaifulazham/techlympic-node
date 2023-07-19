@@ -380,7 +380,7 @@ const action = {
       try{
         var session = req.cookies['localId'];
         var data = {
-          usr_name: session.user.displayName, 
+          usr_name: req.body.usr_name,  //session.user.displayName
           usr_email:session.user.email, 
           notel: req.body.notel,
           usr_role: req.body.usr_role, 
