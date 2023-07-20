@@ -310,6 +310,7 @@ let API = {
                             msg: ''
                         });
                     }else {
+                        con.end();
                         fn({
                             status: true,
                             msg: 'Proceed'
@@ -322,46 +323,50 @@ let API = {
         },
 
         insertOrUpdateNegeri: (pesertaList, fn) => {
-            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            con.beginTransaction((err) => {
-                if (err) throw err;
+            try{
+                var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+                con.beginTransaction((err) => {
+                    if (err) throw err;
+                    
+                    
+                    // Loop through pesertaList and build INSERT or UPDATE query
+                    pesertaList.forEach((peserta) => {
+                      const query = `
+                        INSERT INTO peserta_negeri
+                        SET ?
+                        ON DUPLICATE KEY UPDATE
+                        usr_email = VALUES(usr_email),
+                        program = VALUES(program),
+                        kumpulan = VALUES(kumpulan)
+                      `;
                 
-                
-                // Loop through pesertaList and build INSERT or UPDATE query
-                pesertaList.forEach((peserta) => {
-                  const query = `
-                    INSERT INTO peserta_negeri
-                    SET ?
-                    ON DUPLICATE KEY UPDATE
-                    usr_email = VALUES(usr_email),
-                    program = VALUES(program),
-                    kumpulan = VALUES(kumpulan)
-                  `;
-            
-                  // Execute query
-                  con.query(query, peserta, (err, result) => {
-                    if (err) {
-                        con.rollback(() => {
-                        throw err;
+                      // Execute query
+                      con.query(query, peserta, (err, result) => {
+                        if (err) {
+                            con.rollback(() => {
+                            throw err;
+                          });
+                        }
                       });
-                    }
-                  });
-                });
-            
-                // Commit transaction
-                con.commit((err) => {
-                  if (err) {
-                    con.rollback(() => {
-                      throw err;
                     });
-                  }
-                  //fn(`${pesertaList.length} peserta inserted or updated successfully`);
-                });
-            
-                // Close connection
-                con.end();
-                fn(`${pesertaList.length} peserta negeri berjaya ditambah/ dikemaskini`);
-              });
+                
+                    // Commit transaction
+                    con.commit((err) => {
+                      if (err) {
+                        con.rollback(() => {
+                          throw err;
+                        });
+                      }
+                      //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                    });
+                
+                    // Close connection
+                    con.end();
+                    fn(`${pesertaList.length} peserta negeri berjaya ditambah/ dikemaskini`);
+                  });
+            }catch(err){
+                console.log('ERROR insertOrUpdateNegeri(): ', err);
+            }
         },
 
         getKumpulan: (usr, fn)=>{
@@ -569,7 +574,7 @@ let API = {
                     LEFT JOIN user b USING(kodsekolah)
                 ) c
                 LEFT JOIN peserta a ON c.usr_email = a.usr_email
-                LEFT JOIN peserta_negeri b ON a.usr_email = b.usr_email AND a.kp = b.kp;
+                LEFT JOIN peserta_negeri b ON c.kodsekolah = b.kodsekolah and  a.kp = b.kp;
                 `, [email], function (err, result) {
                     if (err) {
                         console.log(err);
