@@ -302,7 +302,7 @@ let API = {
             if(usr=='') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try{
-                con.query("delete from peserta_negri WHERE usr_email = ?",[usr], 
+                con.query("delete from peserta_negeri WHERE kodsekolah = ?",[usr], 
                 function (err, result) {
                     if(err){
                         fn({
@@ -333,6 +333,7 @@ let API = {
                     INSERT INTO peserta_negeri
                     SET ?
                     ON DUPLICATE KEY UPDATE
+                    usr_email = VALUES(usr_email),
                     program = VALUES(program),
                     kumpulan = VALUES(kumpulan)
                   `;

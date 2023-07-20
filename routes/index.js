@@ -582,7 +582,7 @@ const action = {
         var pesertaList = req.body.peserta;
         pesertaList.forEach(d=>{d.usr_email = session.user.email});
         console.log('pesertaList: ', pesertaList);
-        API.peserta.deletePesertaNegeri(session.user.email, ()=>{
+        API.peserta.deletePesertaNegeri(pesertaList[0].kodsekolah, ()=>{
           API.peserta.insertOrUpdateNegeri(pesertaList, (result) => {
             res.send({
               msg: result

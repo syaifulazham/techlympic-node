@@ -81,7 +81,7 @@
         <%kumpulan.forEach(g=>{%>
             <div class="flex-column width-full kumpulan-pertandingan" prog_code="<%=g.prog_code%>" kodsekolah="<%=g.kodsekolah%>">
                 <h5 class="text-dark"><%=g.prog_name%></h5>
-                <div class="flex-row my-6 kumpulan-1 kumpulan">
+                <div class="flex-row my-6 kumpulan-1 kumpulan-g">
                     <div class="button bg-green text-light">Kumpulan 1</div>
                     <div>
                         <input class="nama-kumpulan" type="text" name="txtKumpulan1-<%=g.prog_code.replace('.','')%>" id="txtKumpulan1-<%=g.prog_code.replace('.','')%>" placeholder="nama kumpulan 1" value="<%=g.kumpulan1%>">
@@ -93,7 +93,7 @@
                         <input class="guru-kumpulan" type="text" name="txtGuru1-<%=g.prog_code.replace('.','')%>" id="txtGuru1-<%=g.prog_code.replace('.','')%>" placeholder="guru pengiring kumpulan 1" value="<%=g.guru1%>">
                     </div>
                 </div>
-                <div class="flex-row my-6 kumpulan-2 kumpulan">
+                <div class="flex-row my-6 kumpulan-2 kumpulan-g">
                     <div class="button bg-red">Kumpulan 2</div>
                     <div>
                         <input class="nama-kumpulan" type="text" name="txtKumpulan2-<%=g.prog_code.replace('.','')%>" id="txtKumpulan2-<%=g.prog_code.replace('.','')%>" placeholder="nama kumpulan 2" value="<%=g.kumpulan2%>">
@@ -548,6 +548,7 @@
 
             g1.forEach(d=>{
                 mg.push({
+                    kodsekolah: "<%=me.kodsekolah%>",
                     kp: d.kp,
                     program: d.nama_pertandingan,
                     kumpulan: d.kumpulan
@@ -555,13 +556,14 @@
             });
             g2.forEach(d=>{
                 mg.push({
+                    kodsekolah: "<%=me.kodsekolah%>",
                     kp: d.kp,
                     program: d.nama_pertandingan,
                     kumpulan: d.kumpulan
                 })
             });
 
-            console.log(mg);
+            console.log('this is the data::::', mg);
             API.addbulk(mg, (msg)=>{
                 console.log(msg)
             })
