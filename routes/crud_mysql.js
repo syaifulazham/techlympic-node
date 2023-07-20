@@ -366,7 +366,19 @@ let API = {
         getKumpulan: (usr, fn)=>{
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try{
-                sqlstr = `SELECT * FROM peserta_negeri_kumpulan WHERE usr_email = ?`;
+                sqlstr = `
+                SELECT a.*, b.prog_code, b.prog_name,
+                    IFNULL(kumpulan1,'') kumpulan1,
+                        IFNULL(kumpulan2,'') kumpulan2,
+                        IFNULL(email1,'') email1,
+                        IFNULL(email2,'') email2,
+                        IFNULL(guru1,'') guru1,
+                        IFNULL(guru2,'') guru2
+                FROM (SELECT if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolah, usr_email, peringkat target_group FROM user WHERE usr_email = ?) a
+                LEFT JOIN program b USING(target_group)
+                LEFT JOIN peserta_negeri_kumpulan c USING(kodsekolah,prog_code)
+                WHERE b.prog_code not in('5.3K','5.3R','5.3B','5.4R')
+                `;
                 con.query(sqlstr, [usr], function (err, result) {
                     if (err) {
                         console.log(err);
@@ -387,6 +399,7 @@ let API = {
             try{
                 con.beginTransaction((err) => {
                     if (err) throw err;
+
                     kumpulan.forEach((grp) => {
                         sqlstr = `
                         INSERT INTO peserta_negeri_kumpulan
@@ -401,20 +414,28 @@ let API = {
                         `;
 
                         con.query(sqlstr, grp, function (err, result) {
-                    
                             if (err) {
                                 con.rollback(() => {
                                 throw err;
                               });
                               fn([]);
-                            } else {
-                                
-                                con.end();
-        
-                                fn(result);
-                            }
+                            } 
                         });
                     });
+
+                    // Commit transaction
+                    con.commit((err) => {
+                        if (err) {
+                        con.rollback(() => {
+                            throw err;
+                        });
+                        }
+                        //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                    });
+                
+                    // Close connection
+                    con.end();
+                    fn(`${kumpulan.length} rekod telah dikemaskini`);
 
                 });
 
@@ -534,14 +555,21 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
-                        SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
-                                DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
-                                a.program, ifnull(b.program,'') program_negeri, 
-                                ifnull(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
-                                ifnull(b.kumpulan,0) kumpulan
-                        from peserta a
-                        LEFT JOIN peserta_negeri b USING(usr_email,kp)
-                        where usr_email = ?`, [email], function (err, result) {
+                SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
+                DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
+                a.program, ifnull(b.program,'') program_negeri, 
+                IFNULL(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
+                IFNULL(b.kumpulan,0) kumpulan
+                FROM (
+                    SELECT if(length(b.kodsekolah)>2,b.kodsekolah,b.usr_email) kodsekolah, 
+                    b.usr_email, b.peringkat target_group
+                    FROM 
+                    (SELECT * FROM user WHERE usr_email = ?) a
+                    LEFT JOIN user b USING(kodsekolah)
+                ) c
+                LEFT JOIN peserta a ON c.usr_email = a.usr_email
+                LEFT JOIN peserta_negeri b ON a.usr_email = b.usr_email AND a.kp = b.kp;
+                `, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {

@@ -1092,7 +1092,14 @@ code {
     color: #fff;
 }
 
+.kumpulan-pertandingan{
+    margin-bottom: 25px;
+    border-bottom: 1px solid #666;
+}
 
+.kumpulan > button{
+    width: 30px;
+}
 
 @media (max-width: 767px) {
     .input-div{
@@ -1109,6 +1116,10 @@ code {
 
     .login > .pilihan > .w-500{
         width:100%!important;
+    }
+
+    .kumpulan.flex-row{
+        flex-direction: column!important;
     }
 
     .w-400{
@@ -1231,7 +1242,7 @@ code {
     }
 
     .popEdit > .popEdit-container > .flex-row select,input[type="text"],input[type="date"]{
-        width:90%!important;
+        width:100%!important;
     }
 
     .login-toggler{

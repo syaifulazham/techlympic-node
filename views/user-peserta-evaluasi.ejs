@@ -6,7 +6,7 @@
             <div class="heigth-90vh overflow-scroll">
                 <table class="table-x width-full">
                     <thead>
-                        <!--
+                        <%if(me.peringkat=='Rendah' || me.peringkat=='Menengah'){%>
                         <tr>
                             <th colspan="5">
                                 <div class="flex-row">
@@ -17,7 +17,8 @@
                                 </div>
                             </th>
                         </tr>
-                        -->
+                        <%}%>
+                        
                         <tr>
                             <th colspan="5">
                                 <div class="flex-row">
@@ -77,30 +78,35 @@
                 </li>
             </ul>
         </div>
-        <div class="flex-row my-6">
-            <div class="capsule bg-green col-label">Kumpulan 1</div>
-            <div>
-                <input type="text" name="txtKumpulan1" id="txtKumpulan1" placeholder="nama kumpulan 1">
+        <%kumpulan.forEach(g=>{%>
+            <div class="flex-column width-full kumpulan-pertandingan" prog_code="<%=g.prog_code%>" kodsekolah="<%=g.kodsekolah%>">
+                <h5 class="text-dark"><%=g.prog_name%></h5>
+                <div class="flex-row my-6 kumpulan-1 kumpulan">
+                    <div class="button bg-green text-light">Kumpulan 1</div>
+                    <div>
+                        <input class="nama-kumpulan" type="text" name="txtKumpulan1-<%=g.prog_code.replace('.','')%>" id="txtKumpulan1-<%=g.prog_code.replace('.','')%>" placeholder="nama kumpulan 1" value="<%=g.kumpulan1%>">
+                    </div>
+                    <div>
+                        <input class="email-kumpulan" type="text" name="emailKumpulan1-<%=g.prog_code.replace('.','')%>" id="emailKumpulan1-<%=g.prog_code.replace('.','')%>" placeholder="email kumpulan 1" value="<%=g.email1%>">
+                    </div>
+                    <div>
+                        <input class="guru-kumpulan" type="text" name="txtGuru1-<%=g.prog_code.replace('.','')%>" id="txtGuru1-<%=g.prog_code.replace('.','')%>" placeholder="guru pengiring kumpulan 1" value="<%=g.guru1%>">
+                    </div>
+                </div>
+                <div class="flex-row my-6 kumpulan-2 kumpulan">
+                    <div class="button bg-red">Kumpulan 2</div>
+                    <div>
+                        <input class="nama-kumpulan" type="text" name="txtKumpulan2-<%=g.prog_code.replace('.','')%>" id="txtKumpulan2-<%=g.prog_code.replace('.','')%>" placeholder="nama kumpulan 2" value="<%=g.kumpulan2%>">
+                    </div>
+                    <div>
+                        <input class="email-kumpulan" type="text" name="emailKumpulan2-<%=g.prog_code.replace('.','')%>" id="emailKumpulan2-<%=g.prog_code.replace('.','')%>" placeholder="email kumpulan 2" value="<%=g.email2%>">
+                    </div>
+                    <div>
+                        <input class="guru-kumpulan" type="text" name="txtGuru2-<%=g.prog_code.replace('.','')%>" id="txtGuru2-<%=g.prog_code.replace('.','')%>" placeholder="guru pengiring kumpulan 2" value="<%=g.guru2%>">
+                    </div>
+                </div>
             </div>
-            <div>
-                <input type="text" name="emailKumpulan1" id="emailKumpulan1" placeholder="email kumpulan 1">
-            </div>
-            <div>
-                <input type="text" name="txtGuru1" id="txtGuru1" placeholder="guru pengiring kumpulan 1">
-            </div>
-        </div>
-        <div class="flex-row my-6">
-            <div class="capsule bg-red col-label">Kumpulan 2</div>
-            <div>
-                <input type="text" name="txtKumpulan2" id="txtKumpulan2" placeholder="nama kumpulan 2">
-            </div>
-            <div>
-                <input type="text" name="emailKumpulan2" id="emailKumpulan2" placeholder="email kumpulan 2">
-            </div>
-            <div>
-                <input type="text" name="txtGuru2" id="txtGuru2" placeholder="guru pengiring kumpulan 2">
-            </div>
-        </div>
+        <%})%>
         <div class="flex-row">
             <button class="button" id="saveKumpulan"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
         </div>
@@ -163,7 +169,12 @@
                             d3.select('.idlePopUp').classed('hide',true);
                             fn(res);
                         },
-                        dataType: 'json'
+                        dataType: 'json',
+                        complete: function(jqXHR, textStatus) {
+                            var res = jqXHR.responseText;
+                            console.log(res);
+                            d3.select('.idlePopUp').classed('hide',true);
+                        }
                     });
             },
             getKumpulan: (fn) =>{
@@ -187,14 +198,22 @@
 
     $('#saveKumpulan').on('click', ()=>{
         tosave = [];
-        tosave.push({
-            kumpulan1: $('#txtKumpulan1').val(),
-            email1: $('#emailKumpulan1').val(),
-            kumpulan2: $('#txtKumpulan2').val(),
-            email2: $('#emailKumpulan2').val(),
-            guru1: $('#txtGuru1').val(),
-            guru2: $('#txtGuru2').val()
+        $('.kumpulan-pertandingan').each((i, d)=>{
+            var pcode = $(d).attr('prog_code').replace('.','');
+            tosave.push({
+                kodsekolah: $(d).attr('kodsekolah'),
+                prog_code: $(d).attr('prog_code'),
+                kumpulan1: $(d).find('#txtKumpulan1-' + pcode).val(),
+                email1: $(d).find('#emailKumpulan1-' + pcode).val(),
+                kumpulan2: $(d).find('#txtKumpulan2-' + pcode).val(),
+                email2: $(d).find('#emailKumpulan2-' + pcode).val(),
+                guru1: $(d).find('#txtGuru1-' + pcode).val(),
+                guru2: $(d).find('#txtGuru2-' + pcode).val()
+            });
+            console.log($(d).attr('prog_code'));
         });
+
+        console.log(tosave);
 
         API.saveKumpulan(tosave, (result)=>{
             console.log(result);

@@ -322,7 +322,9 @@ router.get('/user-peserta-evaluasi', function (req, res) {
   try{
     var session = req.cookies['localId'];
     API.user.isExist(session.user.email, (r) => {
-      res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data });
+      API.peserta.getKumpulan(session.user.email, g=>{
+        res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data, kumpulan: g });
+      });
     });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
