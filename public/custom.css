@@ -1097,7 +1097,7 @@ code {
     border-bottom: 1px solid #666;
 }
 
-.kumpulan > button{
+.kumpulan-g > button{
     width: 30px;
 }
 
@@ -1118,7 +1118,7 @@ code {
         width:100%!important;
     }
 
-    .kumpulan.flex-row{
+    .kumpulan-g.flex-row{
         flex-direction: column!important;
     }
 
