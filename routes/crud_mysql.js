@@ -455,22 +455,22 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 sqlstr = `
-                SELECT 'Jumlah Peserta' prog_name, COUNT(*) peserta 
+                SELECT 1 jenis, 'Jumlah Peserta' prog_name,'' nama, '' notel, COUNT(*) peserta, 0 k1, 0 k2
                 FROM peserta where usr_email = ?
                 
                 UNION 
                 
-                SELECT 'Peserta telah didaftarkan program' prog_name, COUNT(*) peserta 
+                SELECT 1 jenis, 'Peserta telah didaftarkan program' prog_name,'' nama, '' notel, COUNT(*) peserta, 0 k1, 0 k2
                 FROM peserta WHERE program <> '' and usr_email = ?
                 
                 UNION 
                 
-                SELECT 'Peserta belum didaftarkan program' prog_name, COUNT(*) peserta 
+                SELECT 1 jenis, 'Peserta belum didaftarkan program' prog_name,'' nama, '' notel, COUNT(*) peserta, 0 k1, 0 k2
                 FROM peserta WHERE program = '' and usr_email = ?
                 
                 UNION 
                 
-                SELECT aa.prog_name, ifnull(bb.peserta,0) peserta
+                SELECT 2 jenis, aa.prog_name,'' nama, '' notel, ifnull(bb.peserta,0) peserta, 0 k1, 0 k2
                 FROM (
                    SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
                     FROM (SELECT usr_role, usr_email, if(usr_role='Ibu Bapa','All',peringkat) lvl, peringkat FROM user WHERE usr_email=? ) a
@@ -487,9 +487,27 @@ let API = {
                 where a.usr_email = ?
                 ) m 
                 WHERE m.p <> ''
-                GROUP BY m.p) bb USING(prog_name);
+                GROUP BY m.p) bb USING(prog_name)
+                
+                UNION
+
+                SELECT 3 jenis, usr_email prog_name, usr_name nama, notel, COUNT(*) peserta, 0 k1, 0 k2 FROM(
+                    SELECT b.usr_email, b.usr_name, b.notel, c.kp from
+                    (SELECT kodsekolah, usr_email FROM user WHERE usr_email = ?) a
+                    LEFT JOIN user b USING(kodsekolah)
+                    LEFT JOIN peserta c ON c.usr_email = b.usr_email) v
+                    GROUP BY usr_email
+                
+                UNION    
+                
+                SELECT 4 jenis, program prog_name, '' nama, '' notel, COUNT(*) peserta, SUM(if(kumpulan=1,1,0)) k1, SUM(if(kumpulan=2,1,0)) k2
+                FROM 
+                (SELECT b.* FROM 
+                (SELECT kodsekolah, usr_email FROM user WHERE usr_email = ?) a
+                LEFT JOIN peserta_negeri b USING(kodsekolah)) h
+                GROUP BY program;
                 `
-                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
+                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {

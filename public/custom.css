@@ -559,7 +559,30 @@ input:read-only{
     border: 1px solid var(--primary-color);
     border-radius: 12px;
 }
+/* Info */
+.info-container{
+    margin: 0 0 50px 0;
+}
 
+.info{
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 15px 5px 15px;
+    background-color: #fff;
+    color: #000;
+    border-radius: 5px;
+    border-right: 1px solid #fff;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.info > label{
+    color: #999;
+    font-weight: 200;
+    margin-right: 15px;
+}
+.info > span{
+    font-weight: 600;
+}
 
 /* Navigation */
 
@@ -931,6 +954,11 @@ code {
 .text-dark{
     color: var(--text-dark) !important;
 }
+.text-dark-lg{
+    color: var(--text-dark) !important;
+    font-size: 120%;
+    font-weight: 800;
+}
 
 .text-green{
     color:green;
@@ -1247,6 +1275,10 @@ code {
 
     .login-toggler{
         display: block;
+    }
+
+    .info{
+        width: 100%;
     }
 
   }
