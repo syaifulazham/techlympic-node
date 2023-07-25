@@ -310,7 +310,7 @@
 
         kelas.unshift('');
 
-        d3.select('#kelas').selectAll('option').data(kelas).enter().append('option').attr('value',d=>d).text(d=>d=''?'SEMUA':d.toUpperCase());
+        d3.select('#kelas').selectAll('option').data(kelas.filter(d=>d!==null)).enter().append('option').attr('value',d=>d).text(d=>d=''?'SEMUA':d.toUpperCase());
 
         var c = d3.select('#peserta-container');
         c.selectAll('*').remove();
