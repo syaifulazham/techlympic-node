@@ -297,7 +297,7 @@
 <script>
     function renderCards(data, prog){
         //console.log('xxxx------>>>',data);
-
+        data=data.filter(d=>d.kp!==null);
         kelas = [];
         data.forEach(d=>{
             kelas.push(d.darjah_tingkatan);
