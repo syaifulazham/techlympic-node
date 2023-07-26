@@ -201,26 +201,61 @@ router.get('/download-excel-negeri', (req, res) => {
     //var sessionId = mysession(req.cookies['connect.sid']);
     var session = req.cookies['localId'];
     var uid = session.user.email;
-    API.peserta.loadPeserta(uid, 'sekolah', results=>{
-      // Create a new Excel workbook
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Sheet 1');
+    API.peserta.loadPesertaNegeriPrint(uid, 'negeri', results=>{
+      API.peserta.loadGuruNegeriPrint(uid, guru=>{
+        // Create a new Excel workbook
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Peserta');
+  
+        const columnWidth = [15, 40, 20, 15, 10, 20, 15, 30, 10];
+        // Add headers with desired styling
+        const headers = ['KP', 'Nama', 'Email', 'Darjah/ Tingkatan', 'Bangsa', 'Jantina', 'Tarikh Lahir', 'Pertandingan', 'Kumpulan'];
+        //worksheet.addRow(headers).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        const headerRow = worksheet.addRow(headers);
+        headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        //worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
+  
+        // Apply background color to columns A to I
+        for (let i = 1; i <= 9; i++) {
+          const cell = headerRow.getCell(i);
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
+          worksheet.getColumn(i).width = columnWidth[i - 1];
+        }
+  
+        // Add data rows
+        results.forEach((row, index) => {
+          worksheet.addRow(Object.values(row));
+          worksheet.getCell(`A${index + 2}`).numFmt = '@'; // Set KP column format to text
+        });
 
-      // Add headers with desired styling
-      const headers = ['KP', 'Nama', 'Email', 'Darjah/ Tingkatan', 'Bangsa', 'Jantina', 'Tarikh Lahir', 'Program'];
-      worksheet.addRow(headers).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
-
-      // Add data rows
-      results.forEach((row, index) => {
-        worksheet.addRow(Object.values(row));
-        worksheet.getCell(`A${index + 2}`).numFmt = '@'; // Set KP column format to text
-      });
-
-      // Generate the Excel file
-      workbook.xlsx.writeBuffer().then((data) => {
-        res.attachment('Senarai Peserta.xlsx'); // Set the filename for download
-        res.send(data);
+        //============================ TAB GURU ============================
+        const worksheet2 = workbook.addWorksheet('Kumpulan');
+        const columnWidth2 = [40, 15, 30, 30, 30];
+        // Add headers with desired styling
+        const headers2 = ['Pertandingan', 'Kumpulan', 'Nama Kumpulan', 'Email', 'Guru Pengiring'];
+        //worksheet.addRow(headers).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        const headerRow2 = worksheet2.addRow(headers2);
+        headerRow2.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        //worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
+  
+        // Apply background color to columns A to I
+        for (let i = 1; i <= 5; i++) {
+          const cell = headerRow2.getCell(i);
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
+          worksheet2.getColumn(i).width = columnWidth2[i - 1];
+        }
+  
+        // Add data rows
+        guru.forEach((row, index) => {
+          worksheet2.addRow(Object.values(row));
+          worksheet2.getCell(`A${index + 2}`).numFmt = '@'; // Set KP column format to text
+        });
+  
+        // Generate the Excel file
+        workbook.xlsx.writeBuffer().then((data) => {
+          res.attachment('Senarai Peserta Peringkat Zone.xlsx'); // Set the filename for download
+          res.send(data);
+        });
       });
     });
   }catch(err){

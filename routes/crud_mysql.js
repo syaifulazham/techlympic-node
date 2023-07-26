@@ -607,6 +607,71 @@ let API = {
                 console.log(e);
             }
         },
+        loadPesertaNegeriPrint: (email, peringkat, fn) => {
+            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`
+                SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
+                DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir, ifnull(b.program,'') program_negeri, 
+                IFNULL(b.kumpulan,0) kumpulan
+                FROM (
+                    SELECT if(length(b.kodsekolah)>2,b.kodsekolah,b.usr_email) kodsekolah, 
+                    b.usr_email, b.peringkat target_group
+                    FROM 
+                    (SELECT * FROM user WHERE usr_email = ?) a
+                    LEFT JOIN user b USING(kodsekolah)
+                ) c
+                LEFT JOIN peserta a ON c.usr_email = a.usr_email
+                LEFT JOIN peserta_negeri b ON c.kodsekolah = b.kodsekolah and  a.kp = b.kp
+                where kumpulan > 0
+                order by program_negeri, kumpulan;
+                `, [email], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        loadGuruNegeriPrint: (email, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`
+                SELECT * FROM(
+                    SELECT b.prog_name,1 kumpulan,kumpulan1 nama_kumpulan,email1 email,guru1 guru
+                    FROM peserta_negeri_kumpulan a 
+                    LEFT JOIN program b USING(prog_code)
+                    WHERE usr_email='azham@ezcuterobots.com'AND
+                    length(CONCAT(kumpulan1,email1,guru1)) > 2
+                    UNION 
+                    SELECT b.prog_name,2 kumpulan,kumpulan2 nama_kumpulan,email2 email,guru2 guru
+                    FROM peserta_negeri_kumpulan a 
+                    LEFT JOIN program b USING(prog_code)
+                    WHERE usr_email=? AND
+                    length(CONCAT(kumpulan2,email2,guru2)) > 2
+                    ) w
+                    ORDER BY prog_name, kumpulan;
+                `, [email], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
     },
     program: {
         list: (usr, fn) => {
