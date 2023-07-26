@@ -196,6 +196,42 @@ router.get('/download-excel', (req, res) => {
 
 });
 
+router.get('/download-excel-negeri', (req, res) => {
+  try{
+    //var sessionId = mysession(req.cookies['connect.sid']);
+    var session = req.cookies['localId'];
+    var uid = session.user.email;
+    API.peserta.loadPeserta(uid, 'sekolah', results=>{
+      // Create a new Excel workbook
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Sheet 1');
+
+      // Add headers with desired styling
+      const headers = ['KP', 'Nama', 'Email', 'Darjah/ Tingkatan', 'Bangsa', 'Jantina', 'Tarikh Lahir', 'Program'];
+      worksheet.addRow(headers).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } };
+
+      // Add data rows
+      results.forEach((row, index) => {
+        worksheet.addRow(Object.values(row));
+        worksheet.getCell(`A${index + 2}`).numFmt = '@'; // Set KP column format to text
+      });
+
+      // Generate the Excel file
+      workbook.xlsx.writeBuffer().then((data) => {
+        res.attachment('Senarai Peserta.xlsx'); // Set the filename for download
+        res.send(data);
+      });
+    });
+  }catch(err){
+    console.log(err);
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
+  //const sql = 'SELECT kp, nama, email, jantina, umur, darjah_tingkatan, bangsa, program FROM peserta WHERE usr_email = ?';
+  //const params = [req.query.email]; // Get the email parameter from the query string
+
+});
+
 router.get('/', function (req, res) {
   try{
     //var sessionId = mysession(req.cookies['connect.sid']);

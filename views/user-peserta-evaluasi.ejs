@@ -54,6 +54,11 @@
                 <div id="peserta-container" class="flex-row width-full flex-wrap">
 
                 </div>
+        
+                <div class="flex-row float-bottom">
+                    <button class="button" id="saveThis"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
+                    <a class="button bg-green" id="downloadThis" href="/download-excel-negeri" target="_blank"><i class="fa-solid fa-file-excel"></i>&nbsp;&nbsp;Muat Turun</a>
+                </div>
             </div>
         </div>
 </div>
@@ -541,7 +546,7 @@
             });
         });
 
-        d3.select('#btnSave').on('click', ()=>{
+        var saveThis = ()=>{
             var g1 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===1);
             var g2 = d3.selectAll('.kumpulan').data().filter(a=>a.kumpulan===2);
             var mg = [];
@@ -563,10 +568,13 @@
                 })
             });
 
-            console.log('this is the data::::', mg);
+            //console.log('this is the data::::', mg);
             API.addbulk(mg, (msg)=>{
                 console.log(msg)
             })
-        });
+        }
+
+        d3.select('#btnSave').on('click', saveThis);
+        d3.select('#saveThis').on('click', saveThis);
     }
 </script>
