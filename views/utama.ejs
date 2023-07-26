@@ -1,37 +1,38 @@
 <div class="working">
-    <section id="sec-1" class="section-1 flex-column">
-    
-    <div class='imgBg flex-column px-6 py-6'>
+   <section id="sec-1" class="section-1 flex-column">
+
+        <div class='imgBg flex-column px-6 py-6'>
         <div class='flex-row mosti'>
             <img class='.jata' src="./img/jata_malaysia.svg" width="90vh"></img>
             <div class='flex-column px-6 justify mosti-text left-border'>
-                <h5>KEMENTERIAN SAINS,</h5>
-                <h5>TEKNOLOGI DAN INOVASI</h5>
+            <h5>KEMENTERIAN SAINS,</h5>
+            <h5>TEKNOLOGI DAN INOVASI</h5>
             </div>
         </div>
-        
-    </div>
-    <div class="imgBg flex-row center">
+
+        </div>
+        <div class="imgBg flex-row center">
         <div class='glow'>
-            <span>Selamat Kembali</span> 
-            
+            <span>Selamat Kembali</span>
+
             <% if (user.email) { %>
             <strong><%= user.displayName %></strong>
             <%}%>
-            <h1>Techlympics 2023</h1>
-            <% if (!user.email) { %>
-                <div class="flex-row">
-                    <a class="button" href="/daftar">Sertai kami</a>
-                    <a class="button login-toggler" href="/login">Log Masuk</a>
-                </div>
+                <h1>Techlympics 2023</h1>
+                <% if (!user.email) { %>
+            <div class="flex-row">
+            <a class="button" href="/daftar">Sertai kami</a>
+            <a class="button login-toggler" href="/login">Log Masuk</a>
+            </div>
             <%}%>
-        
+            
+            </div>
         </div>
-    </div>
-    <!--
-    <img class='thebg' src="./img/bg-02.png"></img>
-    -->
-</section>
+        <!--
+        <img class='thebg' src="./img/bg-02.png"></img>
+        -->
+    </section>
+    
     <section id="sec-2" class="section-2 flex-row flex-wrap">
         <div class="flex-column width-full center">
             <div><span>Pertandingan</span> <h1>Techlympic 2023</h1></div>
