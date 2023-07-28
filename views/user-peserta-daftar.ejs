@@ -407,7 +407,7 @@
 
 
     function repareIC(kp){
-        var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').replace('/','').replace('\\','').trim();
+        var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').replace('/','').replace('\\','').replace('?','').replace('*','').replace('#','').trim();
         var res = kp_;
 
         if(kp.length < 12){
