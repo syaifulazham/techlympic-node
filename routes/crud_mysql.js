@@ -491,7 +491,7 @@ let API = {
                 
                 UNION
 
-                SELECT 3 jenis, usr_email prog_name, usr_name nama, notel, COUNT(*) peserta, 0 k1, 0 k2 FROM(
+                SELECT 3 jenis, usr_email prog_name, usr_name nama, notel, SUM(if(kp IS NULL,0,1)) peserta, 0 k1, 0 k2 FROM(
                     SELECT b.usr_email, b.usr_name, b.notel, c.kp from
                     (SELECT kodsekolah, usr_email FROM user WHERE usr_email = ?) a
                     LEFT JOIN user b USING(kodsekolah)
