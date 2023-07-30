@@ -650,16 +650,22 @@ let API = {
                 con.query(`
                 SELECT * FROM(
                     SELECT b.prog_name,1 kumpulan,kumpulan1 nama_kumpulan,email1 email,guru1 guru
-                    FROM peserta_negeri_kumpulan a 
+                    FROM (
+							  SELECT h.* FROM 
+	                    (SELECT kodsekolah FROM user WHERE usr_email=?) g
+	                    LEFT JOIN  peserta_negeri_kumpulan h USING(kodsekolah)
+						  ) a 
                     LEFT JOIN program b USING(prog_code)
-                    WHERE usr_email=? AND
-                    length(CONCAT(kumpulan1,email1,guru1)) > 2
+                    WHERE length(CONCAT(kumpulan1,email1,guru1)) > 2
                     UNION 
                     SELECT b.prog_name,2 kumpulan,kumpulan2 nama_kumpulan,email2 email,guru2 guru
-                    FROM peserta_negeri_kumpulan a 
+                    FROM (
+							  SELECT h.* FROM 
+	                    (SELECT kodsekolah FROM user WHERE usr_email=?) g
+	                    LEFT JOIN  peserta_negeri_kumpulan h USING(kodsekolah)
+						  ) a 
                     LEFT JOIN program b USING(prog_code)
-                    WHERE usr_email=? AND
-                    length(CONCAT(kumpulan2,email2,guru2)) > 2
+                    WHERE length(CONCAT(kumpulan2,email2,guru2)) > 2
                     ) w
                     ORDER BY prog_name, kumpulan;
                 `, [email,email], function (err, result) {

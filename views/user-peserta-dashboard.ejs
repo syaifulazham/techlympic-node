@@ -5,6 +5,8 @@
             <h2>Papan Pemuka</h2>
         </div>
         <div class="flex-column width-full">
+            <h1><%=me.usr_role%></h1>
+            <%if(me.usr_role==='Guru'){%>
             <h5>Maklumat Sekolah</h5>
             <div class="info-container flex-row flex-wrap width-full">
                 <div class="flex-row info"><label>Kod Sekolah</label><span><%=me.kodsekolah%></span> </div>
@@ -70,6 +72,7 @@
                     </tbody>
                 </table>
             </div>
+        <%};%>
             <h5>Penyertaan Peringkat Negeri (Zon)</h5>
             <div class="info-container flex-row flex-wrap width-full">
                 <table class="table-x">
