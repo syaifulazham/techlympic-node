@@ -662,7 +662,7 @@ let API = {
                     length(CONCAT(kumpulan2,email2,guru2)) > 2
                     ) w
                     ORDER BY prog_name, kumpulan;
-                `, [email], function (err, result) {
+                `, [email,email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
