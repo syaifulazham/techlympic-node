@@ -652,7 +652,7 @@ let API = {
                     SELECT b.prog_name,1 kumpulan,kumpulan1 nama_kumpulan,email1 email,guru1 guru
                     FROM peserta_negeri_kumpulan a 
                     LEFT JOIN program b USING(prog_code)
-                    WHERE usr_email='azham@ezcuterobots.com'AND
+                    WHERE usr_email=? AND
                     length(CONCAT(kumpulan1,email1,guru1)) > 2
                     UNION 
                     SELECT b.prog_name,2 kumpulan,kumpulan2 nama_kumpulan,email2 email,guru2 guru
