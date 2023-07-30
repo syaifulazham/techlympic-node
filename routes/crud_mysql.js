@@ -298,11 +298,14 @@ let API = {
               });
         },
 
-        deletePesertaNegeri: (usr, fn) =>{
+        deletePesertaNegeri: (grp,usr, fn) =>{
             if(usr=='') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+
+            var kod = (grp==='Guru')?'kodsekolah=?':'usr_email=?';
+            
             try{
-                con.query("delete from peserta_negeri WHERE kodsekolah = ?",[usr], 
+                con.query(`delete from peserta_negeri WHERE ${kod}`,[usr], 
                 function (err, result) {
                     if(err){
                         fn({
@@ -585,14 +588,15 @@ let API = {
                 IFNULL(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
                 IFNULL(b.kumpulan,0) kumpulan
                 FROM (
-                    SELECT if(length(b.kodsekolah)>2,b.kodsekolah,b.usr_email) kodsekolah, 
+                    SELECT kodsekolahx kodsekolah, 
                     b.usr_email, b.peringkat target_group
                     FROM 
-                    (SELECT * FROM user WHERE usr_email = ?) a
-                    LEFT JOIN user b USING(kodsekolah)
+                    (SELECT if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m WHERE usr_email = ?) a
+                    LEFT JOIN (select m.usr_email, m.peringkat, if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m) b 
+						  USING(kodsekolahx)
                 ) c
                 LEFT JOIN peserta a ON c.usr_email = a.usr_email
-                LEFT JOIN peserta_negeri b ON c.kodsekolah = b.kodsekolah and  a.kp = b.kp;
+                LEFT JOIN (SELECT w.*,if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx from peserta_negeri w) b ON c.kodsekolah = b.kodsekolahx and  a.kp = b.kp;
                 `, [email], function (err, result) {
                     if (err) {
                         console.log(err);

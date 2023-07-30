@@ -653,7 +653,11 @@ const action = {
         var pesertaList = req.body.peserta;
         pesertaList.forEach(d=>{d.usr_email = session.user.email});
         console.log('pesertaList: ', pesertaList);
-        API.peserta.deletePesertaNegeri(pesertaList[0].kodsekolah, ()=>{
+
+        var kod = pesertaList[0].kodsekolah!==''?pesertaList[0].kodsekolah:pesertaList[0].usr_email;
+        var grp = pesertaList[0].kodsekolah!==''?'Guru':'Belia';
+
+        API.peserta.deletePesertaNegeri(grp, kod, ()=>{
           API.peserta.insertOrUpdateNegeri(pesertaList, (result) => {
             res.send({
               msg: result
