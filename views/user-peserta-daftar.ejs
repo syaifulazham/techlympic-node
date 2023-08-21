@@ -326,7 +326,7 @@
                 lst.push({id:d.prog_code.replace('.',''), acara:d.prog_name, peringkat: d.target_group});
             });
             acara = d3.select('#individu_acara');
-            acara_contain = acara.append('div').attr('class','flex-column');
+            acara_contain = acara.append('div').attr('class','flex-column').style('padding-bottom','80px');
             acara_contain.selectAll('.acara').data(lst).enter().append('div').call((a)=>{
                 a.attr('class',d=>'flex-row acara center ' + d.peringkat).attr('id',(d)=>'acara_' + d.id).style('border-bottom','1px solid #666');
                 chk = a.append('input').attr('type','checkbox').attr('class',(d)=>('_header'))
