@@ -582,21 +582,23 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
-                SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
-                DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
-                a.program, ifnull(b.program,'') program_negeri, 
-                IFNULL(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
-                IFNULL(b.kumpulan,0) kumpulan
-                FROM (
-                    SELECT kodsekolahx kodsekolah, 
-                    b.usr_email, b.peringkat target_group
-                    FROM 
-                    (SELECT if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m WHERE usr_email = ?) a
-                    LEFT JOIN (select m.usr_email, m.peringkat, if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m) b 
-						  USING(kodsekolahx)
-                ) c
-                LEFT JOIN peserta a ON c.usr_email = a.usr_email
-                LEFT JOIN (SELECT w.*,if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx from peserta_negeri w) b ON c.kodsekolah = b.kodsekolahx and  a.kp = b.kp;
+                SELECT kp,nama,email,darjah_tingkatan,bangsa,jantina,tarikh_lahir,'' program, program_negeri, kod_program_negeri, kumpulan, COUNT(*) total FROM(
+                    SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
+                    DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
+                    a.program, ifnull(b.program,'') program_negeri, 
+                    IFNULL(replace(TRIM(SUBSTRING_INDEX(b.program, ' ', 1)),'.',''),'') kod_program_negeri, 
+                    IFNULL(b.kumpulan,0) kumpulan
+                    FROM (
+                        SELECT kodsekolahx kodsekolah, 
+                        b.usr_email, b.peringkat target_group
+                        FROM 
+                        (SELECT if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m WHERE usr_email = ?) a
+                        LEFT JOIN (select m.usr_email, m.peringkat, if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx FROM user m) b 
+                                              USING(kodsekolahx)
+                    ) c
+                    LEFT JOIN peserta a ON c.usr_email = a.usr_email
+                    LEFT JOIN (SELECT w.*,if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx from peserta_negeri w) b ON c.kodsekolah = b.kodsekolahx and  a.kp = b.kp
+                ) w where kp is not null GROUP BY kp;
                 `, [email], function (err, result) {
                     if (err) {
                         console.log(err);
