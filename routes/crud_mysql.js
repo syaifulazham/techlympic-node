@@ -582,7 +582,7 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
-                SELECT kp,nama,email,darjah_tingkatan,bangsa,jantina,tarikh_lahir,'' program, program_negeri, kod_program_negeri, kumpulan, COUNT(*) total FROM(
+                SELECT kp,nama,email,darjah_tingkatan,bangsa,jantina,tarikh_lahir,program, program_negeri, kod_program_negeri, kumpulan, COUNT(*) total FROM(
                     SELECT a.kp,a.nama,a.email,a.darjah_tingkatan,a.bangsa,a.jantina,
                     DATE_FORMAT(a.tarikh_lahir, "%Y-%m-%d") tarikh_lahir,
                     a.program, ifnull(b.program,'') program_negeri, 
@@ -598,7 +598,7 @@ let API = {
                     ) c
                     LEFT JOIN peserta a ON c.usr_email = a.usr_email
                     LEFT JOIN (SELECT w.*,if(length(kodsekolah)>2,kodsekolah,usr_email) kodsekolahx from peserta_negeri w) b ON c.kodsekolah = b.kodsekolahx and  a.kp = b.kp
-                ) w where kp is not null GROUP BY kp;
+                ) w where kp is not null GROUP BY kp ORDER BY kod_program_negeri, kumpulan;
                 `, [email], function (err, result) {
                     if (err) {
                         console.log(err);
