@@ -405,9 +405,14 @@
         return keys;
     }
 
+    function removeNonNumericAndSpaces(inputString) {
+        return inputString.replace(/[^0-9]/g, '');
+    }
+
 
     function repareIC(kp){
-        var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').replace('/','').replace('\\','').replace('?','').replace('*','').replace('#','').trim();
+        //var kp_ = kp.replace('-','').replace('-','').replace("'","").replace('`','').replace('/','').replace('\\','').replace('?','').replace('*','').replace('#','').trim();
+        var kp_ = removeNonNumericAndSpaces(kp);
         var res = kp_;
 
         if(kp.length < 12){
