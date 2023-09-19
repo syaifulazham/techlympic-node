@@ -249,6 +249,58 @@ let API = {
             }
         },
 
+        
+        updatePasswordBulk: (usr, data, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            const fields = ['kp', 'passcode'];
+    
+            // Create an array to store the update statements for each row
+            const updateStatements = data.map(row => {
+                const kp = row.kp;
+                const passcode = row.passcode;
+                // Construct the update statement with AES_ENCRYPT
+                return `
+                UPDATE peserta SET peserta_password = AES_ENCRYPT(${mysql.escape(passcode)}, CONCAT(${mysql.escape(kp)}, ${mysql.escape(auth._SECRET_)})) WHERE kp = ${mysql.escape(kp)} and usr_email = ${mysql.escape(usr)};
+                `;
+            });
+    
+            // Join the update statements into a single SQL query
+            //let sql = updateStatements.join(' ');
+    
+            try {
+                con.beginTransaction((err) => {
+                    if (err) throw err;
+                    updateStatements.forEach(sql=>{
+                        con.query(sql, function (err, result) {
+                            if (err) {
+                                con.rollback(() => {
+                                throw err;
+                              });
+                            }
+                        });
+                    });
+
+                    
+                // Commit transaction
+                con.commit((err) => {
+                    if (err) {
+                      con.rollback(() => {
+                        throw err;
+                      });
+                    }
+                    //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                  });
+              
+                  // Close connection
+                  con.end();
+                  fn(`${updateStatements.length} dikemaskini`);
+
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
         insertOrUpdate: (pesertaList, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             con.beginTransaction((err) => {
