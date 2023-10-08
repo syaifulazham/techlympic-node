@@ -3,6 +3,8 @@ const ExcelJS = require('exceljs');
 //const sessions = require('express-session');
 const cookieParser = require('cookie-parser');
 
+const axios = require('axios');
+
 var mysql = require('mysql');
 var router = express.Router();
 
@@ -486,7 +488,43 @@ router.get('/user-dashboard', function(req, res, next){
     //console.log('/user-dashboard --error', err );
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
-})
+});
+
+const url = 'https://staging.sparkbackend.cerebry.co';
+const headers = {
+  'Content-Type': 'application/json',
+  'jwt-token': auth._CEREBRY_
+};
+
+async function requestToken(usrid) {
+  // Define the API URL and request data
+  const apiUrl = `${url}/api/v11/partner/user/Teacher-${usrid}/token/`;
+
+  try {
+    // Make the POST request
+    console.log(apiUrl, headers);
+    const response = await axios.get(apiUrl, { headers });
+
+    return response.data;
+  } catch (error) {
+    // Handle any errors that occurred during the request
+    console.error('Error calling API:', error.message);
+    throw error; // You can choose to throw the error or handle it differently
+  }
+}
+
+router.get('/user-cerebry', (req, res)=>{
+  var session = req.cookies['localId'];
+
+  API.user.isExist(session.user.email, (r) => {
+    requestToken(r.data.kodsekolah).then(data=>{
+      console.log('THE TOKEN=========>>>',data.token);
+      res.render('main.ejs', { user: session.user,registered: r.registered, page: 'user-cerebry.ejs',token:data.token });
+    }).catch(err=>{
+      res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+    })
+  });
+});
 
 router.get('/logout', function (req, res, next) {
   /*

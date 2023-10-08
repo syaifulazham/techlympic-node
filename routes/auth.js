@@ -19,6 +19,8 @@ const auth = function(){
 
 const _SECRET_ = process.env.APPS_SECRET_KEY;
 
+const _CEREBRY_ = process.env.CEREBRY_JWT;
+
 const _EMAIL_ = {
   service: process.env.EMAIL_SERVICE,
   host: process.env.EMAIL_HOST,
@@ -31,4 +33,4 @@ const _EMAIL_ = {
 
 
 
-module.exports = {auth,_SECRET_,_EMAIL_}
+module.exports = {auth,_SECRET_,_EMAIL_,_CEREBRY_}
