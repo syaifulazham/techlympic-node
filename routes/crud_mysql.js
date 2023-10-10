@@ -273,9 +273,9 @@ let API = {
                     updateStatements.forEach(sql=>{
                         con.query(sql, function (err, result) {
                             if (err) {
-                                con.rollback(() => {
+                                //con.rollback(() => {
                                 throw err;
-                              });
+                              //});
                             }
                         });
                     });
