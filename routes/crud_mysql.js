@@ -260,7 +260,7 @@ let API = {
                 const passcode = row.passcode;
                 // Construct the update statement with AES_ENCRYPT
                 return `
-                UPDATE peserta SET peserta_password = AES_ENCRYPT(${mysql.escape(passcode)}, CONCAT(${mysql.escape(kp)}, ${mysql.escape(auth._SECRET_)})) WHERE kp = ${mysql.escape(kp)} and usr_email = ${mysql.escape(usr)};
+                UPDATE peserta SET pwd = ${mysql.escape(passcode)}, peserta_password = AES_ENCRYPT(${mysql.escape(passcode)}, CONCAT(${mysql.escape(kp)}, ${mysql.escape(auth._SECRET_)})) WHERE kp = ${mysql.escape(kp)} and usr_email = ${mysql.escape(usr)};
                 `;
             });
     
