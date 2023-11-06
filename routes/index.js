@@ -517,7 +517,7 @@ router.get('/user-cerebry', (req, res)=>{
   var session = req.cookies['localId'];
 
   API.user.isExist(session.user.email, (r) => {
-    requestToken(r.data.kodsekolah).then(data=>{
+    requestToken(r.data.kodsekolah.trim()).then(data=>{
       console.log('THE TOKEN=========>>>',data.token);
       res.render('main.ejs', { user: session.user,registered: r.registered, page: 'user-cerebry.ejs',token:data.token });
     }).catch(err=>{
