@@ -724,6 +724,21 @@
 
             
             btnTD = o.append('td').append('div').attr('class','flex-row');
+            /*
+            btnSijil = btnTD.append('div').attr('class','button bg-green').html('<i class="fa-solid fa-file-pdf"></i>');
+            btnSijil.on('click', (e, d)=>{
+                //download sijil
+                $.ajax({
+                    type: "POST",
+                    url: '/api/peserta/download-sijil',
+                    data: { data: d},
+                    dataType: 'json',
+                    success: (file)=>{
+                        console.log('got return data:', file);
+                    }
+                });
+            })*/
+
             btnEdit = btnTD.append('div').attr('class','button').html('<i class="fa-solid fa-pen-to-square"></i>');
             btnEdit.on('click', (e, d)=>{
                 console.log(d);

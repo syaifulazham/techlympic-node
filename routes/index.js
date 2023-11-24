@@ -1,5 +1,9 @@
 var express = require('express');
 const ExcelJS = require('exceljs');
+const { PDFDocument, rgb } = require('pdf-lib');
+const fontkit = require('fontkit'); // Import the fontkit library
+const fs = require('fs').promises;
+const path = require('path');
 //const sessions = require('express-session');
 const cookieParser = require('cookie-parser');
 
@@ -866,5 +870,238 @@ router.post('/api/program/list', action.program.list);
 router.get('/sessions', (req, res) => {
   //res.json(req.sessionStore.sessions);
 });
+
+async function mergePdfs(dataArray, fn) {
+  console.log('dataArray----------------->>>',dataArray);
+  const mergedPdf = await PDFDocument.create();
+
+  //for (const data of dataArray)
+  for (const data of dataArray) {
+    console.log('dataArray----------------->>>',data);
+    /*
+    const pdfBytes = await createSijil(data);
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pages = await mergedPdf.copyPages(pdfDoc.getPages());
+    pages.forEach((page) => mergedPdf.addPage(page));
+     */
+    createSijil(data, pdfBytes=>{
+      const pdfDoc = PDFDocument.load(pdfBytes);
+      const pages = mergedPdf.copyPages(pdfDoc.getPages());
+    });
+  }
+
+  fn(await mergedPdf.save());
+}
+
+async function createSijil(d, fn) {
+  console.log('data input~~~~~ooooo',d);
+  var peringkat_ = d.peringkat.split('|');
+  const pos = {
+    siri: {
+        y:800,
+        size: 18
+    },
+    nama: {
+        y:570,
+        size: 18
+    },
+    sekolah: {
+        y:550,
+        size:16
+    },
+    pertandingan:{
+        y:470,
+        size: 20
+    },
+    peringkat1:{
+        y:410,
+        size: 20
+    },
+    peringkat2:{
+        y:390,
+        size: 20
+    },
+    tempat:{
+        y:340,
+        size: 18
+    },
+    tarikh:{
+        y:320,
+        size: 16
+    }
+  }
+  // Load the PDF file
+  const pdfData = await fs.readFile('templates/SIJIL PENYERTAAN.pdf');
+  const pdfDoc = await PDFDocument.load(pdfData);
+
+  // Create a new page with the same size as the first page
+  const firstPage = pdfDoc.getPages()[0];
+  const pageWidth = firstPage.getWidth();
+  const pageHeight = firstPage.getHeight();
+  //const newPage = pdfDoc.addPage([pageWidth, pageHeight]);
+
+  // Define the text and font size
+  const fontSize = 20;
+  const textSiri = "No Siri: " + d.siri;
+  const textNama = d.nama.toUpperCase();
+  const textSekolah = d.sekolah.toUpperCase();
+  const textPertandingan = d.pertandingan.toUpperCase();
+  const textPeringkat1 = peringkat_[0].toUpperCase();
+  const textPeringkat2 = peringkat_[1].toUpperCase();
+  const textTempat = d.tempat.toUpperCase();
+  const textTarikh = d.tarikh.toUpperCase();
+
+  // Register fontkit
+  pdfDoc.registerFontkit(fontkit);
+
+  // Embed the Arial font
+  const fontBytes = await fs.readFile('RobotoCondensed-Bold.ttf'); // Provide the path to the Arial font file
+  const customFont = await pdfDoc.embedFont(fontBytes);
+
+  // Calculate the x position to center the text horizontally
+  const textSiriWidth = customFont.widthOfTextAtSize(textSiri, pos.siri.size);
+  const textNamaWidth = customFont.widthOfTextAtSize(textNama, pos.nama.size);
+  const textSekolahWidth = customFont.widthOfTextAtSize(textSekolah, pos.sekolah.size);
+  const textPertandinganWidth = customFont.widthOfTextAtSize(textPertandingan, pos.pertandingan.size);
+  const textPeringkat1Width = customFont.widthOfTextAtSize(textPeringkat1, pos.peringkat1.size);
+  const textPeringkat2Width = customFont.widthOfTextAtSize(textPeringkat2, pos.peringkat2.size);
+  const textTempatWidth = customFont.widthOfTextAtSize(textTempat, pos.tempat.size);
+  const textTarikhWidth = customFont.widthOfTextAtSize(textTarikh, pos.tarikh.size);
+
+  const cxSiri = (pageWidth - textSiriWidth - 40);
+  const cxNama = (pageWidth - textNamaWidth) / 2;
+  const cxSekolah = (pageWidth - textSekolahWidth) / 2;
+  const cxPertandingan = (pageWidth - textPertandinganWidth) / 2;
+  const cxPeringkat1 = (pageWidth - textPeringkat1Width) / 2;
+  const cxPeringkat2 = (pageWidth - textPeringkat2Width) / 2;
+  const cxTempat = (pageWidth - textTempatWidth) / 2;
+  const cxTarikh = (pageWidth - textTarikhWidth) / 2;
+  //const centerY = pageHeight / 2;
+
+  // Add text in the middle of the page with Arial font
+  firstPage.drawText(textSiri, {
+    x: cxSiri,
+    y: pos.siri.y,
+    size: pos.siri.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textNama, {
+    x: cxNama,
+    y: pos.nama.y,
+    size: pos.nama.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0.25, 0.4, 0.6), // Black color
+  });
+
+  firstPage.drawText(textSekolah, {
+    x: cxSekolah,
+    y: pos.sekolah.y,
+    size: pos.sekolah.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textPertandingan, {
+    x: cxPertandingan,
+    y: pos.pertandingan.y,
+    size: pos.pertandingan.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textPeringkat1, {
+    x: cxPeringkat1,
+    y: pos.peringkat1.y,
+    size: pos.peringkat1.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textPeringkat2, {
+    x: cxPeringkat2,
+    y: pos.peringkat2.y,
+    size: pos.peringkat2.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textTempat, {
+    x: cxTempat,
+    y: pos.tempat.y,
+    size: pos.tempat.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  firstPage.drawText(textTarikh, {
+    x: cxTarikh,
+    y: pos.tarikh.y,
+    size: pos.tarikh.size,
+    font: customFont, // Set the font to Arial
+    color: rgb(0, 0, 0), // Black color
+  });
+
+  
+  console.log('GENERATING SIJIL ', d.pertandingan);
+  //const folderName = 'tmp/' + d.kodsekolah;
+  //console.log("Nama folder====>>>>",folderName);
+  //const fname = d.kodsekolah + '-' + d.kp; //nama.substring(0,3) + '-' + kp;
+  // Serialize the modified PDF
+  //const modifiedPdfBytes = await pdfDoc.save();
+
+  // Create the 'sijil' folder if it doesn't exist
+  //const folderPath = path.join(__dirname, "SIJIL PENYERTAAN/" + folderName);
+  //await fs.mkdir(folderPath, { recursive: true });
+
+  // Save the modified PDF inside the 'sijil' folder
+  //const filePath = path.join(folderPath, `${fname}.pdf`);
+  //await fs.writeFile(filePath, modifiedPdfBytes);
+
+  fn(modifiedPdfBytes);
+}
+
+router.post('/api/peserta/download-sijil', async (req, res)=>{
+  try{
+    var session = req.cookies['localId'];
+    var uid = session.user.email;
+    var data = req.body.data;
+
+    data.programs = data.program.split('|');
+
+  var sijil = [];
+  API.user.getUser(uid, u=>{
+    data.programs.forEach(d=>{
+      sijil.push({
+        nama: data.nama,
+        sekolah: u.data.namasekolah,
+        pertandingan: d,
+        peringkat: 'SEKOLAH|',
+        tempat: '',
+        tarikh: '',
+        kp: '',
+        kodsekolah: u.data.kodsekolah,
+        siri: 0,
+      });
+
+      mergePdfs(sijil, mergedPdfBytes=>{
+        console.log(mergedPdfBytes);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=merged_sijil.pdf');
+        res.send(mergedPdfBytes);
+      });
+    });
+  });
+
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+  
+  
+
+})
 
 module.exports = router;

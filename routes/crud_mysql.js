@@ -41,6 +41,37 @@ let API = {
         },
     },
     user: {
+        getUser: async (email, fn) => {
+            try {
+                var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+                con.query("SELECT * FROM user WHERE usr_email = ?", [email], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        var default_val = {
+                            usr_role: '--Pilih Jenis Pengguna--',
+                            kodsekolah: '', 
+                            namasekolah: '', 
+                            alamat1: '', 
+                            alamat2: '', 
+                            poskod: '', 
+                            bandar: '', 
+                            negeri: '--Pilih Negeri--'
+                        }
+                        var val = {
+                            registered: result.length>0 ? true : false,
+                            data: result.length>0 ? result[0] : default_val
+                        }
+                        
+                        fn(val);
+                    }
+                });
+            } catch (e) {
+                console.log('------ERROR------>', e);
+            }
+        },
         isExist: (email, fn) => {
             try {
                 var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
