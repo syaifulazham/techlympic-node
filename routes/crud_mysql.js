@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+const util = require('util');
 const auth = require('./auth');
 
 let __DATA__SCHEMA__ = 'techlympic';
@@ -41,35 +42,38 @@ let API = {
         },
     },
     user: {
-        getUser: async (email, fn) => {
+        getUser: async (email) => {
+            const val = {
+                registered: true,
+                data: []
+            };
+    
             try {
-                var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-                con.query("SELECT * FROM user WHERE usr_email = ?", [email], (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        
-                        con.end();
-                        var default_val = {
-                            usr_role: '--Pilih Jenis Pengguna--',
-                            kodsekolah: '', 
-                            namasekolah: '', 
-                            alamat1: '', 
-                            alamat2: '', 
-                            poskod: '', 
-                            bandar: '', 
-                            negeri: '--Pilih Negeri--'
-                        }
-                        var val = {
-                            registered: result.length>0 ? true : false,
-                            data: result.length>0 ? result[0] : default_val
-                        }
-                        
-                        fn(val);
-                    }
-                });
+                const connection = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+                const queryAsync = util.promisify(connection.query).bind(connection);
+    
+                const result = await queryAsync('SELECT * FROM `user` WHERE usr_email = ?', [email]);
+    
+                connection.end();
+    
+                const default_val = {
+                    usr_role: '--Pilih Jenis Pengguna--',
+                    kodsekolah: '',
+                    namasekolah: '',
+                    alamat1: '',
+                    alamat2: '',
+                    poskod: '',
+                    bandar: '',
+                    negeri: '--Pilih Negeri--'
+                };
+    
+                val.registered = result.length > 0;
+                val.data = result.length > 0 ? result[0] : default_val;
+    
+                return val;
             } catch (e) {
                 console.log('------ERROR------>', e);
+                throw e; // rethrow the error so that it can be caught by the caller
             }
         },
         isExist: (email, fn) => {

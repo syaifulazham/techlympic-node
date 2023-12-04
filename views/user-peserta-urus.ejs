@@ -15,7 +15,7 @@
         <div class="flex-row float-bottom">
             <button class="button" id="saveThis"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</button>
             <a class="button bg-green" id="downloadThis" href="/download-excel" target="_blank"><i class="fa-solid fa-file-excel"></i>&nbsp;&nbsp;Muat Turun</a>
-            <a class="button bg-green" id="downloadThis" href="/download-online-user" target="_blank"><i class="fa-solid fa-file-excel"></i>&nbsp;&nbsp;Muat Turun Pengguna Arena</a>
+            <a class="button bg-green" id="downloadThisArena" href="/download-online-user" target="_blank"><i class="fa-solid fa-file-excel"></i>&nbsp;&nbsp;Muat Turun Pengguna Arena</a>
         </div>
     </div>
 </div>
@@ -191,6 +191,8 @@
 </div>
 
     
+<script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+<script src="https://unpkg.com/downloadjs@1.4.7"></script>
 <script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
 <script src="./assets/d3/v7/d3.v7.min.js"></script>
     
@@ -289,7 +291,7 @@
         }
 
     API.loadPrograms((prog)=>{
-            console.log(prog);
+            //console.log(prog);
             lst = [];
             prog.forEach((d)=>{
                 lst.push({id:'__tmp__', acara:d.prog_name, peringkat:d.target_group});
@@ -346,10 +348,22 @@
     }
 
     d3.select('#downloadThis').on('click', ()=>{
-        console.log('dad asdas dasdasdasd');
+        console.log('---Excel---');
         $.ajax({
             type: "POST",
             url: '/download-excel',
+            dataType: 'json',
+            success: (data)=>{
+                
+            }
+        });
+    });
+
+    d3.select('#downloadThisArena').on('click', ()=>{
+        console.log('---Arena---');
+        $.ajax({
+            type: "POST",
+            url: '/download-online-user',
             dataType: 'json',
             success: (data)=>{
                 
@@ -727,14 +741,68 @@
             
             btnSijil = btnTD.append('div').attr('class','button bg-green').html('<i class="fa-solid fa-file-pdf"></i>');
             btnSijil.on('click', (e, d)=>{
+                
                 //download sijil
                 $.ajax({
-                    type: "POST",
                     url: '/api/peserta/download-sijil',
-                    data: { data: d},
-                    dataType: 'json',
-                    success: (file)=>{
-                        console.log('got return data:', file);
+                    type: 'POST',
+                    data: {data: d},
+                    xhrFields: {
+                        responseType: 'json'
+                    },
+                    success: async function(data, textStatus, jqXHR) {
+                        const { PDFDocument } = PDFLib;
+                        console.log(data);
+                        
+                        try{ /*
+                            const pdf = await PDFDocument.load(data);
+                            console.log(pdf);
+
+                            const uint8Array = new Uint8Array(data);
+                            const blob = new Blob([uint8Array], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+
+                            // Open the PDF in a new window for inspection
+                            window.open(url);
+                            //window.location.href = url;
+
+                            
+                            // Save ArrayBuffer as a binary file
+                            const uint8Array = new Uint8Array(data);
+                            const blob = new Blob([uint8Array], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+
+                            // Create a link to download the file
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `${d.kp}.pdf`;
+                            a.click();
+                           
+                            const pdf = await PDFDocument.load(data);
+                            console.log(pdf);
+                            // Create a new PDFDocument
+                            const pdfDoc = await PDFDocument.create();
+                            const [page] = await pdfDoc.copyPages(pdf, [0]);
+                            pdfDoc.addPage(page);
+                            const pdfBytes = await pdf.save();
+                            console.log(pdfBytes);
+
+                            download(pdf, `${d.kp}.pdf`, "application/pdf");
+                        */
+                        const url = 'http://localhost:3000/generated/' + data.pdf;
+                        console.log(url);
+                        const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
+                        //const pdf = await PDFDocument.load(pdfBytes);
+                        download(pdfBytes, `${d.kp}.pdf`, "application/pdf");
+                        // Load a PDFDocument from each of the existing PDFs
+                        //const secondDonorPdfDoc = await PDFDocument.load(pdfBytes)
+                        }catch(err){
+                            console.log(err);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        // Handle errors
+                        console.error('Error fetching PDF:',textStatus, errorThrown);
                     }
                 });
             })

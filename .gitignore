@@ -1,3 +1,5 @@
 node_modules/*
+routes/generated
+public/generated
 package-lock.json
 .env
