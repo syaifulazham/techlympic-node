@@ -1146,13 +1146,14 @@ async function mergePdfs(dataArray) {
       //pages.forEach((page) => mergedPdf.addPage(page));
       mergedPdf.addPage(page);
     }
-
+    
     const savedPdf = await mergedPdf.save();
     const fname = dataArray[0].kodsekolah + '-' + dataArray[0].siri;
-    const folderPath = path.join("public/generated/");
+    const folderPath = path.join(`${auth._CERT_}public/generated/`);
     await fs.mkdir(folderPath, { recursive: true });
   
     const filePath = path.join(folderPath, `${fname}.pdf`);
+    console.log('======>filepath: ',path,filePath);
     await fs.writeFile(filePath, savedPdf);
   
     return savedPdf;
