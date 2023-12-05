@@ -789,7 +789,7 @@
 
                             download(pdf, `${d.kp}.pdf`, "application/pdf");
                         */
-                        const url = 'http://localhost:3000/generated/' + data.pdf;
+                        const url = './generated/' + data.pdf;
                         console.log(url);
                         const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
                         //const pdf = await PDFDocument.load(pdfBytes);
