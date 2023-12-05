@@ -1149,7 +1149,7 @@ async function mergePdfs(dataArray) {
     
     const savedPdf = await mergedPdf.save();
     const fname = dataArray[0].kodsekolah + '-' + dataArray[0].siri;
-    const folderPath = path.join(`${auth._CERT_}public/generated/`);
+    const folderPath = path.join(`${auth._CERT_}generated/`);
     await fs.mkdir(folderPath, { recursive: true });
   
     const filePath = path.join(folderPath, `${fname}.pdf`);
