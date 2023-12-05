@@ -961,23 +961,23 @@ async function createSijil(sijil) {
   const pos = {
     siri: {
         y:800,
-        size: 18
+        size: 16
     },
     nama: {
-        y:570,
+        y:550,
         size: 18
     },
     sekolah: {
-        y:550,
-        size:16
+        y:320,
+        size:18
     },
     pertandingan:{
         y:470,
-        size: 20
+        size: 18
     },
     peringkat1:{
-        y:410,
-        size: 20
+        y:390,
+        size: 18
     },
     peringkat2:{
         y:390,
@@ -1001,6 +1001,10 @@ async function createSijil(sijil) {
   const pageWidth = firstPage.getWidth();
   const pageHeight = firstPage.getHeight();
   //const newPage = pdfDoc.addPage([pageWidth, pageHeight]);
+
+  const pertandingan = sijil.pertandingan.split(" ");
+  pertandingan.shift();
+  sijil.pertandingan = pertandingan.join(" ");
 
   // Define the text and font size
   const fontSize = 20;
