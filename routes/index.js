@@ -1002,6 +1002,10 @@ async function createSijil(sijil) {
   const pageHeight = firstPage.getHeight();
   //const newPage = pdfDoc.addPage([pageWidth, pageHeight]);
 
+  if(sijil.pertandingan==="3.3KB Pemikiran Komputasi (FC-1)"){
+    sijil.pertandingan = "3.3KB Pemikiran Komputasi (Tacobot)";
+  }
+
   const pertandingan = sijil.pertandingan.split(" ");
   pertandingan.shift();
   sijil.pertandingan = pertandingan.join(" ");
