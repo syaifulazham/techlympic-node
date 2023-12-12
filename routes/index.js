@@ -968,16 +968,16 @@ async function createSijil(sijil) {
         size: 18
     },
     sekolah: {
-        y:320,
+        y:530,
         size:18
     },
     pertandingan:{
-        y:470,
+        y:450,
         size: 18
     },
     peringkat1:{
-        y:390,
-        size: 18
+        y:370,
+        size: 20
     },
     peringkat2:{
         y:390,
@@ -993,7 +993,7 @@ async function createSijil(sijil) {
     }
   }
   // Load the PDF file
-  const pdfData = await fs.readFile('templates/SIJIL PENYERTAAN.pdf');
+  const pdfData = await fs.readFile('templates/SIJIL PENYERTAAN v2.pdf');
   const pdfDoc = await PDFDocument.load(pdfData);
 
   // Create a new page with the same size as the first page
@@ -1014,7 +1014,7 @@ async function createSijil(sijil) {
   const fontSize = 20;
   const textSiri = "No Siri: " + sijil.siri;
   const textNama = sijil.nama.toUpperCase();
-  const textSekolah = sijil.sekolah.toUpperCase();
+  const textSekolah = sijil.kp.toUpperCase();
   const textPertandingan = sijil.pertandingan.toUpperCase();
   const textPeringkat1 = peringkat_[0].toUpperCase();
   const textPeringkat2 = peringkat_[1].toUpperCase();
@@ -1183,10 +1183,10 @@ router.post('/api/peserta/download-sijil', async (req, res)=>{
         nama: data.nama,
         sekolah: sijil_.data.namasekolah,
         pertandingan: d,
-        peringkat: 'PERINGKAT SEKOLAH|',
+        peringkat: 'MALAYSIA TECHLYMPICS 2023|',
         tempat: '',
         tarikh: '',
-        kp: '',
+        kp: data.kp.replace(/\D/g, ''),
         kodsekolah: sijil_.data.kodsekolah,
         siri: '2023-' + d.split(' ')[0].replace('.','') + '-' + data.kp.replace(/\D/g, '').slice(-6),
       });
