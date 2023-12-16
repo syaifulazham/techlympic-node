@@ -22,7 +22,8 @@ const bodyParser = require('body-parser');
 const API = require('./crud_mysql'); 
 
 const uuidv4 = require('uuid').v4;
-var auth = require('./auth');
+const auth = require('./auth');
+const certGuru = require("./cert-guru");
 
 router.use(bodyParser.raw({ type: 'application/pdf' }));
 
@@ -1203,6 +1204,48 @@ router.post('/api/peserta/download-sijil', async (req, res)=>{
     res.send({pdf:`${fname}.pdf`});
     //res.send(pdfDoc);
     //res.send(await mergedPdfBytes.save());  
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+// E-Cert Guru
+router.post('/api/guru/download-sijil', async (req, res)=>{
+  try{
+    var session = req.cookies['localId'];
+    var email = session.user.email;
+    var guru = req.body.guru;
+    var data = await API.user.getUser(email); 
+
+    //data.programs = req.program.split('|');
+
+    //const sijil_ = await API.user.getUser(uid);
+    console.log('=====GURU=====',req.body.guru);
+    const sijil = [];
+    sijil.push({
+      nama: guru.nama,
+      sekolah: data.data.namasekolah,
+      pertandingan: 'JURULATIH',
+      peringkat: 'MALAYSIA TECHLYMPICS 2023|',
+      tempat: '',
+      tarikh: '',
+      kp: '',
+      kodsekolah: data.data.kodsekolah,
+      siri: '2023-G-' + guru.id,
+    });
+    
+    const mergedPdfBytes = await certGuru.mergePdfs(sijil);
+    //const mergedPdfBytes = await createSijil(sijil[0]);
+    //const pdfDoc = await PDFDocument.load(mergedPdfBytes);
+    console.log(sijil[0]);
+    const fname = sijil[0].kodsekolah + '-' + sijil[0].siri;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${fname}.pdf`);
+   
+    res.send({pdf:`${fname}.pdf`}); 
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');

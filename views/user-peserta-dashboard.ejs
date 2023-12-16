@@ -22,6 +22,7 @@
                             <th>Email</th>
                             <th>No Telefon</th>
                             <th>Peserta</th>
+                            <th>Sijil Guru</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,6 +32,7 @@
                                 <td><%=d.prog_name%></td>
                                 <td><%=d.notel%></td>
                                 <td class="text-center text-dark-lg"><%=d.peserta===0?'-':d.peserta%></td>
+                                <td class="flex-column"><div class="button bg-green center btn-cert-guru" guru="<%=d.nama%>" siri="<%=d.k1%>"><i class="fa-solid fa-file-pdf" guru="<%=d.nama%>" siri="<%=d.k1%>"></i></div></td>
                             </tr>
                         <%})%>
                     </tbody>
@@ -115,3 +117,53 @@
         </div>-->
     </div>
 </div>
+
+
+<script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+<script src="https://unpkg.com/downloadjs@1.4.7"></script>
+<script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+<script src="./assets/d3/v7/d3.v7.min.js"></script>
+
+<script>
+    d3.selectAll('.btn-cert-guru').on('click', (e, d) => {
+        console.log(e.target);
+        console.log(d3.select(e.target).attr('guru'));
+
+        var guru = d3.select(e.target).attr('guru');
+        var siri = d3.select(e.target).attr('siri');
+        var _data = {
+            nama: guru,
+            id: siri
+        }
+
+        //download sijil
+        $.ajax({
+            url: '/api/guru/download-sijil',
+            type: 'POST',
+            data: { guru: _data },
+            xhrFields: {
+                responseType: 'json'
+            },
+            success: async function (data, textStatus, jqXHR) {
+                const { PDFDocument } = PDFLib;
+                console.log(data);
+
+                try {
+                    const url = './generated/guru/' + data.pdf;
+                    console.log(url);
+                    const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
+                    //const pdf = await PDFDocument.load(pdfBytes);
+                    download(pdfBytes, `${siri}.pdf`, "application/pdf");
+                    // Load a PDFDocument from each of the existing PDFs
+                    //const secondDonorPdfDoc = await PDFDocument.load(pdfBytes)
+                } catch (err) {
+                    console.log(err);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle errors
+                console.error('Error fetching PDF:', textStatus, errorThrown);
+            }
+        });
+    });
+</script>

@@ -754,41 +754,7 @@
                         const { PDFDocument } = PDFLib;
                         console.log(data);
                         
-                        try{ /*
-                            const pdf = await PDFDocument.load(data);
-                            console.log(pdf);
-
-                            const uint8Array = new Uint8Array(data);
-                            const blob = new Blob([uint8Array], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
-
-                            // Open the PDF in a new window for inspection
-                            window.open(url);
-                            //window.location.href = url;
-
-                            
-                            // Save ArrayBuffer as a binary file
-                            const uint8Array = new Uint8Array(data);
-                            const blob = new Blob([uint8Array], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
-
-                            // Create a link to download the file
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `${d.kp}.pdf`;
-                            a.click();
-                           
-                            const pdf = await PDFDocument.load(data);
-                            console.log(pdf);
-                            // Create a new PDFDocument
-                            const pdfDoc = await PDFDocument.create();
-                            const [page] = await pdfDoc.copyPages(pdf, [0]);
-                            pdfDoc.addPage(page);
-                            const pdfBytes = await pdf.save();
-                            console.log(pdfBytes);
-
-                            download(pdf, `${d.kp}.pdf`, "application/pdf");
-                        */
+                        try{ 
                         const url = './generated/' + data.pdf;
                         console.log(url);
                         const pdfBytes = await fetch(url).then(res => res.arrayBuffer());

@@ -581,14 +581,26 @@ let API = {
                 
                 UNION
 
-                SELECT 3 jenis, usr_email prog_name, usr_name nama, notel, SUM(if(kp IS NULL,0,1)) peserta, 0 k1, 0 k2 FROM(
-                    SELECT b.usr_email, b.usr_name, b.notel, c.kp from
+                SELECT 3 jenis, usr_email prog_name, usr_name nama, notel, SUM(if(kp IS NULL,0,1)) peserta, lpad(userid,6,0) k1, 0 k2 FROM(
+                    SELECT b.userid, b.usr_email, b.usr_name, b.notel, c.kp from
                     (SELECT kodsekolah, usr_email FROM user WHERE usr_email = ?) a
                     LEFT JOIN user b USING(kodsekolah)
                     LEFT JOIN peserta c ON c.usr_email = b.usr_email) v
                     GROUP BY usr_email
                 
-                UNION    
+                    UNION 
+                    SELECT * FROM (
+                             SELECT 3 jenis, 'Guru Pengiring' prog_name, ucase(guru1) nama, '' notel, 0 peserta, 
+                             CONCAT(lpad(grpid,6,0),'-',1) k1, 0 k2 
+                             FROM peserta_negeri_kumpulan WHERE  usr_email = ? AND guru1 <> ''
+                        
+                        UNION 
+                             SELECT 3 jenis, 'Guru Pengiring' prog_name, ucase(guru2) nama, '' notel, 0 peserta, 
+                             CONCAT(lpad(grpid,6,0),'-',2) k1, 0 k2 
+                             FROM peserta_negeri_kumpulan WHERE  usr_email = ? AND guru2 <> ''
+                         ) g GROUP BY jenis, nama  
+                         
+                UNION
                 
                 SELECT 4 jenis, program prog_name, '' nama, '' notel, COUNT(*) peserta, SUM(if(kumpulan=1,1,0)) k1, SUM(if(kumpulan=2,1,0)) k2
                 FROM 
@@ -597,7 +609,7 @@ let API = {
                 LEFT JOIN peserta_negeri b USING(kodsekolah)) h
                 GROUP BY program;
                 `
-                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
+                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
