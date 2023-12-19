@@ -153,7 +153,7 @@
                     console.log(url);
                     const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
                     //const pdf = await PDFDocument.load(pdfBytes);
-                    download(pdfBytes, `${siri}.pdf`, "application/pdf");
+                    download(pdfBytes, `${data.pdf}`, "application/pdf");
                     // Load a PDFDocument from each of the existing PDFs
                     //const secondDonorPdfDoc = await PDFDocument.load(pdfBytes)
                 } catch (err) {

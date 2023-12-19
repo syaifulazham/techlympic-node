@@ -1236,16 +1236,17 @@ router.post('/api/guru/download-sijil', async (req, res)=>{
       siri: '2023-G-' + guru.id,
     });
     
-    const mergedPdfBytes = await certGuru.mergePdfs(sijil);
+    const pdfGuru = await certGuru.mergePdfs(sijil);
+    const mergedPdfBytes = pdfGuru.pdf;
     //const mergedPdfBytes = await createSijil(sijil[0]);
     //const pdfDoc = await PDFDocument.load(mergedPdfBytes);
     console.log(sijil[0]);
-    const fname = sijil[0].kodsekolah + '-' + sijil[0].siri;
+    //const fname = sijil[0].kodsekolah + '-' + sijil[0].siri;
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=${fname}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=${pdfGuru.fname}.pdf`);
    
-    res.send({pdf:`${fname}.pdf`}); 
+    res.send({pdf:`${pdfGuru.fname}.pdf`}); 
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');

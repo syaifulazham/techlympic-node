@@ -4,6 +4,18 @@ const fs = require('fs').promises;
 const path = require('path');
 const auth = require("./auth");
 
+function rndString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+}
+
 async function createSijil(sijil) {
     //nama, sekolah,pertandingan,peringkat,tempat,tarikh,kp,kodsekolah, siri_,folder
     var peringkat_ = sijil.peringkat.split('|');
@@ -186,7 +198,7 @@ async function createSijil(sijil) {
       }
       
       const savedPdf = await mergedPdf.save();
-      const fname = dataArray[0].kodsekolah + '-' + dataArray[0].siri;
+      const fname = dataArray[0].kodsekolah + '-' + dataArray[0].siri + '-' + rndString(6);
       const folderPath = path.join(`${auth._CERT_}/generated/guru/`);
       await fs.mkdir(folderPath, { recursive: true });
     
@@ -194,7 +206,7 @@ async function createSijil(sijil) {
       console.log('======>filepath: ',path,filePath);
       await fs.writeFile(filePath, savedPdf);
     
-      return savedPdf;
+      return {fname:fname, pdf:savedPdf};
     } catch (error) {
         console.error('Error in PDF generation:', error);
         throw error; // Propagate the error
