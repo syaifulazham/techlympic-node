@@ -641,6 +641,37 @@ let API = {
                 console.log(e);
             }
         },
+        getPesertaID: async (kp, usr) => {
+            const val = {
+                registered: true,
+                data: []
+            };
+    
+            try {
+                const connection = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+                const queryAsync = util.promisify(connection.query).bind(connection);
+    
+                const result = await queryAsync('select lpad(id,6,0) id, kp, nama from peserta where kp = ? and usr_email=?', [kp, usr]);
+    
+                connection.end();
+    
+                const default_val = {
+                    id: '',
+                    nama: '',
+                    kp: ''
+                };
+    
+                val.registered = result.length > 0;
+                val.data = result.length > 0 ? result[0] : default_val;
+
+                console.log('val---->',val);
+    
+                return val;
+            } catch (e) {
+                console.log('------ERROR------>', e);
+                throw e; // rethrow the error so that it can be caught by the caller
+            }
+        },
         loadPesertaList: (email, peringkat, fn) => {
             var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);

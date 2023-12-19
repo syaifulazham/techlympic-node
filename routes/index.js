@@ -962,7 +962,7 @@ async function createSijil(sijil) {
   const pos = {
     siri: {
         y:800,
-        size: 16
+        size: 14
     },
     nama: {
         y:550,
@@ -1173,6 +1173,8 @@ router.post('/api/peserta/download-sijil', async (req, res)=>{
     var session = req.cookies['localId'];
     var uid = session.user.email;
     var data = req.body.data;
+    var pesertaid = await API.peserta.getPesertaID(data.kp,uid); 
+    //console.log('pesertaid',pesertaid);
 
     data.programs = data.program.split('|');
 
@@ -1189,9 +1191,11 @@ router.post('/api/peserta/download-sijil', async (req, res)=>{
         tarikh: '',
         kp: data.kp.replace(/\D/g, ''),
         kodsekolah: sijil_.data.kodsekolah,
-        siri: '2023-' + d.split(' ')[0].replace('.','') + '-' + data.kp.replace(/\D/g, '').slice(-6),
+        siri: '2023-' + d.split(' ')[0].replace('.','') + '-' + data.kp.replace(/\D/g, '').slice(-6) + '-' + pesertaid.data.id,
       });
     });
+
+    console.log(sijil);
 
     const mergedPdfBytes = await mergePdfs(sijil);
     //const mergedPdfBytes = await createSijil(sijil[0]);
