@@ -1129,6 +1129,38 @@ code {
     width: 30px;
 }
 
+.group-container{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+}
+
+.group-card{
+    flex: 3;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    display: flex; 
+    cursor: pointer;
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100px;
+}
+
+.group-card-header{
+    display: flex;
+    flex-direction: row;
+    background-color: var(--secondary-color);
+    color: var(--gold);
+    border-radius: 6px;
+    min-height: 50px;
+    max-height: 50px;
+    overflow-y: hidden;
+    text-align: center;
+    font-size: small;
+}
+
 @media (max-width: 767px) {
     .input-div{
         width: 100%;
@@ -1279,6 +1311,15 @@ code {
 
     .info{
         width: 100%;
+    }
+
+    .group-container{
+        flex-direction: column;
+    }
+
+    .group-card{
+        flex: auto;
+        min-width: 100%;
     }
 
   }

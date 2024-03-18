@@ -1,0 +1,145 @@
+<div class="section-1">
+    <div class="popUp hide">
+        
+        <div id="pop" class="popUp-container flex-column" style="min-height: 100px;max-height:100vh;margin-left:10px">
+
+        </div>
+    </div>
+    <%- include ('totembar.ejs') %>
+    <div class="workspace">
+        <h2>Kemaskini Kumpulan</h2>
+        <div id="input-tray" class="input-tray fill-container flex-column center">
+            
+        </div>
+        
+        <div class="group-container">
+            <div id="add-group" class="group-card center">
+                <i class="fa-solid fa-circle-plus fa-2x"></i>&nbsp;&nbsp;Tambah Kumpulan
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    5.1B Cabaran Kereta Roket
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Meta-3 General</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    5.5B Cabaran Permainan Digital Metaverse Techlympics
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Freedom Tribal</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    5.5B Cabaran Permainan Digital Metaverse Techlympics
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Mentari Jingga</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    4.1B Cabaran Cetakan 3D
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Kalabul Malami</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    4.1B Cabaran Cetakan 3D
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Hyper Venture</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    4.1B Cabaran Cetakan 3D
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Rocky</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group-card flex-column group-select">
+                <div class="group-card-header width-full center">
+                    4.1B Cabaran Cetakan 3D
+                </div>
+                <div class="flex-column">
+                    <div class="flex-row center">
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Slayer</span>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+
+<div id="popUp-list" class="popUp hide">
+    <div class="popUp-container flex-column width-full" id="listContainer">
+        <div class="acara-list">
+            <div class="flex-row">
+                <h5>Sila pilih pertandingan</h5>
+                <div class="button float-right" onclick="closePopup()"><i class="fa-solid fa-x"></i></div>
+            </div>
+            <div class="flex-column acara">
+                <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
+                <select name="sel-pertandingan" id="sel-pertandingan">
+                    <option value="">Pilih Pertandingan</option>
+                </select>
+            </div>
+            <div class="flex-column acara">
+                <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
+                <input type="text" id="nama-kumpulan" type="text">
+            </div>
+            <div class="pertandingan"></div>
+            
+            <div class="flex-row py-6">
+                <div class="button" id="btn-addGroup"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./assets/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+<script src="./assets/d3/v7/d3.v7.min.js"></script>
+<script src="./assets/xlsx/xlsx.full.min.js"></script>
+
+<script>
+    d3.select('#add-group').on('click', (e)=>{
+        $('#popUp-list').removeClass('hide');
+    });
+
+    d3.selectAll('.group-select').on('click', (e)=>{
+        $('#popUp-list').removeClass('hide');
+    });
+
+    function closePopup(){
+            $('#popUp-list').addClass('hide');
+        }
+    
+</script>

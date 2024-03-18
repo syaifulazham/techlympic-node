@@ -459,7 +459,7 @@ router.get('/user-peserta-urus', function (req, res) {
     var session = req.cookies['localId'];
     console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      var data_ = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
+      var data_ = { user: session.user, page: 'user-peserta-urus-2.ejs', registered: r.registered, me: r.data };
       console.log(':: 3 :: Passing: ',data_);
       res.render('main.ejs', data_);
     });
@@ -474,7 +474,7 @@ router.get('/user-peserta-evaluasi', function (req, res) {
     var session = req.cookies['localId'];
     API.user.isExist(session.user.email, (r) => {
       API.peserta.getKumpulan(session.user.email, g=>{
-        res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi.ejs', registered: r.registered, me: r.data, kumpulan: g });
+        res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi-2.ejs', registered: r.registered, me: r.data, kumpulan: g });
       });
     });
   }catch(err){
