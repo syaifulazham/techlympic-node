@@ -16,83 +16,23 @@
             <div id="add-group" class="group-card center">
                 <i class="fa-solid fa-circle-plus fa-2x"></i>&nbsp;&nbsp;Tambah Kumpulan
             </div>
-            
-            <div class="group-card flex-column group-select">
+
+
+            <%kumpulan.forEach(grp => {%>
+            <div class="group-card flex-column group-select"
+            namakumpulan="<%=grp.nama_kumpulan%>"
+            acara="<%=grp.program%>"
+            >
                 <div class="group-card-header width-full center">
-                    5.1B Cabaran Kereta Roket
+                    <%=grp.program%>
                 </div>
                 <div class="flex-column">
                     <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Meta-3 General</span>
+                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;"><%=grp.nama_kumpulan%></span>
                     </div>
                 </div>
             </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    5.5B Cabaran Permainan Digital Metaverse Techlympics
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Freedom Tribal</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    5.5B Cabaran Permainan Digital Metaverse Techlympics
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Mentari Jingga</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    4.1B Cabaran Cetakan 3D
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Kalabul Malami</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    4.1B Cabaran Cetakan 3D
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Hyper Venture</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    4.1B Cabaran Cetakan 3D
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Rocky</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="group-card flex-column group-select">
-                <div class="group-card-header width-full center">
-                    4.1B Cabaran Cetakan 3D
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;">Slayer</span>
-                    </div>
-                </div>
-            </div>
+            <%})%>
             
         </div>
         
@@ -103,6 +43,7 @@
     <div class="popUp-container flex-column width-full" id="listContainer">
         <div class="acara-list">
             <div class="flex-row">
+                
                 <h5>Sila pilih pertandingan</h5>
                 <div class="button float-right" onclick="closePopup()"><i class="fa-solid fa-x"></i></div>
             </div>
@@ -116,10 +57,78 @@
                 <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
                 <input type="text" id="nama-kumpulan" type="text">
             </div>
-            <div class="pertandingan"></div>
+            <div class="pertandingan">
+                <span id="txtmsg" class="red-msg"></span>
+            </div>
             
             <div class="flex-row py-6">
                 <div class="button" id="btn-addGroup"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popUp-update" class="popUp hide">
+    <div class="popUp-container flex-column width-full" id="listContainer">
+        <div class="acara-list">
+            <div class="flex-row">
+                
+                <h5>Sila pilih pertandingan</h5>
+                <div class="button float-right" onclick="closePopupUpdate()"><i class="fa-solid fa-x"></i></div>
+            </div>
+            <div class="flex-column acara">
+                <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
+                <select name="sel-pertandingan-update" id="sel-pertandingan-update">
+                    <option value="">Pilih Pertandingan</option>
+                </select>
+            </div>
+            <div class="flex-column acara">
+                <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
+                <input type="text" id="nama-kumpulan-update" type="text">
+            </div>
+            <div class="pertandingan">
+                <span id="txtmsg-update" class="red-msg"></span>
+            </div>
+            
+            <div class="flex-row py-6">
+                <div class="button" id="btn-updateGroup"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
+            </div>
+
+            <div class="winpanel">
+                <div class="winpanel-header">
+                    <span>Senarai Pelajar</span>
+                    <div class="button-small float-right" id="btn-addpeserta"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Tambah Peserta</div>
+                </div>
+                <div class="flex-row">
+                    <table class="table" id="selected-peserta">
+                        <tbody>
+    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popUp-add" class="popUp hide">
+    <div class="popUp-container flex-column width-full" id="listContainer">
+        <div class="acara-list">
+            <div class="flex-row">
+                <input class="flex-grow-4" type="text" id="srcstudent">
+                <div class="button-small float-right" id="btn-cari"><i class="fa-solid fa-magnifying-glass"></i></i>&nbsp;&nbsp;Cari</div>
+            </div>
+            <p>*Carian menggunakan nama atau kad pengenalan peserta</p>
+            <div class="list-panel">
+                <table class="table" id="search-result">
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex-row">
+                <div class="button-small float-right" id="btn-batal" onclick="closePopupAdd()"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Batal</div>
+                
             </div>
         </div>
     </div>
@@ -130,16 +139,186 @@
 <script src="./assets/xlsx/xlsx.full.min.js"></script>
 
 <script>
+    let api = {
+        program: (fn) => {
+            $.ajax({
+                type: "POST",
+                url: '/api/program/senarai',
+                data: {},
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        },
+        add: (fn) => {
+            var pertandingan = $('#sel-pertandingan').val();
+            var namakumpulan = $('#nama-kumpulan').val();
+            $.ajax({
+                type: "POST",
+                url: '/api/kumpulan/addkumpulan',
+                data: {
+                    pertandingan: pertandingan,
+                    namakumpulan: namakumpulan
+                },
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        },
+        search: (fn) => {
+            var src = $('#srcstudent').val();
+            $.ajax({
+                type: "POST",
+                url: '/api/peserta/search',
+                data: {
+                    search: src
+                },
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        }
+    }
+
+    function loadPrograms(){
+        api.program(data=>{
+            console.log(data);
+
+            var sel = d3.select('#sel-pertandingan');
+            var sel2 = d3.select('#sel-pertandingan-update');
+            sel.selectAll('option').remove();
+
+            options = [{value:"", text:""}];
+
+            data.forEach(d=>{
+                options.push({
+                    value: d.prog_name,
+                    text: d.prog_name
+                })
+            });
+
+            sel.selectAll('option').data(options).enter().append('option').call(o=>{
+                o.attr('value',d=>d.value);
+                o.text(d=>d.text);
+            });
+
+            sel2.selectAll('option').data(options).enter().append('option').call(o=>{
+                o.attr('value',d=>d.value);
+                o.text(d=>d.text);
+            })
+        })
+    }
+
+    $(document).ready(()=>{
+        loadPrograms();
+    })
+</script>
+
+<script>
     d3.select('#add-group').on('click', (e)=>{
+        $('#sel-pertandingan').val('');
+        $('#nama-kumpulan').val('');
         $('#popUp-list').removeClass('hide');
     });
 
+    d3.select('#btn-addpeserta').on('click', e=>{
+        $('#popUp-add').removeClass('hide');
+    });
+
     d3.selectAll('.group-select').on('click', (e)=>{
-        $('#popUp-list').removeClass('hide');
+        const targetElement = e.currentTarget;
+        const namakumpulan = d3.select(targetElement).attr('namakumpulan');
+        const acara = d3.select(targetElement).attr('acara');
+
+        $('#sel-pertandingan-update').val(acara);
+        $('#nama-kumpulan-update').val(namakumpulan);
+
+        console.log(namakumpulan);
+        $('#popUp-update').removeClass('hide');
+    });
+
+    d3.select('#btn-addGroup').on('click', (e)=>{
+        api.add(res => {
+            console.log(res);
+            if(res.msg !== ''){
+                d3.select('#txtmsg').text(res.msg);
+            }else{
+                location.reload();
+            }
+            
+        })
+    });
+
+    d3.select('#btn-cari').on('click', e=> {
+        api.search(data=>{
+            console.log(data);
+            var tbl = d3.select('#search-result');
+            var tbdy = tbl.select('tbody');
+            tbdy.selectAll('tr').remove();
+
+            tbdy.selectAll('.tr-search').data(data).enter().append('tr').call(o=>{
+                o.append('td').text(d=>d.nama);
+                o.append('td').text(d=>d.kp);
+                o.append('td').text(d=>d.darjah_tingkatan);
+                o.append('td').text(d=>d.jantina);
+                t = o.append('td');
+                btn = t.append('div').attr('class','button-small float-right');
+                btn.html('<i class="fa-solid fa-arrow-up-right-from-square"></i>');
+
+                const updateTable = (_data) => {
+                    var _tbl = d3.select('#selected-peserta');
+                    var _tbdy = _tbl.select('tbody');
+                    
+                    const rows = _tbdy.selectAll('tr').data(_data);
+
+                    // Enter phase
+                    const rowsEnter = rows.enter()
+                        .append('tr');
+
+                    // Update phase
+                    const mergedRows = rowsEnter.merge(rows);
+
+                    // Append data to each <tr>
+                    mergedRows.each(function (d) {
+                        const row = d3.select(this);
+                        row.selectAll('td').remove(); // Clear existing td elements
+                        row.append('td').text(d.nama);
+                        row.append('td').text(d.kp);
+                        row.append('td').text(d.darjah_tingkatan);
+                        row.append('td').text(d.jantina);
+
+                        const deleteBtn = row.append('td')
+                            .append('div')
+                            .attr('class', 'button-small float-right');
+                        deleteBtn.html('<i class="fa-solid fa-xmark"></i>');
+                    });
+
+                    // Exit phase
+                    rows.exit().remove();
+
+                    $('#popUp-add').addClass('hide');
+                };
+
+                btn.on('click', (e, d)=> {
+                    updateTable([d]);
+                });
+            })
+        })
     });
 
     function closePopup(){
             $('#popUp-list').addClass('hide');
-        }
+    }
+
+    function closePopupUpdate(){
+            $('#popUp-update').addClass('hide');
+    }
+
+    function closePopupAdd(){
+            $('#popUp-add').addClass('hide');
+    }
     
 </script>

@@ -459,7 +459,7 @@ router.get('/user-peserta-urus', function (req, res) {
     var session = req.cookies['localId'];
     console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      var data_ = { user: session.user, page: 'user-peserta-urus-2.ejs', registered: r.registered, me: r.data };
+      var data_ = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
       console.log(':: 3 :: Passing: ',data_);
       res.render('main.ejs', data_);
     });
@@ -473,7 +473,10 @@ router.get('/user-peserta-evaluasi', function (req, res) {
   try{
     var session = req.cookies['localId'];
     API.user.isExist(session.user.email, (r) => {
-      API.peserta.getKumpulan(session.user.email, g=>{
+      //API.peserta.getKumpulan(session.user.email, g=>{
+      //  res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi-2.ejs', registered: r.registered, me: r.data, kumpulan: g });
+      //});
+      API.kumpulan.list(r.data.kodsekolah, g=>{
         res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi-2.ejs', registered: r.registered, me: r.data, kumpulan: g });
       });
     });
@@ -833,6 +836,15 @@ const action = {
       API.peserta.loadPesertaNegeri(usr, req.body.peringkat, (result)=>{
         res.send(result);
       });
+    },
+
+    search: (req, res, next) => {
+      var session = req.cookies['localId'];
+      usr = session.user.email;
+      src = req.body.search;
+      API.peserta.searchPeserta(usr, src, (result)=>{
+        res.send(result);
+      });
     }
   },
   program: {
@@ -850,6 +862,45 @@ const action = {
           res.send(result)
         });
       }
+    },
+    senarai: (req, res) => {
+      try{
+        var session = req.cookies['localId'];
+        API.user.isExist(session.user.email, (r) => {
+          API.program.senarai(r.data.peringkat,result=>{
+            res.send(result);
+          })
+        });
+      }catch(err){
+
+      }
+    }
+  },
+  kumpulan:{
+    create: (req, res)=>{
+      var session = req.cookies['localId'];
+      var data = req.body;
+      API.kumpulan.loadByName(data.namakumpulan, isexists =>{
+        if(!isexists){
+          API.user.isExist(session.user.email, (r) => {
+            var add = {
+              kodsekolah: r.data.kodsekolah,
+              nama_kumpulan: data.namakumpulan,
+              program: data.pertandingan,
+              pembimbing: '',
+              updatedby: session.user.email
+            }
+            API.kumpulan.create(add, (result)=>{
+              res.send({msg: ''});
+            })
+          });
+        }else{
+          res.send({msg: `'${data.namakumpulan}' telah digunakan, sila pilih nama yang lain`})
+        }
+      })
+    },
+    list: (req, res)=> {
+      
     }
   }
 }
@@ -870,8 +921,12 @@ router.post('/api/peserta/load', action.peserta.load);
 router.post('/api/peserta/get-kumpulan', action.peserta.getKumpulanNegeri);
 router.post('/api/peserta/save-kumpulan', action.peserta.saveKumpulanNegeri);
 router.post('/api/peserta/load-negeri', action.peserta.load_negeri);
+router.post('/api/peserta/search', action.peserta.search);
 router.get('/api/program/list', action.program.list);
 router.post('/api/program/list', action.program.list);
+router.post('/api/program/senarai', action.program.senarai);
+
+router.post('/api/kumpulan/addkumpulan', action.kumpulan.create);
 
 router.get('/sessions', (req, res) => {
   //res.json(req.sessionStore.sessions);
@@ -1256,5 +1311,7 @@ router.post('/api/guru/download-sijil', async (req, res)=>{
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 module.exports = router;

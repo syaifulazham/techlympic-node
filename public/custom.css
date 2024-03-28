@@ -487,6 +487,26 @@ span.err{
     border-bottom-right-radius: 30px;
 }
 
+.button-small {
+    display: inline-block;
+    padding: 5px 20px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+    background-color: var(--primary-color);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    min-width: 35px;
+    text-decoration: none;
+    text-align: center !important;
+}
+
+.button-small:hover {
+    background-color: var(--secondary-color);
+}
+
+
 .width-full{
     width: 100%;
 }
@@ -1159,6 +1179,41 @@ code {
     overflow-y: hidden;
     text-align: center;
     font-size: small;
+}
+
+.red-msg{
+    color: #f00;
+}
+
+.winpanel{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--text-dark);
+    min-height: 200px;
+    margin-top: 10px;
+}
+
+.winpanel-header{
+    display: flex;
+    flex-direction: row;
+    min-height: 35px;
+    max-height: 35px;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+}
+
+.winpanel-header > span{
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.list-panel{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--text-dark);
+    min-height: 200px;
+    margin-top: 10px;
+    overflow-y: scroll;
 }
 
 @media (max-width: 767px) {

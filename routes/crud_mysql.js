@@ -690,6 +690,23 @@ let API = {
                 console.log(e);
             }
         },
+        searchPeserta: (email, src, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta where usr_email = ? and (lcase(nama) regexp lcase(?) or lcase(kp) regexp lcase(?))`, [email, src, src], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        
+                        con.end();
+                        //console.log(result);
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
         deletePeserta: (email, kp, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
@@ -847,7 +864,104 @@ let API = {
             } catch (e) {
                 console.log(e);
             }
+        },
+        senarai: (peringkat, fn)=>{
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                SELECT * FROM program where target_group = ?
+                `;
+                con.query(sql, peringkat, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
         }
+    },
+    
+    kumpulan: {
+        create: (data, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                INSERT INTO kumpulan (kodsekolah, nama_kumpulan, program, pembimbing, createdate, updatedate, updatedby) 
+                VALUES (?, ?, ?, ?, current_timestamp(), current_timestamp(), ?)
+                `;
+                con.query(sql, [data.kodsekolah, data.nama_kumpulan, data.program, data.pembimbing, data.updatedby], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        update: (groupid, data, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                UPDATE kumpulan 
+                SET kodsekolah=?, nama_kumpulan=?, program=?, pembimbing=?, updatedate=current_timestamp(), updatedby=? 
+                WHERE groupid=?
+                `;
+                con.query(sql, [data.kodsekolah, data.nama_kumpulan, data.program, data.pembimbing, data.updatedby, groupid], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        list: (kodsekolah, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                SELECT * FROM kumpulan WHERE kodsekolah=?
+                `;
+                con.query(sql, [kodsekolah], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        loadByName: (nama, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                SELECT * FROM kumpulan WHERE nama_kumpulan=?
+                `;
+                con.query(sql, [nama], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result.length > 0 ? true : false);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
     }
 }
 
