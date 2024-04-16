@@ -905,6 +905,23 @@ let API = {
                 console.log(e);
             }
         },
+        isExist: (kodsekolah, shaid, fn)=> {
+            try {
+                var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+                var secret = auth._SECRET_;
+                con.query(`SELECT * FROM kumpulan WHERE kodsekolah = ? and sha(concat(groupid,'${secret}')) = ?`, [kodsekolah, shaid], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result[0]);
+                    }
+                });
+            } catch (e) {
+                console.log('------ERROR------>', e);
+            }
+
+        },
         update: (groupid, data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
@@ -928,8 +945,9 @@ let API = {
         list: (kodsekolah, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
+                var secret = auth._SECRET_;
                 var sql = `
-                SELECT * FROM kumpulan WHERE kodsekolah=?
+                SELECT a.*, sha(concat(a.groupid,'${secret}')) shaid FROM kumpulan a WHERE kodsekolah=?
                 `;
                 con.query(sql, [kodsekolah], function (err, result) {
                     if (err) {

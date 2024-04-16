@@ -477,6 +477,7 @@ router.get('/user-peserta-evaluasi', function (req, res) {
       //  res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi-2.ejs', registered: r.registered, me: r.data, kumpulan: g });
       //});
       API.kumpulan.list(r.data.kodsekolah, g=>{
+        console.log(g);
         res.render('main.ejs', { user: session.user, page: 'user-peserta-evaluasi-2.ejs', registered: r.registered, me: r.data, kumpulan: g });
       });
     });
@@ -484,6 +485,21 @@ router.get('/user-peserta-evaluasi', function (req, res) {
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
 });
+
+router.get('/:shaid', (req, res, next) => {
+  try{
+    var session = req.cookies['localId'];
+    var shaid = req.params.shaid;
+    API.user.isExist(session.user.email, (r) => {
+      API.kumpulan.isExist(r.data.kodsekolah, shaid.replace('group-edit-',''), (g)=>{
+        res.render('main.ejs',{user:session.user, page:'group-edit.ejs', grpid:shaid, registered:r.registered, kumpulan:g})
+      });
+    });
+    
+  }catch(err){
+    res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
+})
 
 router.get('/user-dashboard', function(req, res, next){
   console.log(':: 1 :: Enter /user-dashboard');

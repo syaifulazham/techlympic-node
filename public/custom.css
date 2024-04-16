@@ -11,6 +11,7 @@
     --text-dark: #333;
     --text-header: #86A5D9;
     --gold: #a9b67a; /*a9b67a*/
+    --border-color: #4e4e4e;
 }
 
 
@@ -164,6 +165,44 @@ body {
     color: var(--text-light) !important;
 }
 
+.panel{
+    background-color: var(--text-light);
+    color: var(--text-dark);
+    border-radius: 2px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.thumb{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin: 5px;
+}
+
+.thumb:hover{
+    background-color: var(--secondary-color);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.thumb:hover > i{
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.thumb:hover > span{
+    color: var(--text-light);
+}
+
+.thumb > span{
+    font-size: x-small;
+}
+
 .container {
     padding: 0 !important;
     margin: 0 !important;
@@ -311,7 +350,7 @@ body {
 }
 
 .popUp-container > th, td {
-    color: var(--text-dark) !important;
+    color: var(--text-dark);
 }
 
 .workspace {
@@ -621,7 +660,7 @@ a.navbar-brand {
     position: fixed !important;
     z-index: 99999999 !important;
     background-color: var(--secondary-color-opaque) !important;
-    border-bottom: 1px solid #4e4e4e;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .nav-item-left{
@@ -693,6 +732,51 @@ footer a:hover {
 }
 
 /*---------------------------TABLE---------------------------------*/
+.table{
+    color: var(--text-light);
+}
+
+.table > thead > tr > th{
+    color: var(--text-light);
+}
+
+.table > tbody > tr > td{
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table > tbody > tr:hover{
+    background-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.table > tbody > tr:hover > td{
+    color: var(--text-dark);
+}
+
+/*black table*/
+.table-black{
+    color: var(--text-light);
+}
+
+.table-black > thead > tr > th{
+    color: var(--text-dark);
+}
+
+.table-black > tbody > tr > td{
+    color: var(--text-dark);
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.table-black > tbody > tr:hover{
+    background-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.table-black > tbody > tr:hover > td{
+    color: var(--text-dark);
+}
+
 .table-x {
     border-collapse: collapse;
 }
@@ -941,7 +1025,7 @@ footer a:hover {
     padding:10px;
     width: 100%;
     background-color: var(--secondary-color);
-    border-top:1px solid #4e4e4e;
+    border-top:1px solid var(--border-color);
 }
 
 code {
@@ -952,6 +1036,18 @@ code {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #c22e1b;
+    border-color: #a02211;
+}
+
+.btn-sm{
+    padding: 1px;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
 }
 
 
@@ -990,6 +1086,15 @@ code {
 
 .text-red{
     color: red;
+}
+
+.text-header{
+    color: var(--gold) !important;
+    margin-top: 20px;
+}
+
+.text-header > i{
+    margin-right: 5px;
 }
 
 .overflowy-scroll{
@@ -1159,13 +1264,19 @@ code {
 
 .group-card{
     flex: 3;
-    border: 1px solid #fff;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     display: flex; 
     cursor: pointer;
     min-width: 250px;
     max-width: 250px;
     min-height: 100px;
+}
+
+.group-card:hover{
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border: 1px solid #fff;
 }
 
 .group-card-header{

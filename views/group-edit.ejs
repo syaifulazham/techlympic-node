@@ -1,111 +1,80 @@
 <div class="section-1">
-    <div class="popUp hide">
-        
-        <div id="pop" class="popUp-container flex-column" style="min-height: 100px;max-height:100vh;margin-left:10px">
-
-        </div>
-    </div>
     <%- include ('totembar.ejs') %>
     <div class="workspace">
-        <h2>Kemaskini Kumpulan</h2>
-        <div id="input-tray" class="input-tray fill-container flex-column center">
-            
-        </div>
-        
-        <div class="group-container">
-            <div id="add-group" class="group-card center">
-                <i class="fa-solid fa-circle-plus fa-2x"></i>&nbsp;&nbsp;Tambah Kumpulan
-            </div>
-
-            <%kumpulan.forEach(grp => {%>
-            <div class="group-card flex-column group-select"
-            namakumpulan="<%=grp.nama_kumpulan%>"
-            acara="<%=grp.program%>"
-            grpid="<%=grp.shaid%>"
-            >
-                <div class="group-card-header width-full center">
-                    <%=grp.program%>
-                </div>
-                <div class="flex-column">
-                    <div class="flex-row center">
-                        <i class="fa-solid fa-people-line fa-2x"></i><span style="padding-left: 5px;"><%=grp.nama_kumpulan%></span>
-                    </div>
-                </div>
-            </div>
-            <%})%>
-            
-        </div>
-        
-    </div>
-</div>
-
-<div id="popUp-list" class="popUp hide">
-    <div class="popUp-container flex-column width-full" id="listContainer">
-        <div class="acara-list">
-            <div class="flex-row">
-                
-                <h5>Sila pilih pertandingan</h5>
-                <div class="button float-right" onclick="closePopup()"><i class="fa-solid fa-x"></i></div>
-            </div>
-            <div class="flex-column acara">
+        <h5 class="text-header"><i class="fa-solid fa-pencil"></i> Kemaskini Kumpulan</h5>
+        <div class="panel flex-row">
+            <div class="flex-column">
                 <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
                 <select name="sel-pertandingan" id="sel-pertandingan">
                     <option value="">Pilih Pertandingan</option>
                 </select>
             </div>
-            <div class="flex-column acara">
+            <div class="flex-column">
                 <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
                 <input type="text" id="nama-kumpulan" type="text">
             </div>
-            <div class="pertandingan">
-                <span id="txtmsg" class="red-msg"></span>
+            <div class="flex-column">
+                <label for="nama-kumpulan" style="padding-left: 6px;">-</label>
+                <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
             </div>
             
-            <div class="flex-row py-6">
-                <div class="button" id="btn-addGroup"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
-            </div>
         </div>
-    </div>
-</div>
+        <h5 class="text-header"><i class="fa-solid fa-users"></i> Senarai Peserta</h5>
+        <div class="panel flex-row">
+            <table class="table-black width-full">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>KP</th>
+                        <th>Darjah/ Tingkatan</th>
+                        <th>Jantina</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nurul</td>
+                        <td>0123456789</td>
+                        <td>S1</td>
+                        <td>Perempuan</td>
+                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td>Halim</td>
+                        <td>0123456772</td>
+                        <td>S1</td>
+                        <td>Lelaki</td>
+                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td>Jamil</td>
+                        <td>0123456001</td>
+                        <td>S1</td>
+                        <td>Lelaki</td>
+                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <button id="btn-addpeserta" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Peserta</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-<div id="popUp-update" class="popUp hide">
-    <div class="popUp-container flex-column width-full" id="listContainer">
-        <div class="acara-list">
-            <div class="flex-row">
-                
-                <h5>Sila pilih pertandingan</h5>
-                <div class="button float-right" onclick="closePopupUpdate()"><i class="fa-solid fa-x"></i></div>
+        <h5 class="text-header"><i class="fa-solid fa-file-shield"></i> Serahan Tugasan</h5>
+        <div class="panel flex-row">
+            <div class="flex-column thumb">
+                <i class="fa-solid fa-circle-plus fa-2x"></i>
+                <span>Hantar</span>
             </div>
-            <div class="flex-column acara">
-                <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
-                <select name="sel-pertandingan-update" id="sel-pertandingan-update">
-                    <option value="">Pilih Pertandingan</option>
-                </select>
+            <div class="flex-column thumb">
+                <i class="fa-solid fa-file-pdf fa-2x"></i>
+                <span>Tugasan I</span>
             </div>
-            <div class="flex-column acara">
-                <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
-                <input type="text" id="nama-kumpulan-update" type="text">
-            </div>
-            <div class="pertandingan">
-                <span id="txtmsg-update" class="red-msg"></span>
-            </div>
-            
-            <div class="flex-row py-6">
-                <div class="button" id="btn-updateGroup"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Simpan</div>
-            </div>
-
-            <div class="winpanel">
-                <div class="winpanel-header">
-                    <span>Senarai Pelajar</span>
-                    <div class="button-small float-right" id="btn-addpeserta"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Tambah Peserta</div>
-                </div>
-                <div class="flex-row">
-                    <table class="table" id="selected-peserta">
-                        <tbody>
-    
-                        </tbody>
-                    </table>
-                </div>
+            <div class="flex-column thumb">
+                <i class="fa-solid fa-file-pdf fa-2x"></i>
+                <span>Tugasan II</span>
             </div>
         </div>
     </div>
@@ -120,7 +89,7 @@
             </div>
             <p>*Carian menggunakan nama atau kad pengenalan peserta</p>
             <div class="list-panel">
-                <table class="table" id="search-result">
+                <table class="table-black" id="search-result">
                     <tbody>
 
                     </tbody>
@@ -209,6 +178,9 @@
                 o.attr('value',d=>d.value);
                 o.text(d=>d.text);
             })
+
+            $('#sel-pertandingan').val('<%= kumpulan.program %>');
+            $('#nama-kumpulan').val('<%= kumpulan.nama_kumpulan %>');
         })
     }
 
@@ -218,42 +190,11 @@
 </script>
 
 <script>
-    d3.select('#add-group').on('click', (e)=>{
-        $('#sel-pertandingan').val('');
-        $('#nama-kumpulan').val('');
-        $('#popUp-list').removeClass('hide');
-    });
-
     d3.select('#btn-addpeserta').on('click', e=>{
         $('#popUp-add').removeClass('hide');
     });
 
-    d3.selectAll('.group-select').on('click', (e)=>{
-        const targetElement = e.currentTarget;
-        const namakumpulan = d3.select(targetElement).attr('namakumpulan');
-        const acara = d3.select(targetElement).attr('acara');
-        const grpid = d3.select(targetElement).attr('grpid');
-
-        window.location.replace("./group-edit-"+grpid);
-
-        $('#sel-pertandingan-update').val(acara);
-        $('#nama-kumpulan-update').val(namakumpulan);
-
-        console.log(namakumpulan);
-        $('#popUp-update').removeClass('hide');
-    });
-
-    d3.select('#btn-addGroup').on('click', (e)=>{
-        api.add(res => {
-            console.log(res);
-            if(res.msg !== ''){
-                d3.select('#txtmsg').text(res.msg);
-            }else{
-                location.reload();
-            }
-            
-        })
-    });
+    
 
     d3.select('#btn-cari').on('click', e=> {
         api.search(data=>{
@@ -268,7 +209,7 @@
                 o.append('td').text(d=>d.darjah_tingkatan);
                 o.append('td').text(d=>d.jantina);
                 t = o.append('td');
-                btn = t.append('div').attr('class','button-small float-right');
+                btn = t.append('div').attr('class','btn btn-sm float-right');
                 btn.html('<i class="fa-solid fa-arrow-up-right-from-square"></i>');
 
                 const updateTable = (_data) => {
@@ -312,16 +253,7 @@
         })
     });
 
-    function closePopup(){
-            $('#popUp-list').addClass('hide');
-    }
-
-    function closePopupUpdate(){
-            $('#popUp-update').addClass('hide');
-    }
-
     function closePopupAdd(){
             $('#popUp-add').addClass('hide');
     }
-    
 </script>
