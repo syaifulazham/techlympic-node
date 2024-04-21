@@ -499,7 +499,27 @@ router.get('/:shaid', (req, res, next) => {
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'utama.ejs' });
   }
-})
+});
+
+router.post('/api/upload-file', function(req, res) {
+  // Handle file upload logic here
+  const multer = require('multer');
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/'); // Specify the destination folder for saving uploaded files
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname); // Keep the original file name
+    }
+  });
+  const upload = multer({ storage: storage });
+
+  router.post('/api/upload-file', upload.single('file'), function(req, res) {
+    // Handle file upload logic here
+    res.send('File uploaded successfully');
+  });
+});
+
 
 router.get('/user-dashboard', function(req, res, next){
   console.log(':: 1 :: Enter /user-dashboard');
