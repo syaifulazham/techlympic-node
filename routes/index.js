@@ -501,25 +501,42 @@ router.get('/:shaid', (req, res, next) => {
   }
 });
 
-router.post('/api/upload-file', function(req, res) {
-  // Handle file upload logic here
-  const multer = require('multer');
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/'); // Specify the destination folder for saving uploaded files
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname); // Keep the original file name
-    }
-  });
-  const upload = multer({ storage: storage });
-
-  router.post('/api/upload-file', upload.single('file'), function(req, res) {
-    // Handle file upload logic here
-    res.send('File uploaded successfully');
+router.post('/api/group-add-member', function(req, res){
+  console.log(':: 1 :: Enter /api/group-add-member');
+  API.kumpulan.addMember(req.body, (r)=>{
+    res.send(r);
   });
 });
 
+router.post('/api/load-members', function(req, res){
+  API.kumpulan.loadMembers(req.body.groupid, (r)=>{
+    res.send(r);
+  });
+});
+
+router.post('/api/delete-member', function(req, res){
+  API.kumpulan.deleteMember(req.body.groupid, req.body.kp, (r)=>{
+    res.send(r);
+  });
+});
+
+router.post('/api/upload-file', function(req, res) {
+  console.log('body data: ',req.body);
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  let sampleFile = req.files.sampleFile;
+
+  // Use the mv() method to place the file somewhere on your server
+  sampleFile.mv('/path/to/folder/' + sampleFile.name, function(err) {
+    if (err)
+      return res.status(500).send(err);
+
+    res.send('File uploaded successfully');
+  });
+});
 
 router.get('/user-dashboard', function(req, res, next){
   console.log(':: 1 :: Enter /user-dashboard');
@@ -781,9 +798,16 @@ const action = {
         var session = req.cookies['localId'];
         var pesertaList = req.body.peserta;
         pesertaList.forEach(d=>{d.usr_email = session.user.email});
-        API.peserta.insertOrUpdate(pesertaList, (d) => {
-          res.send(d);
-        })
+        API.user.isExist(session.user.email, (r) => {
+          pesertaList.forEach(d=>{d.kodsekolah = r.data.kodsekolah});
+          //console.log('pesertaList: ', pesertaList);
+          API.peserta.insertOrUpdate(pesertaList, (d) => {
+            res.send(d);
+          });
+        });
+        //API.peserta.insertOrUpdate(pesertaList, (d) => {
+        //  res.send(d);
+        //})
       }catch(err){
         console.log('error: ', err);
       }
@@ -920,6 +944,7 @@ const action = {
         if(!isexists){
           API.user.isExist(session.user.email, (r) => {
             var add = {
+              negeri: r.data.negeri,
               kodsekolah: r.data.kodsekolah,
               nama_kumpulan: data.namakumpulan,
               program: data.pertandingan,
@@ -935,7 +960,7 @@ const action = {
         }
       })
     },
-    list: (req, res)=> {
+    list: (req, res)=>{
       
     }
   }

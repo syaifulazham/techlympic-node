@@ -348,6 +348,7 @@ let API = {
                     INSERT INTO peserta
                     SET ?
                     ON DUPLICATE KEY UPDATE
+                    kodsekolah = VALUES(kodsekolah),
                     nama = VALUES(nama),
                     jantina = VALUES(jantina),
                     tarikh_lahir = VALUES(tarikh_lahir),
@@ -979,6 +980,63 @@ let API = {
                 console.log(e);
             }
         },
+        loadMembers: (groupid, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                SELECT a.groupid, b.* FROM kumpulan_members a
+                LEFT JOIN peserta b USING(kp)
+                WHERE groupid=?
+                `;
+                con.query(sql, [groupid], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        addMember: (data, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                INSERT INTO kumpulan_members (groupid, kp) 
+                VALUES (?, ?)
+                `;
+                con.query(sql, [data.groupid*1, data.kp], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        deleteMember: (groupid, kp, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                DELETE FROM kumpulan_members WHERE groupid=? and kp=?
+                `;
+                con.query(sql, [groupid*1, kp], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }   
+        }
 
     }
 }

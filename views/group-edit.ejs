@@ -1,83 +1,72 @@
 <div class="section-1">
     <%- include ('totembar.ejs') %>
-    <div class="workspace">
-        <h5 class="text-header"><i class="fa-solid fa-pencil"></i> Kemaskini Kumpulan</h5>
-        <div class="panel flex-row">
-            <div class="flex-column">
-                <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
-                <select name="sel-pertandingan" id="sel-pertandingan">
-                    <option value="">Pilih Pertandingan</option>
-                </select>
-            </div>
-            <div class="flex-column">
-                <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
-                <input type="text" id="nama-kumpulan" type="text">
-            </div>
-            <div class="flex-column">
-                <label for="nama-kumpulan" style="padding-left: 6px;">-</label>
-                <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
-            </div>
-            
-        </div>
-        <h5 class="text-header"><i class="fa-solid fa-users"></i> Senarai Peserta</h5>
-        <div class="panel flex-row">
-            <table class="table-black width-full">
-                <thead>
-                    <tr>
-                        <th>Nama</th>
-                        <th>KP</th>
-                        <th>Darjah/ Tingkatan</th>
-                        <th>Jantina</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Nurul</td>
-                        <td>0123456789</td>
-                        <td>S1</td>
-                        <td>Perempuan</td>
-                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td>Halim</td>
-                        <td>0123456772</td>
-                        <td>S1</td>
-                        <td>Lelaki</td>
-                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td>Jamil</td>
-                        <td>0123456001</td>
-                        <td>S1</td>
-                        <td>Lelaki</td>
-                        <td><button class="btn btn-danger btn-sm"><i class="fa-solid fa-user-slash fa-2xs"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5">
-                            <button id="btn-addpeserta" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Peserta</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <input type="hidden" id="groupid" value="<%= kumpulan.groupid %>">
+        <div class="workspace">
+            <h5 class="text-header"><i class="fa-solid fa-pencil"></i> Kemaskini Kumpulan</h5>
+            <div class="panel flex-row">
+                <div class="flex-column">
+                    <label for="sel-pertandingan" style="padding-left: 6px;">Pilih Pertandingan</label>
+                    <select name="sel-pertandingan" id="sel-pertandingan">
+                        <option value="">Pilih Pertandingan</option>
+                    </select>
+                </div>
+                <div class="flex-column">
+                    <label for="nama-kumpulan" style="padding-left: 6px;">Nama Kumpulan</label>
+                    <input type="text" id="nama-kumpulan" type="text">
+                </div>
+                <div class="flex-column">
+                    <label for="nama-kumpulan" style="padding-left: 6px;">-</label>
+                    <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+                </div>
 
-        <h5 class="text-header"><i class="fa-solid fa-file-shield"></i> Serahan Tugasan</h5>
-        <div class="panel flex-row">
-            <div class="flex-column thumb">
-                <i class="fa-solid fa-circle-plus fa-2x"></i>
-                <span>Hantar</span>
             </div>
-            <div class="flex-column thumb">
-                <i class="fa-solid fa-file-pdf fa-2x"></i>
-                <span>Tugasan I</span>
+            <h5 class="text-header"><i class="fa-solid fa-users"></i> Senarai Peserta</h5>
+            <div class="panel flex-row">
+                <table class="table-black width-full">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>KP</th>
+                            <th>Darjah/ Tingkatan</th>
+                            <th>Jantina</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="member-list">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <button id="btn-addpeserta" class="btn btn-primary"><i class="fa-solid fa-plus"></i>
+                                    Tambah Peserta</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+
+                </table>
             </div>
-            <div class="flex-column thumb">
-                <i class="fa-solid fa-file-pdf fa-2x"></i>
-                <span>Tugasan II</span>
+
+            <h5 class="text-header"><i class="fa-solid fa-file-shield"></i> Serahan Tugasan</h5>
+            <div class="panel flex-row">
+
+                <div class="flex-column thumb">
+                    <input type="file" id="file-input" accept="application/pdf" onchange="uploadFile()">
+                    <label for="file-input">
+                        <i class="fa-solid fa-circle-plus fa-2x"></i>
+                    </label>
+
+                </div>
+                <div class="flex-column thumb">
+                    <i class="fa-solid fa-file-pdf fa-2x"></i>
+                    <span>Tugasan I</span>
+                </div>
+                <div class="flex-column thumb">
+                    <i class="fa-solid fa-file-pdf fa-2x"></i>
+                    <span>Tugasan II</span>
+                </div>
             </div>
         </div>
-    </div>
 </div>
 
 <div id="popUp-add" class="popUp hide">
@@ -85,7 +74,8 @@
         <div class="acara-list">
             <div class="flex-row">
                 <input class="flex-grow-4" type="text" id="srcstudent">
-                <div class="button-small float-right" id="btn-cari"><i class="fa-solid fa-magnifying-glass"></i></i>&nbsp;&nbsp;Cari</div>
+                <div class="button-small float-right" id="btn-cari"><i
+                        class="fa-solid fa-magnifying-glass"></i></i>&nbsp;&nbsp;Cari</div>
             </div>
             <p>*Carian menggunakan nama atau kad pengenalan peserta</p>
             <div class="list-panel">
@@ -96,8 +86,9 @@
                 </table>
             </div>
             <div class="flex-row">
-                <div class="button-small float-right" id="btn-batal" onclick="closePopupAdd()"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Batal</div>
-                
+                <div class="button-small float-right" id="btn-batal" onclick="closePopupAdd()"><i
+                        class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Batal</div>
+
             </div>
         </div>
     </div>
@@ -151,51 +142,74 @@
             });
         },
         upload: (fn) => {
-            $('#file-input').change(function() {
-                var file = this.files[0];
-                var formData = new FormData();
-                formData.append('file', file);
+            var file = $('#file-input')[0].files[0]; // Ensure you access the files property correctly
+            console.log(file); // This will log the file object to the console
+            var formData = new FormData();
+            formData.append('file', file); // Append the file to the FormData object
 
-                $.ajax({
-                    type: "POST",
-                    url: '/api/upload-file',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (res) {
-                        fn(res);
-                    },
-                    dataType: 'json'
-                });
+            $.ajax({
+                type: "POST",
+                url: '/api/upload-file',
+                data: formData,
+                contentType: false, // Important: Setting the contentType to false is necessary for file uploads
+                processData: false, // Also important: Prevent jQuery from processing the data as a string
+                success: function (res) {
+                    console.log(res); // Log the response from the server
+                },
+                dataType: 'json'
+            });
+        },
+        addMember: (data, fn) => {
+            $.ajax({
+                type: "POST",
+                url: '/api/group-add-member',
+                data: data,
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        },
+        loadMembers: (groupid, fn) => {
+            $.ajax({
+                type: "POST",
+                url: '/api/load-members',
+                data: {
+                    groupid: groupid
+                },
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
             });
         }
     }
 
-    function loadPrograms(){
-        api.program(data=>{
+    function loadPrograms() {
+        api.program(data => {
             console.log(data);
 
             var sel = d3.select('#sel-pertandingan');
             var sel2 = d3.select('#sel-pertandingan-update');
             sel.selectAll('option').remove();
 
-            options = [{value:"", text:""}];
+            options = [{ value: "", text: "" }];
 
-            data.forEach(d=>{
+            data.forEach(d => {
                 options.push({
                     value: d.prog_name,
                     text: d.prog_name
                 })
             });
 
-            sel.selectAll('option').data(options).enter().append('option').call(o=>{
-                o.attr('value',d=>d.value);
-                o.text(d=>d.text);
+            sel.selectAll('option').data(options).enter().append('option').call(o => {
+                o.attr('value', d => d.value);
+                o.text(d => d.text);
             });
 
-            sel2.selectAll('option').data(options).enter().append('option').call(o=>{
-                o.attr('value',d=>d.value);
-                o.text(d=>d.text);
+            sel2.selectAll('option').data(options).enter().append('option').call(o => {
+                o.attr('value', d => d.value);
+                o.text(d => d.text);
             })
 
             $('#sel-pertandingan').val('<%= kumpulan.program %>');
@@ -203,38 +217,64 @@
         })
     }
 
-    $(document).ready(()=>{
+    function uploadFile() {
+        api.upload(data => {
+            console.log(data);
+        })
+    }
+
+    function loadMembers(data) {
+        var tbdy = d3.select('#member-list');
+        tbdy.selectAll('tr').remove();
+
+        tbdy.selectAll('tr').data(data).enter().append('tr').call(o => {
+            o.append('td').text(d => d.nama);
+            o.append('td').text(d => d.kp);
+            o.append('td').text(d => d.darjah_tingkatan);
+            o.append('td').text(d => d.jantina);
+            const rem = o.append('td');
+            const rembtn = rem.append('div').attr('class', 'btn btn-danger btn-sm');
+            rembtn.append('i').attr('class', 'fa-solid fa-user-slash fa-2xs');
+        })
+    }
+
+    $(document).ready(() => {
         loadPrograms();
+
+        api.loadMembers($('#groupid').val(), (m) => {
+            console.log(m);
+            loadMembers(m);
+        });
     })
 </script>
 
 <script>
-    d3.select('#btn-addpeserta').on('click', e=>{
+    d3.select('#btn-addpeserta').on('click', e => {
         $('#popUp-add').removeClass('hide');
     });
 
-    
 
-    d3.select('#btn-cari').on('click', e=> {
-        api.search(data=>{
+
+    d3.select('#btn-cari').on('click', e => {
+        api.search(data => {
             console.log(data);
             var tbl = d3.select('#search-result');
             var tbdy = tbl.select('tbody');
             tbdy.selectAll('tr').remove();
 
-            tbdy.selectAll('.tr-search').data(data).enter().append('tr').call(o=>{
-                o.append('td').text(d=>d.nama);
-                o.append('td').text(d=>d.kp);
-                o.append('td').text(d=>d.darjah_tingkatan);
-                o.append('td').text(d=>d.jantina);
+            tbdy.selectAll('.tr-search').data(data).enter().append('tr').call(o => {
+                o.append('td').text(d => d.nama);
+                o.append('td').text(d => d.kp);
+                o.append('td').text(d => d.darjah_tingkatan);
+                o.append('td').text(d => d.jantina);
                 t = o.append('td');
-                btn = t.append('div').attr('class','btn btn-sm float-right');
+                btn = t.append('div').attr('class', 'btn btn-sm float-right');
                 btn.html('<i class="fa-solid fa-arrow-up-right-from-square"></i>');
 
                 const updateTable = (_data) => {
                     var _tbl = d3.select('#selected-peserta');
                     var _tbdy = _tbl.select('tbody');
-                    
+
                     const rows = _tbdy.selectAll('tr').data(_data);
 
                     // Enter phase
@@ -264,15 +304,26 @@
 
                     $('#popUp-add').addClass('hide');
                 };
-
-                btn.on('click', (e, d)=> {
-                    updateTable([d]);
+                //latin1_swedish_ci
+                btn.on('click', (e, d) => {
+                    //updateTable([d]);
+                    api.addMember({
+                        groupid: $('#groupid').val(),
+                        kp: d.kp
+                    }, (r) => {
+                        console.log(r);
+                        //window.location.replace('/group-edit');
+                        api.loadMembers($('#groupid').val(), (m) => {
+                            $('#popUp-add').addClass('hide');
+                            loadMembers(m);
+                        });
+                    });
                 });
             })
         })
     });
 
-    function closePopupAdd(){
-            $('#popUp-add').addClass('hide');
+    function closePopupAdd() {
+        $('#popUp-add').addClass('hide');
     }
 </script>
