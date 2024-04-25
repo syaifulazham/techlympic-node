@@ -48,23 +48,15 @@
             </div>
 
             <h5 class="text-header"><i class="fa-solid fa-file-shield"></i> Serahan Tugasan</h5>
-            <div class="panel flex-row">
-
+            <div id="pdf-list" class="panel flex-row">
                 <div class="flex-column thumb">
-                    <input type="file" id="file-input" accept="application/pdf" onchange="uploadFile()">
+                    <input type="file" id="file-input" accept="application/pdf">
                     <label for="file-input">
-                        <i class="fa-solid fa-circle-plus fa-2x"></i>
+                        <i class="fa-solid fa-upload fa-2x"></i>
                     </label>
 
                 </div>
-                <div class="flex-column thumb">
-                    <i class="fa-solid fa-file-pdf fa-2x"></i>
-                    <span>Tugasan I</span>
-                </div>
-                <div class="flex-column thumb">
-                    <i class="fa-solid fa-file-pdf fa-2x"></i>
-                    <span>Tugasan II</span>
-                </div>
+               
             </div>
         </div>
 </div>
@@ -142,22 +134,7 @@
             });
         },
         upload: (fn) => {
-            var file = $('#file-input')[0].files[0]; // Ensure you access the files property correctly
-            console.log(file); // This will log the file object to the console
-            var formData = new FormData();
-            formData.append('file', file); // Append the file to the FormData object
 
-            $.ajax({
-                type: "POST",
-                url: '/api/upload-file',
-                data: formData,
-                contentType: false, // Important: Setting the contentType to false is necessary for file uploads
-                processData: false, // Also important: Prevent jQuery from processing the data as a string
-                success: function (res) {
-                    console.log(res); // Log the response from the server
-                },
-                dataType: 'json'
-            });
         },
         addMember: (data, fn) => {
             $.ajax({
@@ -174,6 +151,19 @@
             $.ajax({
                 type: "POST",
                 url: '/api/load-members',
+                data: {
+                    groupid: groupid
+                },
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        },
+        loadPdf: (groupid, fn) => {
+            $.ajax({
+                type: "POST",
+                url: '/api/load-pdf',
                 data: {
                     groupid: groupid
                 },
@@ -217,12 +207,6 @@
         })
     }
 
-    function uploadFile() {
-        api.upload(data => {
-            console.log(data);
-        })
-    }
-
     function loadMembers(data) {
         var tbdy = d3.select('#member-list');
         tbdy.selectAll('tr').remove();
@@ -238,12 +222,72 @@
         })
     }
 
+    function loadPdf(data){
+        //console.log(data);
+        /*
+        <div class="flex-column thumb">
+            <i class="fa-solid fa-file-pdf fa-2x"></i>
+            <span>Tugasan I</span>
+        </div>
+        */
+        var pdfList = d3.select('#pdf-list');
+        pdfList.selectAll('.pdf-file').remove();
+
+        pdfList.selectAll('.pdf-file').data(data).enter().append('div').call(o => {
+            o.attr('class', 'pdf-file flex-column thumb');
+            o.append('i').attr('class', 'fa-solid fa-file-pdf fa-2x');
+            o.append('span').text(d => d.tajuk);
+        })
+    }
+
     $(document).ready(() => {
         loadPrograms();
 
         api.loadMembers($('#groupid').val(), (m) => {
             console.log(m);
             loadMembers(m);
+        });
+
+        api.loadPdf($('#groupid').val(), (p) => {
+            console.log(p);
+            loadPdf(p);
+        });
+
+        //$('#file-input').on('change', (e, d) => {
+        //    console.log(d);
+        //    api.upload((r) => {
+        //        console.log(r);
+        //    })
+        //});
+
+        var fileInput = document.getElementById('file-input');
+        // Add an event listener to handle file selection
+        fileInput.addEventListener('change', function () {
+            // Select the file input element
+            var file = fileInput.files[0]; // Get the selected file
+            var groupid = $('#groupid').val();
+
+            var formData = new FormData();
+            formData.append('file', file); // Append the file to the FormData object
+            formData.append('groupid', groupid); 
+
+            $.ajax({
+                type: "POST",
+                url: '/api/upload-file',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('groupid', groupid); // Pass groupid to header
+                },
+                success: function (res) {
+                    console.log(res); // Log the response from the server
+                    api.loadPdf($('#groupid').val(), (p) => {
+                        loadPdf(p);
+                    });
+                },
+                dataType: 'json'
+            });
         });
     })
 </script>

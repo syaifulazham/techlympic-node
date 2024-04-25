@@ -11,11 +11,11 @@ let API = {
             try {
                 con.query("SELECT * FROM sekolah limit 10", function (err, result) {
                     if (err) {
-                        console.log('but with some error: ',err);
+                        console.log('but with some error: ', err);
                     } else {
-                        console.log('... with some data: ',result);
+                        console.log('... with some data: ', result);
                         con.end();
-                        
+
                         fn(result);
                     }
                 });
@@ -30,7 +30,7 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
 
                         fn(result);
@@ -47,15 +47,15 @@ let API = {
                 registered: true,
                 data: []
             };
-    
+
             try {
                 const connection = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
                 const queryAsync = util.promisify(connection.query).bind(connection);
-    
+
                 const result = await queryAsync('SELECT * FROM `user` WHERE usr_email = ?', [email]);
-    
+
                 connection.end();
-    
+
                 const default_val = {
                     usr_role: '--Pilih Jenis Pengguna--',
                     kodsekolah: '',
@@ -66,10 +66,10 @@ let API = {
                     bandar: '',
                     negeri: '--Pilih Negeri--'
                 };
-    
+
                 val.registered = result.length > 0;
                 val.data = result.length > 0 ? result[0] : default_val;
-    
+
                 return val;
             } catch (e) {
                 console.log('------ERROR------>', e);
@@ -83,23 +83,23 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         var default_val = {
                             usr_role: '--Pilih Jenis Pengguna--',
-                            kodsekolah: '', 
-                            namasekolah: '', 
-                            alamat1: '', 
-                            alamat2: '', 
-                            poskod: '', 
-                            bandar: '', 
+                            kodsekolah: '',
+                            namasekolah: '',
+                            alamat1: '',
+                            alamat2: '',
+                            poskod: '',
+                            bandar: '',
                             negeri: '--Pilih Negeri--'
                         }
                         var val = {
-                            registered: result.length>0 ? true : false,
-                            data: result.length>0 ? result[0] : default_val
+                            registered: result.length > 0 ? true : false,
+                            data: result.length > 0 ? result[0] : default_val
                         }
-                        
+
                         fn(val);
                     }
                 });
@@ -107,99 +107,99 @@ let API = {
                 console.log('------ERROR------>', e);
             }
         },
-        isRegistered: (email, fn)=>{
-            if(email=='') return 0;
+        isRegistered: (email, fn) => {
+            if (email == '') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
-                con.query("SELECT * from user WHERE usr_email = ?",[email], 
-                function (err, result) {
-                    if(result.length > 0){
-                        fn({
-                            register: false,
-                            msg: email + ' telah didaftarkan'
-                        });
-                    }else {
-                        fn({
-                            register: true,
-                            msg: 'Proceed'
-                        })
-                    }
-                });
-            } catch(e){
+            try {
+                con.query("SELECT * from user WHERE usr_email = ?", [email],
+                    function (err, result) {
+                        if (result.length > 0) {
+                            fn({
+                                register: false,
+                                msg: email + ' telah didaftarkan'
+                            });
+                        } else {
+                            fn({
+                                register: true,
+                                msg: 'Proceed'
+                            })
+                        }
+                    });
+            } catch (e) {
                 console.log(e);
             }
         },
-        create : (uid, pass, fn)=>{
+        create: (uid, pass, fn) => {
             //UPDATE users SET usr_password = AES_ENCRYPT('demo123',CONCAT(usr_name,'sP00n4eat0O0O'))
-            if(uid=='' || pass=='') return 0;
+            if (uid == '' || pass == '') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
-                con.query("insert into user(usr_email,usr_name,usr_password,usr_agent) values(?,?,AES_ENCRYPT(?,CONCAT(?,?)),?)",[uid, uid, pass, uid, auth._SECRET_,'Internal'], 
-                function (err, result) {
-                    fn({
-                      status: true,
-                      msg: 'New account has been successfully registered. Please refer to your email for the initial password'
+            try {
+                con.query("insert into user(usr_email,usr_name,usr_password,usr_agent) values(?,?,AES_ENCRYPT(?,CONCAT(?,?)),?)", [uid, uid, pass, uid, auth._SECRET_, 'Internal'],
+                    function (err, result) {
+                        fn({
+                            status: true,
+                            msg: 'New account has been successfully registered. Please refer to your email for the initial password'
+                        });
                     });
-                });
-            } catch(e){
+            } catch (e) {
                 console.log(e);
                 fn({
-                  status: false,
-                  msg: 'Error accured! registration failed. Sorry for the inconvenience'
+                    status: false,
+                    msg: 'Error accured! registration failed. Sorry for the inconvenience'
                 })
             }
         },
-        login: (uid, pass, fn)=>{
-            if(uid=='' || pass=='') return 0;
+        login: (uid, pass, fn) => {
+            if (uid == '' || pass == '') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
-                con.query("SELECT * from user WHERE usr_agent = 'Internal' and usr_email = ? and usr_password = AES_ENCRYPT(?,CONCAT(?,?))",[uid, pass, uid, auth._SECRET_], 
-                function (err, result) {
-                    if(result.length > 0){
-                        var user = {
-                            displayName: result[0].usr_name,
-                            email: result[0].usr_email,
-                            photo: '',
-                            agent: 'Internal'
-                          }
-                        fn({
-                            authorized: true,
-                            msg: 'User Authorized!',
-                            data: user
-                        });
-                    }else {
-                        fn({
-                            authorized: false,
-                            msg: 'Incorrect Username of Password',
-                            data: []
-                        })
-                    }
-                });
-            } catch(e){
+            try {
+                con.query("SELECT * from user WHERE usr_agent = 'Internal' and usr_email = ? and usr_password = AES_ENCRYPT(?,CONCAT(?,?))", [uid, pass, uid, auth._SECRET_],
+                    function (err, result) {
+                        if (result.length > 0) {
+                            var user = {
+                                displayName: result[0].usr_name,
+                                email: result[0].usr_email,
+                                photo: '',
+                                agent: 'Internal'
+                            }
+                            fn({
+                                authorized: true,
+                                msg: 'User Authorized!',
+                                data: user
+                            });
+                        } else {
+                            fn({
+                                authorized: false,
+                                msg: 'Incorrect Username of Password',
+                                data: []
+                            })
+                        }
+                    });
+            } catch (e) {
                 console.log(e);
             }
         },
-        updatePassword : (uid, pass, fn)=>{
+        updatePassword: (uid, pass, fn) => {
             //UPDATE users SET usr_password = AES_ENCRYPT('demo123',CONCAT(usr_name,'sP00n4eat0O0O'))
-            if(uid=='' || pass=='') return 0;
+            if (uid == '' || pass == '') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
+            try {
                 con.query(`
                         update user
                             set usr_password = AES_ENCRYPT(?,CONCAT(?,?))
                         where usr_email = ? and usr_agent = ?
-                    `,[pass, uid, auth._SECRET_, uid, 'Internal'], 
-                function (err, result) {
-                    fn({
-                      status: true,
-                      msg: 'Password has been reset'
+                    `, [pass, uid, auth._SECRET_, uid, 'Internal'],
+                    function (err, result) {
+                        fn({
+                            status: true,
+                            msg: 'Password has been reset'
+                        });
                     });
-                });
-            } catch(e){
+            } catch (e) {
                 console.log(e);
                 fn({
-                  status: false,
-                  msg: 'Error accured! registration failed. Sorry for the inconvenience'
+                    status: false,
+                    msg: 'Error accured! registration failed. Sorry for the inconvenience'
                 })
             }
         },
@@ -221,42 +221,42 @@ let API = {
                         poskod = ?,
                         bandar = ?,
                         negeri = ?;
-                    `, 
-                [
-                    data.usr_name, 
-                    data.usr_email, 
-                    data.notel,
-                    data.usr_role, 
-                    data.usr_agent, 
-                    data.kodsekolah, 
-                    data.namasekolah, 
-                    data.peringkat, 
-                    data.alamat1, 
-                    data.alamat2, 
-                    data.poskod, 
-                    data.bandar, 
-                    data.negeri, 
-                    data.usr_name,
-                    data.notel,
-                    data.usr_role,
-                    data.kodsekolah, 
-                    data.namasekolah, 
-                    data.peringkat, 
-                    data.alamat1, 
-                    data.alamat2, 
-                    data.poskod, 
-                    data.bandar, 
-                    data.negeri
-                ], (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        
-                        con.end();
+                    `,
+                    [
+                        data.usr_name,
+                        data.usr_email,
+                        data.notel,
+                        data.usr_role,
+                        data.usr_agent,
+                        data.kodsekolah,
+                        data.namasekolah,
+                        data.peringkat,
+                        data.alamat1,
+                        data.alamat2,
+                        data.poskod,
+                        data.bandar,
+                        data.negeri,
+                        data.usr_name,
+                        data.notel,
+                        data.usr_role,
+                        data.kodsekolah,
+                        data.namasekolah,
+                        data.peringkat,
+                        data.alamat1,
+                        data.alamat2,
+                        data.poskod,
+                        data.bandar,
+                        data.negeri
+                    ], (err, result) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
 
-                        fn({message: 'Pendaftaran pengguna berjaya', registered:true});
-                    }
-                });
+                            con.end();
+
+                            fn({ message: 'Pendaftaran pengguna berjaya', registered: true });
+                        }
+                    });
             } catch (e) {
                 console.log(e);
             }
@@ -265,18 +265,18 @@ let API = {
     peserta: {
         addBulk: (usr, data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            const fields = ['usr_email','kp','jantina','tarikh_lahir', 'nama', 'email', 'darjah_tingkatan','target_group','kumpulan', 'program'];
+            const fields = ['usr_email', 'kp', 'jantina', 'tarikh_lahir', 'nama', 'email', 'darjah_tingkatan', 'target_group', 'kumpulan', 'program'];
             let sql = `INSERT IGNORE INTO peserta (${fields.join(', ')}) VALUES ?`;
             try {
                 con.query(sql, [data], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //con.release();
 
-                        fn({msg: `Inserted ${result.affectedRows} rows`});
+                        fn({ msg: `Inserted ${result.affectedRows} rows` });
                     }
                 });
             } catch (e) {
@@ -284,11 +284,11 @@ let API = {
             }
         },
 
-        
+
         updatePasswordBulk: (usr, data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             const fields = ['kp', 'passcode'];
-    
+
             // Create an array to store the update statements for each row
             const updateStatements = data.map(row => {
                 const kp = row.kp;
@@ -298,37 +298,37 @@ let API = {
                 UPDATE peserta SET pwd = ${mysql.escape(passcode)}, peserta_password = AES_ENCRYPT(${mysql.escape(passcode)}, CONCAT(${mysql.escape(kp)}, ${mysql.escape(auth._SECRET_)})) WHERE kp = ${mysql.escape(kp)} and usr_email = ${mysql.escape(usr)};
                 `;
             });
-    
+
             // Join the update statements into a single SQL query
             //let sql = updateStatements.join(' ');
-    
+
             try {
                 con.beginTransaction((err) => {
                     if (err) throw err;
-                    updateStatements.forEach(sql=>{
+                    updateStatements.forEach(sql => {
                         con.query(sql, function (err, result) {
                             if (err) {
                                 con.rollback(() => {
-                                throw err;
-                              });
+                                    throw err;
+                                });
                             }
                         });
                     });
 
-                    
-                // Commit transaction
-                con.commit((err) => {
-                    if (err) {
-                      con.rollback(() => {
-                        throw err;
-                      });
-                    }
-                    //fn(`${pesertaList.length} peserta inserted or updated successfully`);
-                  });
-              
-                  // Close connection
-                  con.end();
-                  fn(`${updateStatements.length} dikemaskini`);
+
+                    // Commit transaction
+                    con.commit((err) => {
+                        if (err) {
+                            con.rollback(() => {
+                                throw err;
+                            });
+                        }
+                        //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                    });
+
+                    // Close connection
+                    con.end();
+                    fn(`${updateStatements.length} dikemaskini`);
 
                 });
             } catch (e) {
@@ -340,11 +340,11 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             con.beginTransaction((err) => {
                 if (err) throw err;
-                
-                
+
+
                 // Loop through pesertaList and build INSERT or UPDATE query
                 pesertaList.forEach((peserta) => {
-                  const query = `
+                    const query = `
                     INSERT INTO peserta
                     SET ?
                     ON DUPLICATE KEY UPDATE
@@ -359,70 +359,70 @@ let API = {
                     bidang = VALUES(bidang),
                     program = VALUES(program)
                   `;
-            
-                  // Execute query
-                  con.query(query, peserta, (err, result) => {
-                    if (err) {
-                        con.rollback(() => {
-                        throw err;
-                      });
-                    }
-                  });
+
+                    // Execute query
+                    con.query(query, peserta, (err, result) => {
+                        if (err) {
+                            con.rollback(() => {
+                                throw err;
+                            });
+                        }
+                    });
                 });
-            
+
                 // Commit transaction
                 con.commit((err) => {
-                  if (err) {
-                    con.rollback(() => {
-                      throw err;
-                    });
-                  }
-                  //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                    if (err) {
+                        con.rollback(() => {
+                            throw err;
+                        });
+                    }
+                    //fn(`${pesertaList.length} peserta inserted or updated successfully`);
                 });
-            
+
                 // Close connection
                 con.end();
                 fn(`${pesertaList.length} peserta berjaya ditambah/ dikemaskini`);
-              });
+            });
         },
 
-        deletePesertaNegeri: (grp,usr, fn) =>{
-            if(usr=='') return 0;
+        deletePesertaNegeri: (grp, usr, fn) => {
+            if (usr == '') return 0;
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
 
-            var kod = (grp==='Guru')?'kodsekolah=?':'usr_email=?';
-            
-            try{
-                con.query(`delete from peserta_negeri WHERE ${kod}`,[usr], 
-                function (err, result) {
-                    if(err){
-                        fn({
-                            status: false,
-                            msg: ''
-                        });
-                    }else {
-                        con.end();
-                        fn({
-                            status: true,
-                            msg: 'Proceed'
-                        })
-                    }
-                });
-            } catch(e){
+            var kod = (grp === 'Guru') ? 'kodsekolah=?' : 'usr_email=?';
+
+            try {
+                con.query(`delete from peserta_negeri WHERE ${kod}`, [usr],
+                    function (err, result) {
+                        if (err) {
+                            fn({
+                                status: false,
+                                msg: ''
+                            });
+                        } else {
+                            con.end();
+                            fn({
+                                status: true,
+                                msg: 'Proceed'
+                            })
+                        }
+                    });
+            } catch (e) {
                 console.log(e);
             }
         },
 
         insertOrUpdateNegeri: (pesertaList, fn) => {
-            try{
+            try {
                 var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
                 con.beginTransaction((err) => {
                     if (err) throw err;
-                    
-                    
+
+
                     // Loop through pesertaList and build INSERT or UPDATE query
                     pesertaList.forEach((peserta) => {
-                      const query = `
+                        const query = `
                         INSERT INTO peserta_negeri
                         SET ?
                         ON DUPLICATE KEY UPDATE
@@ -430,39 +430,39 @@ let API = {
                         program = VALUES(program),
                         kumpulan = VALUES(kumpulan)
                       `;
-                
-                      // Execute query
-                      con.query(query, peserta, (err, result) => {
-                        if (err) {
-                            con.rollback(() => {
-                            throw err;
-                          });
-                        }
-                      });
+
+                        // Execute query
+                        con.query(query, peserta, (err, result) => {
+                            if (err) {
+                                con.rollback(() => {
+                                    throw err;
+                                });
+                            }
+                        });
                     });
-                
+
                     // Commit transaction
                     con.commit((err) => {
-                      if (err) {
-                        con.rollback(() => {
-                          throw err;
-                        });
-                      }
-                      //fn(`${pesertaList.length} peserta inserted or updated successfully`);
+                        if (err) {
+                            con.rollback(() => {
+                                throw err;
+                            });
+                        }
+                        //fn(`${pesertaList.length} peserta inserted or updated successfully`);
                     });
-                
+
                     // Close connection
                     con.end();
                     fn(`${pesertaList.length} peserta negeri berjaya ditambah/ dikemaskini`);
-                  });
-            }catch(err){
+                });
+            } catch (err) {
                 console.log('ERROR insertOrUpdateNegeri(): ', err);
             }
         },
 
-        getKumpulan: (usr, fn)=>{
+        getKumpulan: (usr, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
+            try {
                 sqlstr = `
                 SELECT a.*, b.prog_code, b.prog_name,
                     IFNULL(kumpulan1,'') kumpulan1,
@@ -486,14 +486,14 @@ let API = {
                         fn(result);
                     }
                 });
-            }catch(err){
+            } catch (err) {
                 console.log('Error getKumpulan: ', err);
             }
         },
 
-        saveKumpulan: (kumpulan, fn)=>{
+        saveKumpulan: (kumpulan, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
-            try{
+            try {
                 con.beginTransaction((err) => {
                     if (err) throw err;
 
@@ -513,31 +513,31 @@ let API = {
                         con.query(sqlstr, grp, function (err, result) {
                             if (err) {
                                 con.rollback(() => {
-                                throw err;
-                              });
-                              fn([]);
-                            } 
+                                    throw err;
+                                });
+                                fn([]);
+                            }
                         });
                     });
 
                     // Commit transaction
                     con.commit((err) => {
                         if (err) {
-                        con.rollback(() => {
-                            throw err;
-                        });
+                            con.rollback(() => {
+                                throw err;
+                            });
                         }
                         //fn(`${pesertaList.length} peserta inserted or updated successfully`);
                     });
-                
+
                     // Close connection
                     con.end();
                     fn(`${kumpulan.length} rekod telah dikemaskini`);
 
                 });
 
-                
-            }catch(err){
+
+            } catch (err) {
                 console.log('Error saveKumpulan: ', err);
             }
         },
@@ -610,11 +610,11 @@ let API = {
                 LEFT JOIN peserta_negeri b USING(kodsekolah)) h
                 GROUP BY program;
                 `
-                con.query(sqlstr, [usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email,usr_email], function (err, result) {
+                con.query(sqlstr, [usr_email, usr_email, usr_email, usr_email, usr_email, usr_email, usr_email, usr_email, usr_email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
 
                         fn(result);
@@ -625,14 +625,14 @@ let API = {
             }
         },
         loadPeserta: (email, peringkat, fn) => {
-            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var _peringkat = (peringkat === 'sekolah' ? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,ipt,bidang,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -647,26 +647,26 @@ let API = {
                 registered: true,
                 data: []
             };
-    
+
             try {
                 const connection = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
                 const queryAsync = util.promisify(connection.query).bind(connection);
-    
+
                 const result = await queryAsync('select lpad(id,6,0) id, kp, nama from peserta where kp = ? and usr_email=?', [kp, usr]);
-    
+
                 connection.end();
-    
+
                 const default_val = {
                     id: '',
                     nama: '',
                     kp: ''
                 };
-    
+
                 val.registered = result.length > 0;
                 val.data = result.length > 0 ? result[0] : default_val;
 
-                console.log('val---->',val);
-    
+                console.log('val---->', val);
+
                 return val;
             } catch (e) {
                 console.log('------ERROR------>', e);
@@ -674,14 +674,14 @@ let API = {
             }
         },
         loadPesertaList: (email, peringkat, fn) => {
-            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var _peringkat = (peringkat === 'sekolah' ? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`select kp,nama,email,darjah_tingkatan,bangsa,jantina,DATE_FORMAT(tarikh_lahir, "%Y-%m-%d") tarikh_lahir,program from peserta${_peringkat} where usr_email = ?`, [email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -698,7 +698,7 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -715,7 +715,7 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -726,7 +726,7 @@ let API = {
             }
         },
         loadPesertaNegeri: (email, peringkat, fn) => {
-            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var _peringkat = (peringkat === 'sekolah' ? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
@@ -751,7 +751,7 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -762,7 +762,7 @@ let API = {
             }
         },
         loadPesertaNegeriPrint: (email, peringkat, fn) => {
-            var _peringkat = (peringkat === 'sekolah'? '' : ('_' + peringkat));
+            var _peringkat = (peringkat === 'sekolah' ? '' : ('_' + peringkat));
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 con.query(`
@@ -784,7 +784,7 @@ let API = {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -818,11 +818,11 @@ let API = {
                     WHERE length(CONCAT(kumpulan2,email2,guru2)) > 2
                     ) w
                     ORDER BY prog_name, kumpulan;
-                `, [email,email], function (err, result) {
+                `, [email, email], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
                         //console.log(result);
                         fn(result);
@@ -847,16 +847,16 @@ let API = {
                 */
                 var sql = `
                 SELECT b.prog_code, b.prog_name, b.prog_desc, b.theme, b.color, b.target_group 
-                FROM (SELECT usr_role, usr_email, if(usr_role='Ibu Bapa','All',peringkat) lvl, peringkat FROM user ` + (usr ==='--none--'?'':'WHERE usr_email=?') + ` ) a
+                FROM (SELECT usr_role, usr_email, if(usr_role='Ibu Bapa','All',peringkat) lvl, peringkat FROM user ` + (usr === '--none--' ? '' : 'WHERE usr_email=?') + ` ) a
                 left JOIN (SELECT prog_code, prog_name, prog_desc, theme, color, target_group from program) b
                 ON if(usr_role='Ibu Bapa','All',peringkat) = if(usr_role='Ibu Bapa','All',b.target_group) 
                 ORDER BY target_group, b.prog_code
                 `;
-                con.query(sql, [usr],function (err, result) {
+                con.query(sql, [usr], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
-                        
+
                         con.end();
 
                         fn(result);
@@ -866,7 +866,7 @@ let API = {
                 console.log(e);
             }
         },
-        senarai: (peringkat, fn)=>{
+        senarai: (peringkat, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 var sql = `
@@ -885,7 +885,7 @@ let API = {
             }
         }
     },
-    
+
     kumpulan: {
         create: (data, fn) => {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
@@ -906,7 +906,7 @@ let API = {
                 console.log(e);
             }
         },
-        isExist: (kodsekolah, shaid, fn)=> {
+        isExist: (kodsekolah, shaid, fn) => {
             try {
                 var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
                 var secret = auth._SECRET_;
@@ -1007,7 +1007,7 @@ let API = {
                 INSERT INTO kumpulan_members (groupid, kp) 
                 VALUES (?, ?)
                 `;
-                con.query(sql, [data.groupid*1, data.kp], function (err, result) {
+                con.query(sql, [data.groupid * 1, data.kp], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -1025,7 +1025,7 @@ let API = {
                 var sql = `
                 DELETE FROM kumpulan_members WHERE groupid=? and kp=?
                 `;
-                con.query(sql, [groupid*1, kp], function (err, result) {
+                con.query(sql, [groupid * 1, kp], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -1035,7 +1035,46 @@ let API = {
                 });
             } catch (e) {
                 console.log(e);
-            }   
+            }
+        },
+        uploadPdf: (data, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                INSERT INTO kumpulan_uploads (groupid, tajuk, obj_file, usr_email, updatedate) 
+                VALUES (?, ?, ?, ?, current_timestamp())
+                `;
+                con.query(sql, [data.groupid, data.tajuk, data.obj_file, data.usr_email], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+
+
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        loadPdf: (groupid, fn) => {
+            var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
+            try {
+                var sql = `
+                SELECT * FROM kumpulan_uploads WHERE groupid=?
+                `;
+                con.query(sql, [groupid], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        con.end();
+                        fn(result);
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
         }
 
     }

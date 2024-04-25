@@ -520,21 +520,52 @@ router.post('/api/delete-member', function(req, res){
   });
 });
 
-router.post('/api/upload-file', function(req, res) {
-  console.log('body data: ',req.body);
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
+const fs_ = require('fs');
+const multer = require('multer');
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      //console.log(req.headers);
+      const groupId = req.headers.groupid*1; // Get the group ID from the request body
+      const uploadPath = `uploads/${groupId}/`; // Define the upload path dynamically
+
+      fs_.mkdir(uploadPath, { recursive: true }, (err) => {
+        if (err) {
+          console.error('Error creating directory:', err);
+        }
+        cb(null, uploadPath); // Set the upload path
+      });
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname); // Keep the original file name
+    }
+  })
+});
+
+router.post('/api/upload-file', upload.single('file'), (req, res) => {
+  const file = req.file; // Uploaded file details
+  const session = req.cookies['localId'];
+  const groupId = req.body.groupid; // Retrieve the group ID from the request body
+
+  if (!groupId) {
+    return res.status(400).json({ error: 'Group ID is missing in the request body' });
   }
 
-  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  let sampleFile = req.files.sampleFile;
+  const data_ = {
+    groupid: groupId,
+    tajuk: file.originalname,
+    obj_file: `uploads/${groupId}/${file.originalname}`, // Update the file path to include the dynamically created folder path
+    usr_email: session.user.email
+  }
 
-  // Use the mv() method to place the file somewhere on your server
-  sampleFile.mv('/path/to/folder/' + sampleFile.name, function(err) {
-    if (err)
-      return res.status(500).send(err);
+  API.kumpulan.uploadPdf(data_, (r) => {
+    res.send(r);
+  });
+});
 
-    res.send('File uploaded successfully');
+router.post('/api/load-pdf', function(req, res){
+  API.kumpulan.loadPdf(req.body.groupid, (r)=>{
+    res.send(r);
   });
 });
 
