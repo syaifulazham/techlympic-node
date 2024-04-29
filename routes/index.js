@@ -374,7 +374,7 @@ router.get('/utama', function (req, res) {
 router.get('/program', function (req, res) {
   try{
     var session = req.cookies['localId'];
-    res.render('main.ejs', { user: session.user, page: 'program.ejs' });
+    res.render('main.ejs', { user: session.user, page: 'program.ejs', kumpulan: {groupid: 0} });
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'program.ejs' });
   }
@@ -402,7 +402,7 @@ router.get('/login', function (req, res) {
 router.get('/daftar', function (req, res) {
   try{
     var session = req.cookies['localId'];
-    res.render('main.ejs', { user: session.user, page: 'daftar.ejs' });
+    res.render('main.ejs', { user: session.user, page: 'daftar.ejs', kumpulan: {groupid: 0} });
     
   }catch(err){
     res.render('main.ejs', { user: {}, page: 'daftar.ejs' });
@@ -411,7 +411,7 @@ router.get('/daftar', function (req, res) {
 
 router.get('/reset-password', function (req, res) {
   //var session = req.cookies['localId'];
-  res.render('main.ejs', { user: {}, page: 'reset-password.ejs' });
+  res.render('main.ejs', { user: {}, page: 'reset-password.ejs', kumpulan: {groupid: 0} });
 });
 
 router.get('/user-panel', function (req, res) {
@@ -425,7 +425,7 @@ router.get('/user-panel', function (req, res) {
     //console.log('SESION :',session);
     if(session){
       API.user.isExist(session.user.email, (r) => {
-        var data_ = { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data }
+        var data_ = { user: session.user, page: 'user-panel.ejs', registered: r.registered, me: r.data, kumpulan: {groupid: 0} }
         console.log(':: 3 :: Passing: ',data_);
         res.render('main.ejs', data_);
       });
@@ -443,7 +443,7 @@ router.get('/user-peserta-daftar', function (req, res) {
     var session = req.cookies['localId'];
     console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      var data_ = { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data }
+      var data_ = { user: session.user, page: 'user-peserta-daftar.ejs', registered: r.registered, me: r.data, kumpulan: {groupid: 0} }
       console.log(':: 3 :: Passing: ',data_);
       res.render('main.ejs', data_);
     });
@@ -459,7 +459,7 @@ router.get('/user-peserta-urus', function (req, res) {
     var session = req.cookies['localId'];
     console.log(':: 2 :: Fetch cookies');
     API.user.isExist(session.user.email, (r) => {
-      var data_ = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data };
+      var data_ = { user: session.user, page: 'user-peserta-urus.ejs', registered: r.registered, me: r.data, kumpulan: {groupid: 0} };
       console.log(':: 3 :: Passing: ',data_);
       res.render('main.ejs', data_);
     });
@@ -486,10 +486,11 @@ router.get('/user-peserta-evaluasi', function (req, res) {
   }
 });
 
-router.get('/:shaid', (req, res, next) => {
+router.get('/kumpulan', (req, res, next) => {
   try{
+    console.log('I am here....')
     var session = req.cookies['localId'];
-    var shaid = req.params.shaid;
+    var shaid = req.query.shaid;
     API.user.isExist(session.user.email, (r) => {
       API.kumpulan.isExist(r.data.kodsekolah, shaid.replace('group-edit-',''), (g)=>{
         res.render('main.ejs',{user:session.user, page:'group-edit.ejs', grpid:shaid, registered:r.registered, kumpulan:g})
@@ -527,7 +528,7 @@ const upload = multer({
     destination: (req, file, cb) => {
       //console.log(req.headers);
       const groupId = req.headers.groupid*1; // Get the group ID from the request body
-      const uploadPath = `uploads/${groupId}/`; // Define the upload path dynamically
+      const uploadPath = `public/uploads/${groupId}/`; // Define the upload path dynamically
 
       fs_.mkdir(uploadPath, { recursive: true }, (err) => {
         if (err) {
@@ -568,6 +569,28 @@ router.post('/api/load-pdf', function(req, res){
     res.send(r);
   });
 });
+
+router.get('/view-file-pdf', (req, res) => {
+  const session = req.cookies['localId'];
+  console.log('QUERY====>>>>',req.query);
+  try{
+    API.user.isExist(session.user.email, (r) => {
+      const groupid = req.query.groupid;
+      const fname = req.query.filename;
+      console.log('body===============>',req.body)
+      const fdir = `../uploads/${groupid}/${fname}`;
+  
+      res.render('main.ejs', { user:session.user, filepath: fdir, page: 'pdf-view.ejs', registered: r.registered })
+    })
+  }catch(e){
+    //res.render('main.ejs', { user: {}, page: 'utama.ejs' });
+  }
+  
+});
+
+router.get('/hello', (req, res, next)=>{
+  console.log('-------YES-----');
+})
 
 router.get('/user-dashboard', function(req, res, next){
   console.log(':: 1 :: Enter /user-dashboard');

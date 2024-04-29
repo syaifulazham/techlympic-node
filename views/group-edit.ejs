@@ -237,6 +237,13 @@
             o.attr('class', 'pdf-file flex-column thumb');
             o.append('i').attr('class', 'fa-solid fa-file-pdf fa-2x');
             o.append('span').text(d => d.tajuk);
+
+            o.on('click', (e, d)=>{
+
+                //window.location.replace('/view-pdf?groupid=' + d.groupid + '&filename=' + d.tajuk, '_blank');
+                window.location.replace('/view-file-pdf?groupid=' + d.groupid + '&filename=' + d.tajuk);
+                
+            });
         })
     }
 
