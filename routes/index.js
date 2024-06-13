@@ -1045,6 +1045,10 @@ router.post('/api/kumpulan/addkumpulan', action.kumpulan.create);
 
 router.get('/sessions', (req, res) => {
   //res.json(req.sessionStore.sessions);
+  var session = req.cookies['localId'];
+  API.user.isExist(session.user.email, (r) => {
+    console.log('My session |===============> : ', r)
+  })
 });
 
 

@@ -1,5 +1,22 @@
 /* Provide sufficient contrast against white background */
 /* Color Palette */
+/*
+:root {
+    --primary-color: #86A5D9;
+    --secondary-color: #0B1D49;
+    --secondary-color-opaque: #0B1D4966;
+    --background-color: linear-gradient(to right, #09121a, #1d2b3a, #324356, #4b5e72, #6a7e8d);
+    --background-color-rv: linear-gradient(to bottom, #09121a88, #1d2b3a88, #32435688, #4b5e7288, #6a7e8d88);
+    --text-light: #f2f2f2;
+    --text-dark: #333;
+    --text-header: #86A5D9;
+    --gold: #a9b67a; 
+    --border-color: #4e4e4e;
+}
+    --background-color: linear-gradient(63deg, rgba(34,193,195,1) 0%, rgb(45, 253, 173) 100%);
+    background: rgb(34,193,195);
+    background: linear-gradient(63deg, rgba(34,193,195,1) 0%, rgba(253,45,129,1) 100%);
+*/
 
 :root {
     --primary-color: #86A5D9;
@@ -10,10 +27,9 @@
     --text-light: #f2f2f2;
     --text-dark: #333;
     --text-header: #86A5D9;
-    --gold: #a9b67a; /*a9b67a*/
+    --gold: #a9b67a; 
     --border-color: #4e4e4e;
-}
-
+    --bg-light: #fff;
 
 /* width */
 ::-webkit-scrollbar {
@@ -166,7 +182,7 @@ body {
 }
 
 .panel{
-    background-color: var(--text-light);
+    background-color: var(--bg-light);
     color: var(--text-dark);
     border-radius: 2px;
     padding: 10px;
@@ -408,7 +424,7 @@ h6 {
 
 .glow {
     color: white;
-    text-shadow: 0 0 20px #00eeff, 0 0 25px #00eeff, 0 0 30px #00eeff, 0 0 35px #00eeff;
+    text-shadow: 0 0 20px #ff6700, 0 0 25px #00eeff, 0 0 30px #00eeff, 0 0 35px #00eeff;
     /* Set text shadow with different blur and spread radius */
 }
 
@@ -1111,7 +1127,7 @@ code {
 }
 
 .text-header{
-    color: var(--gold) !important;
+    color: var(--gold);
     margin-top: 20px;
 }
 

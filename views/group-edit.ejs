@@ -147,6 +147,17 @@
                 dataType: 'json'
             });
         },
+        deleteMember: (data, fn) => {
+            $.ajax({
+                type: "POST",
+                url: '/api/delete-member',
+                data: data,
+                success: function (res) {
+                    fn(res);
+                },
+                dataType: 'json'
+            });
+        },
         loadMembers: (groupid, fn) => {
             $.ajax({
                 type: "POST",
@@ -219,6 +230,15 @@
             const rem = o.append('td');
             const rembtn = rem.append('div').attr('class', 'btn btn-danger btn-sm');
             rembtn.append('i').attr('class', 'fa-solid fa-user-slash fa-2xs');
+
+            rembtn.on('click', (e, d) => {
+                console.log(d);
+                d3.select(e.target.parentNode).attr('class','hide');
+                d3.select(e.target.parentNode.parentNode).append('div').html('<i class="fa-solid fa-spinner fa-spin"></i>')
+                api.deleteMember( { groupid: d.groupid, kp: d.kp }, r => {
+                d3.select(e.target.parentNode.parentNode.parentNode).remove();
+                });
+            });
         })
     }
 
@@ -337,17 +357,21 @@
 
                     // Append data to each <tr>
                     mergedRows.each(function (d) {
-                        const row = d3.select(this);
+                        var  row = d3.select(this);
                         row.selectAll('td').remove(); // Clear existing td elements
                         row.append('td').text(d.nama);
                         row.append('td').text(d.kp);
                         row.append('td').text(d.darjah_tingkatan);
                         row.append('td').text(d.jantina);
 
-                        const deleteBtn = row.append('td')
-                            .append('div')
-                            .attr('class', 'button-small float-right');
+                        var btnx = row.append('td');
+                        var deleteBtn = btnx.append('div')
+                            .attr('class', 'button float-right');
                         deleteBtn.html('<i class="fa-solid fa-xmark"></i>');
+
+                        deleteBtn.on('click', (e, d) => {
+                            console.log('------------>',d);
+                        })
                     });
 
                     // Exit phase

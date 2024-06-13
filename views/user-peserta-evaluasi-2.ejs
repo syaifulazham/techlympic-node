@@ -293,10 +293,14 @@
                         row.append('td').text(d.darjah_tingkatan);
                         row.append('td').text(d.jantina);
 
-                        const deleteBtn = row.append('td')
-                            .append('div')
+                        const deleteBtn = row.append('td');
+                        deleteBtn.append('div')
                             .attr('class', 'button-small float-right');
                         deleteBtn.html('<i class="fa-solid fa-xmark"></i>');
+
+                        deleteBtn.on('click', (e, d) => {
+                            console.log(d);
+                        })
                     });
 
                     // Exit phase

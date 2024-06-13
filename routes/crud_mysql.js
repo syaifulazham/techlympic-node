@@ -891,10 +891,10 @@ let API = {
             var con = mysql.createConnection(auth.auth()[__DATA__SCHEMA__]);
             try {
                 var sql = `
-                INSERT INTO kumpulan (kodsekolah, nama_kumpulan, program, pembimbing, createdate, updatedate, updatedby) 
-                VALUES (?, ?, ?, ?, current_timestamp(), current_timestamp(), ?)
+                INSERT INTO kumpulan (negeri, kodsekolah, nama_kumpulan, program, pembimbing, createdate, updatedate, updatedby) 
+                VALUES (?, ?, ?, ?, ?, current_timestamp(), current_timestamp(), ?)
                 `;
-                con.query(sql, [data.kodsekolah, data.nama_kumpulan, data.program, data.pembimbing, data.updatedby], function (err, result) {
+                con.query(sql, [data.negeri, data.kodsekolah, data.nama_kumpulan, data.program, data.pembimbing, data.updatedby], function (err, result) {
                     if (err) {
                         console.log(err);
                     } else {
